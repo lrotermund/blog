@@ -8,28 +8,33 @@ theme = "m10c"
     identifier = "home"
     name = "Home"
     url = "/"
+    weight = 10
   [[menu.main]]
     identifier = "about"
     name = "About"
     url = "/about/"
+    weight = 20
   [[menu.main]]
     identifier = "tags"
     name = "Tags"
     url = "/tags/"
+    weight = 30
   [[menu.main]]
     identifier = "imprint"
     name = "Imprint"
     url = "/imprint/"
+    weight = 40
   [[menu.main]]
-    identifier = "privacy"
-    name = "Privacy"
-    url = "/privacy/"
+    identifier = "data-protection"
+    name = "Data Protection"
+    url = "/data-protection/"
+    weight = 50
 
 [params]
   author = "Lukas Rotermund"
   description = "hobby coding blog about all dev topics that interest me"
   avatar = "/assets/lukas-rotermund.jpg"
-  favicon = "/assests/favicon.ico"
+  favicon = "/assets/favicon.ico"
   [[params.social]]
     name = "github"
     url = "https://github.com/lrotermund"
