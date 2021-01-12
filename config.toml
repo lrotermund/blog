@@ -2,7 +2,46 @@ baseURL = "http://example.org/"
 languageCode = "en-us"
 title = "coding blog"
 theme = "m10c"
-author = "Lukas Rotermund"
-description = "hobby coding blog about all dev topics that interest me"
-avatar = "/assets/lukas-rotermund.jpg"
-favicon = "/assests/favicon.ico"
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about/"
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+  [[menu.main]]
+    identifier = "imprint"
+    name = "Imprint"
+    url = "/imprint/"
+  [[menu.main]]
+    identifier = "privacy"
+    name = "Privacy"
+    url = "/privacy/"
+
+[params]
+  author = "Lukas Rotermund"
+  description = "hobby coding blog about all dev topics that interest me"
+  avatar = "/assets/lukas-rotermund.jpg"
+  favicon = "/assests/favicon.ico"
+  [[params.social]]
+    name = "github"
+    url = "https://github.com/lrotermund"
+  [[params.social]]
+    name = "linkedin"
+    url = "https://www.linkedin.com/in/lukas-rotermund"
+  [[params.social]]
+    name = "xing"
+    url = "https://www.xing.com/profile/Lukas_Rotermund2"
+  [params.style]
+    darkestColor = "#315659"
+    darkColor = "#253031"
+    primaryColor = "#dad865"
+    lightColor = "#96a879"
+    lightestColor = "#fff"
