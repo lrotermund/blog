@@ -1,13 +1,13 @@
-FROM alpine:3.9 AS build
+FROM debian:10.0 AS build
 
 # Hugo version
-ARG VERSION=0.68.3
-ADD https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_${VERSION}_Linux-64bit.tar.gz /hugo.tar.gz
-RUN tar -zxvf hugo.tar.gz
+ARG VERSION=0.80.0
+ADD https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_extended_${VERSION}_Linux-64bit.tar.gz /hugo_extended.tar.gz
+RUN tar -zxvf hugo_extended.tar.gz
 RUN /hugo version
 
 # for --enableGitInfo
-RUN apk add --no-cache git
+RUN apt-get update && apt-get install -y git
 
 COPY . /site
 WORKDIR /site
