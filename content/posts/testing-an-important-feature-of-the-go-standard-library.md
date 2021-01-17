@@ -82,12 +82,12 @@ an blank string, causing `s` to contain an blank string.
 
 Now to make sure our string is not blank, I check the length of `s` via `if len(s) == 0`. Since `s` 
 was initialized empty via the `buggyFuncReturningBlankStr()` function, the error "String returned by buggyFuncReturningBlankStr() is blank" is now generated via the 
-[t.Error](https://golang.org/pkg/testing/#T.Error) function and the test is marked as failed - we'll 
+[t.Error](https://golang.org/pkg/testing/#T.Error) function and the test is marked as failed – we'll 
 look at how all this happens later.
 
 It is important to note here that the test deliberately results in a failed test to illustrate the 
 result of the [t.Error](https://golang.org/pkg/testing/#T.Error) function. Of course, the goal is 
-always to have successful tests - in other words, to get the tests green at the end.
+always to have successful tests – in other words, to get the tests green at the end.
 
 Now let's run the test via `go test` and see if we get our expected error message.
 ```shell
@@ -106,8 +106,10 @@ look at these in the next section.
 ## Mark a Go test as failed
 
 Tests are marked as "passed" if they were not marked as failed during the test. There are several 
-ways to mark a test as failed - let's dive into the Go standard library and start with the "Fail" 
+ways to mark a test as failed – let's dive into the Go standard library and start with the "Fail" 
 function.
+
+### Use the Fail function to mark a test as failed 
 
 ```golang
 func (c *common) Fail() {
@@ -125,25 +127,134 @@ func (c *common) Fail() {
 ```
 (Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=23815:23838#L670))
 
-Why do we have so many code in here for a simple fail function? We can find the answer to this 
-question already in the first few lines of Code. `if c.parent != nil` shows us that there may be a 
-parent test that produced the current test. Let's have a look at the common struct (in a shortened 
-form).
-
-
+Below you find the common struct used in `Fail()` so you have the fields and their types available 
+for reference. (in a shortened form).
 
 ```golang
 type common struct {
     ...
     mu     sync.RWMutex // guards this group of fields
+	failed bool         // Test or benchmark has failed.
 	done   bool         // Test is finished and all subtests have completed.
-	hasSub int32        // Written atomically.
-	parent *common
-    sub    []*T         // Queue of subtests to be run in parallel.
+    parent *common
+    name   string       // Name of test or benchmark.
     ...
 }
 ```
+
 (Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=14406:14426#L384))
 
-Ok, whats going on here? There is a common pointer `parent *common` that indicates a parent test and
-there is a slice of  
+Why do we have so many code in here for a simple fail function – why not just set failed to true? We 
+can find the answer to this question already in the first few lines of Code, `if c.parent != nil` 
+shows us that there could be a parent test that produced the current test and if so `Fail()` is also 
+called on the parent test `c.parent.Fail()`.
+
+Now its getting more complicated, what is this 
+[sync.RWMutex](https://golang.org/src/sync/rwmutex.go?s=987:1319#L18) thats getting locked 
+`c.mu.Lock()`? In order to answer this question, we have to make a short excursion into the world of 
+multi-threading in Go. 
+
+We already know that there can be a parent test to our test and that already indicates the use of a 
+[goroutine](https://tour.golang.org/concurrency/1). Before we clarify what a 
+[sync.RWMutex](https://golang.org/src/sync/rwmutex.go?s=987:1319#L18) is, let's first look at a 
+classic [sync.Mutex](https://golang.org/src/sync/mutex.go?s=765:813#L15). A mutex (mutual exclusion 
+lock) is your tool to protect a shared resource, like the common struct in our case, from race 
+condition due to an simultaneously read or write access. Let's have a brief look into the func 
+description of the `Lock()` function.
+
+```golang
+// Lock locks m.
+// If the lock is already in use, the calling goroutine
+// blocks until the mutex is available.
+func (m *Mutex) Lock()
+```
+(Source: [sync/mutex.go](https://golang.org/src/sync/mutex.go?s=2534:2556#L62))
+
+The description already brings it to the point – if the function `Lock()` of the mutex is called and 
+this lock should already be set by another goroutine, our current goroutine is blocked until the 
+lock is released again and this applies to reading, as well as writing accesses.
+
+To take a less restrictive approach, a 
+[sync.RWMutex](https://golang.org/src/sync/rwmutex.go?s=987:1319#L18) (reader/writer mutex) was 
+integrated in the common struct. The 
+[sync.RWMutex](https://golang.org/src/sync/rwmutex.go?s=987:1319#L18) slightly loosens the 
+restriction that only one access can take place at the same time. Thus, it is possible that several 
+read accesses, or one write access take place simultaneously on the shared resource. By the way, 
+there are different lock functions for the different accesses: 
+[Lock()](https://golang.org/src/sync/rwmutex.go?s=2805:2830#L82) and 
+[RLock()](https://golang.org/src/sync/rwmutex.go?s=1558:1584#L33)
+
+Now let's jump back into our `Fail()` function and thus to the next line of code 
+`defer c.mu.Unlock()`. The `defer` statement causes the following instruction to be executed when 
+the surrounding function returns, as a result we unlock the previously created lock at the end of 
+the function with [Unlock()](https://golang.org/src/sync/rwmutex.go?s=3664:3691#L108) and release 
+the resource again.
+
+The next lines of code are a reaction to a race condition that occurs when the user has not 
+synchronized his sub-tests/ goroutines appropriately and the test function completes successfully 
+even though sub-tests are still running.
+
+```golang
+// c.done needs to be locked to synchronize checks to c.done in parent tests.
+if c.done {
+    panic("Fail in goroutine after " + c.name + " has completed")
+}
+```
+
+Finally, the test is marked as failed via `c.failed = true`. Important to know: the test is __not 
+aborted__ at this point. To abort a test completely in case of an error, the function 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) can be used, which we'll 
+look in the next section – but first an example of a test with sub-tests.
+
+```golang
+func TestWithSubTests(t *testing.T) {
+	testCases := []struct {
+		foo string
+		bar string
+	}{
+		{"foo", "bar"},
+		{"foo", ""},
+		{"", "bar"},
+		{"bar", "foo"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%s-%s", tc.foo, tc.bar), func(t *testing.T) {
+			s := buggyFuncCouldReturnBlankString(tc.foo, tc.bar)
+
+			if len(s) == 0 {
+				t.Fail()
+			}
+		})
+	}
+}
+
+func buggyFuncCouldReturnBlankString(foo, bar string) (s string) {
+	if len(foo) == 0 || len(bar) == 0 {
+		return
+	}
+
+	s = fmt.Sprintf("%s::%s", foo, bar)
+	return
+}
+```
+
+This is a common pattern in Go testing to test a bunch of test cases against a function. First, you
+declare your test cases within a slice. Then you loop over these test cases and start a sub-test 
+with [t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125). The first parameter
+is the name of the sub-test and the second one is the sub-test function. 
+
+Let's run the test with `go test`:
+
+```shell
+$ go test                                                                                                           1 ↵
+--- FAIL: TestWithSubTests (0.00s)
+    --- FAIL: TestWithSubTests/foo- (0.00s)
+    --- FAIL: TestWithSubTests/-bar (0.00s)
+FAIL
+exit status 1
+FAIL    github.com/lrotermund/testing/pkg/subtests   0.001s
+```
+
+Here you can see very nicely how `go test` displays the failed sub-tests indented, which quickly 
+shows which of the sub-tests failed and which parameter combinations did not work.
