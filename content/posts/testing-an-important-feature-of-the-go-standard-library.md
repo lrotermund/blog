@@ -204,7 +204,47 @@ if c.done {
 Finally, the test is marked as failed via `c.failed = true`. Important to know: the test is __not 
 aborted__ at this point. To abort a test completely in case of an error, the function 
 [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) can be used, which we'll 
-look in the next section – but first an example of a test with sub-tests.
+look in the next section – but first, an example of what I mean by "not aborted":
+
+```golang
+func TestMultipleAssertions(t *testing.T) {
+	s := buggyFuncReturningNil()
+
+	if s == nil {
+		t.Log("assertion failed, expected a value, got nil")
+		t.Fail()
+	}
+
+	if len(*s) == 0 {
+		t.Log("assertion failed, expected a value, got blank string")
+		t.Fail()
+	}
+}
+
+func buggyFuncReturningNil() *string {
+	return nil
+}
+```
+
+Let's jump straight to the test execution and see what happens.
+
+```shell
+$ go test                                                                                           
+--- FAIL: TestMultipleAssertions (0.00s)
+    multipleassertions_test.go:9: assertion failed, expected a value, got nil
+panic: runtime error: invalid memory address or nil pointer dereference [recovered]
+        panic: runtime error: invalid memory address or nil pointer dereference
+```
+
+Oh no, we have a null pointer exception. The error message shows that the first assertion was 
+successful and we also find the expected log message. The error occurs because the assertions are 
+based on each other and the next assertion expects that the value can be dereferenced. If you 
+want to cover this case, then you should use 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) as already mentioned.
+
+Let's take another look at an example where multiple test cases are tested sequentially using the 
+[t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125) function with different 
+parameters.
 
 ```golang
 func TestWithSubTests(t *testing.T) {
@@ -247,7 +287,7 @@ is the name of the sub-test and the second one is the sub-test function.
 Let's run the test with `go test`:
 
 ```shell
-$ go test                                                                                                           1 ↵
+$ go test                                                                                        
 --- FAIL: TestWithSubTests (0.00s)
     --- FAIL: TestWithSubTests/foo- (0.00s)
     --- FAIL: TestWithSubTests/-bar (0.00s)
@@ -258,3 +298,5 @@ FAIL    github.com/lrotermund/testing/pkg/subtests   0.001s
 
 Here you can see very nicely how `go test` displays the failed sub-tests indented, which quickly 
 shows which of the sub-tests failed and which parameter combinations did not work.
+
+### Stop test execution directly with the FailNow function
