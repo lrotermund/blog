@@ -67,7 +67,8 @@ func TestValidateStringNotBlank(t *testing.T) {
     s := buggyFuncReturningBlankStr()
 
     if len(s) == 0 {
-        t.Error("String returned by buggyFuncReturningBlankStr() is blank")
+		t.Log("String returned by buggyFuncReturningBlankStr() is blank")
+        t.Fail()
     }
 }
 
@@ -300,3 +301,170 @@ Here you can see very nicely how `go test` displays the failed sub-tests indente
 shows which of the sub-tests failed and which parameter combinations did not work.
 
 ### Stop test execution directly with the FailNow function
+
+Let's have a look at the [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) 
+code before we jump into an example.
+
+```golang
+func (c *common) FailNow() {
+	c.Fail()
+
+	// Calling runtime.Goexit will exit the goroutine, which
+	// will run the deferred functions in this goroutine,
+	// which will eventually run the deferred lines in tRunner,
+	// which will signal to the test loop that this test is done.
+	//
+	// A previous version of this code said:
+	//
+	//	c.duration = ...
+	//	c.signal <- c.self
+	//	runtime.Goexit()
+	//
+	// This previous version duplicated code (those lines are in
+	// tRunner no matter what), but worse the goroutine teardown
+	// implicit in runtime.Goexit was not guaranteed to complete
+	// before the test exited. If a test deferred an important cleanup
+	// function (like removing temporary files), there was no guarantee
+	// it would run on a test failure. Because we send on c.signal during
+	// a top-of-stack deferred function now, we know that the send
+	// only happens after any other stacked defers have completed.
+	c.finished = true
+	runtime.Goexit()
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=24706:24732#L699))
+
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) first executes 
+[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) to mark the test as failed. 
+You can read more about this in the previous section 
+[Mark a Go test as failed](#mark-a-go-test-as-failed). Finally, the test is marked as "finished" and 
+the current goroutine is terminated via `runtime.Goexit()`. Exiting the goroutine will execute the 
+next test or benchmark.
+
+Now let's pick up the previous example and replace the 
+[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) function with the 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) function and look at the 
+output of `go test`.
+
+```golang
+func TestMultipleAssertionsWithFailNow(t *testing.T) {
+	s := buggyFuncReturningNil()
+
+	if s == nil {
+		t.Log("assertion failed, expected a value, got nil")
+		t.FailNow()
+	}
+
+	if len(*s) == 0 {
+		t.Log("assertion failed, expected a value, got blank string")
+		t.FailNow()
+	}
+}
+
+func buggyFuncReturningNil() *string {
+	return nil
+}
+```
+```shell
+$ go test
+--- FAIL: TestMultipleAssertionsWithFailNow (0.00s)
+    multiplefailnowassertions_test.go:9: assertion failed, expected a value, got nil
+FAIL
+exit status 1
+FAIL    github.com/lrotermund/testing/pkg/failnow   0.004s
+```
+
+This time we were more lucky and our tests could be executed without an unexpected exception. The 
+test was successfully terminated on the first call to 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699).
+
+### Simplified logging when marking a test as failed with the Error/ Errorf function
+
+In the previous examples, I often printed the error messages of the Go tests via the 
+[t.Log()](https://golang.org/src/testing/testing.go?s=27069:27110#L766) 
+function and subsequently marked the test as failed via 
+[t.Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) - fortunately, the Go 
+standard library provides a way to avoid this boilerplate code: 
+[t.Error()](https://golang.org/src/testing/testing.go?s=27660:27703#L776) and 
+[t.Errorf()](https://golang.org/src/testing/testing.go?s=27799:27858#L782)
+
+Let's take a look at the code.
+
+```golang
+func (c *common) Error(args ...interface{}) {
+	c.log(fmt.Sprintln(args...))
+	c.Fail()
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=27660:27703#L776))
+
+As you can see, nothing really happens here except that the passed arguments are logged and then 
+[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) is called. Now let's replace 
+[Log()](https://golang.org/src/testing/testing.go?s=27069:27110#L766) and 
+[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) with
+[Error()](https://golang.org/src/testing/testing.go?s=27660:27703#L776) in our first example.
+
+```golang
+func TestValidateStringNotBlank(t *testing.T) {
+    s := buggyFuncReturningBlankStr()
+
+    if len(s) == 0 {
+		t.Error("String returned by buggyFuncReturningBlankStr() is blank")
+    }
+}
+
+func buggyFuncReturningBlankStr() string {
+    return ""
+}
+```
+```shell
+$ go test
+--- FAIL: TestValidateStringNotBlank (0.00s)
+    validatorwitherror_test.go:9: String returned by buggyFuncReturningBlankStr() is blank
+FAIL
+exit status 1
+FAIL    github.com/lrotermund/testing/pkg/validationwitherror   0.001s
+```
+
+Now let's look at [Errorf()](https://golang.org/src/testing/testing.go?s=27799:27858#L782) which 
+calls the [c.log()](https://golang.org/src/testing/testing.go?s=25730:25763#L736) function with a 
+formatted string to output the passed arguments in the specified formatting.
+
+```golang
+func (c *common) Errorf(format string, args ...interface{}) {
+	c.log(fmt.Sprintf(format, args...))
+	c.Fail()
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=27799:27858#L782))
+
+Let's look at an example of how 
+[Errorf()](https://golang.org/src/testing/testing.go?s=27799:27858#L782) can be used.
+
+```golang
+func TestPrintingFormattedError(t *testing.T) {
+    input := "foobar"
+    expected := "barfoo"
+
+    s := buggyFuncReturningWrongStr(input)
+
+    if s != expected {
+		t.Errorf("assertion failed, expected %s, got %s", expected, s)
+    }
+}
+
+func buggyFuncReturningWrongStr(s string) string {
+    return "abcde"
+}
+```
+```shell
+$ go test
+--- FAIL: TestPrintingFormattedError (0.00s)
+    validatorwitherrorf_test.go:12: assertion failed, expected barfoo, got abcde
+FAIL
+exit status 1
+FAIL    github.com/lrotermund/testing/pkg/validationwitherrorf   0.001s
+```
