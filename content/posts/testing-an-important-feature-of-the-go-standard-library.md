@@ -110,7 +110,7 @@ Tests are marked as "passed" if they were not marked as failed during the test. 
 ways to mark a test as failed – let's dive into the Go standard library and start with the "Fail" 
 function.
 
-### Use the Fail function to mark a test as failed 
+### Use the Fail function to mark a test as failed
 
 ```golang
 func (c *common) Fail() {
@@ -401,7 +401,10 @@ func (c *common) Error(args ...interface{}) {
 (Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=27660:27703#L776))
 
 As you can see, nothing really happens here except that the passed arguments are logged and then 
-[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) is called. Now let's replace 
+[Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) is called. The functionality 
+of Fail was explained in the previous section 
+[Use the Fail function to mark a test as failed](#use-the-fail-function-to-mark-a-test-as-failed).
+Now let's replace 
 [Log()](https://golang.org/src/testing/testing.go?s=27069:27110#L766) and 
 [Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) with
 [Error()](https://golang.org/src/testing/testing.go?s=27660:27703#L776) in our first example.
@@ -467,4 +470,93 @@ $ go test
 FAIL
 exit status 1
 FAIL    github.com/lrotermund/testing/pkg/validationwitherrorf   0.001s
+```
+
+### Simplified logging when stopping test execution directly with the Fatal/ Fatalf function
+
+As with [Error()](https://golang.org/src/testing/testing.go?s=27660:27703#L776) and 
+[Errorf()](https://golang.org/src/testing/testing.go?s=27799:27858#L782), 
+[Fatal()](https://golang.org/src/testing/testing.go?s=27962:28005#L788) and 
+[Fatalf()](https://golang.org/src/testing/testing.go?s=28107:28166#L794) are used to avoid boilerplate 
+code by logging a desired value and then terminating the test directly via 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699). The functionality of 
+FailNow has already been explained in the previous section 
+[Stop test execution directly with the FailNow function](#stop-test-execution-directly-with-the-failnow-function). Let's take a look at the code of the two functions before we implement them in an example.
+
+```golang
+// Fatal is equivalent to Log followed by FailNow.
+func (c *common) Fatal(args ...interface{}) {
+	c.log(fmt.Sprintln(args...))
+	c.FailNow()
+}
+
+// Fatalf is equivalent to Logf followed by FailNow.
+func (c *common) Fatalf(format string, args ...interface{}) {
+	c.log(fmt.Sprintf(format, args...))
+	c.FailNow()
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=27910:28220#L797))
+
+As already mentioned, logging or formatted logging is done here via 
+[c.log()](https://golang.org/src/testing/testing.go?s=25730:25763#L736) and the call to 
+[FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) follows afterwards. Let's 
+jump now to an example where both functions are included.
+
+```golang
+func TestWithFatalInSubTests(t *testing.T) {
+	testCases := []struct {
+		foo string
+		bar string
+	}{
+		{"foo", "bar"},
+		{"foo", "foo"},
+		{"bar", "bar"},
+		{"bar", "foo"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("%s,%s", tc.foo, tc.bar), func(t *testing.T) {
+			expected := fmt.Sprintf("%s::%s", tc.bar, tc.foo)
+			s := buggyFuncCouldReturnBlankOrWrongString(tc.foo, tc.bar)
+
+			if len(s) == 0 {
+				t.Fatal("assertion failed, returned string is blank")
+			}
+
+			if s != expected {
+				t.Fatalf("assertion failed, expected %s, got %s", expected, s)
+			}
+		})
+	}
+}
+
+func buggyFuncCouldReturnBlankOrWrongString(foo, bar string) (s string) {
+	if foo == "foo" && bar == "foo" {
+		return
+	}
+
+	if foo == "bar" && bar == "bar" {
+		return "foo::foo"
+	}
+
+	s = fmt.Sprintf("%s::%s", bar, foo)
+	return
+}
+```
+
+Let's see what is logged by [Fatal()](https://golang.org/src/testing/testing.go?s=27962:28005#L788) 
+and [Fatalf()](https://golang.org/src/testing/testing.go?s=28107:28166#L794).
+
+```shell
+$ go test
+--- FAIL: TestWithFatalInSubTests (0.00s)
+    --- FAIL: TestWithFatalInSubTests/foo,foo (0.00s)
+        subtestswithfatal_test.go:25: assertion failed, returned string is blank
+    --- FAIL: TestWithFatalInSubTests/bar,bar (0.00s)
+        subtestswithfatal_test.go:29: assertion failed, expected bar::bar, got foo::foo
+FAIL
+exit status 1
+Fail    github.com/lrotermund/testing/pkg/subtestswithfatal   0.001s
 ```
