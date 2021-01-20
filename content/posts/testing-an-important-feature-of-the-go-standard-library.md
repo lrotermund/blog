@@ -560,3 +560,183 @@ FAIL
 exit status 1
 Fail    github.com/lrotermund/testing/pkg/subtestswithfatal   0.001s
 ```
+
+## Run time-consuming test cases in parallel
+
+It may well happen that the execution time of a test is unusually long. If several parameter 
+combinations are now tested, the execution time of all test cases can reach a disproportionate 
+length. If worst comes to worst, these above-average runtimes can also exhaust the time quota of a 
+CI/CP pipeline. 
+
+Let's look at an example where we have an unusually long execution time of a test.
+
+```golang
+func TestWithFatalInSubTests(t *testing.T) {
+	testCases := []string{
+		"foo",
+		"foobar",
+		"foobarfoo",
+		"foobarfoobar",
+		"foobarfoobarfoo",
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc, func(t *testing.T) {
+			timeConsumingOperation(tc)
+		})
+	}
+}
+
+func timeConsumingOperation(foo string) {
+	sec := len(foo)
+	time.Sleep(time.Duration(sec) * time.Second)
+}
+```
+```shell
+$ go test
+PASS
+ok      github.com/lrotermund/testing/pkg/notparallel   45.004s
+```
+
+In the `go test` output you can see that there is an execution time of 45 seconds and that is 
+clearly too long. The Go standard library helps out again by providing the possibility to 
+execute sub-tests in parallel in own goroutines via 
+[t.Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969). Let's jump right into 
+the code again – unlike the last functions for simplified logging, exciting code is waiting for us 
+again.
+
+```golang
+func (t *T) Parallel() {
+	if t.isParallel {
+		panic("testing: t.Parallel called multiple times")
+	}
+	t.isParallel = true
+
+	// We don't want to include the time we spend waiting for serial tests
+	// in the test duration. Record the elapsed time thus far and reset the
+	// timer afterwards.
+	t.duration += time.Since(t.start)
+
+	// Add to the list of tests to be released by the parent.
+	t.parent.sub = append(t.parent.sub, t)
+	t.raceErrors += race.Errors()
+
+	if t.chatty != nil {
+		// Unfortunately, even though PAUSE indicates that the named test is *no
+		// longer* running, cmd/test2json interprets it as changing the active test
+		// for the purpose of log parsing. We could fix cmd/test2json, but that
+		// won't fix existing deployments of third-party tools that already shell
+		// out to older builds of cmd/test2json — so merely fixing cmd/test2json
+		// isn't enough for now.
+		t.chatty.Updatef(t.name, "=== PAUSE %s\n", t.name)
+	}
+
+	t.signal <- true   // Release calling test.
+	<-t.parent.barrier // Wait for the parent test to complete.
+	t.context.waitParallel()
+
+	if t.chatty != nil {
+		t.chatty.Updatef(t.name, "=== CONT  %s\n", t.name)
+	}
+
+	t.start = time.Now()
+	t.raceErrors += -race.Errors()
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=32974:32996#L969))
+
+The first few lines of the function are a simple protection against multiple calls of 
+[t.Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969). 
+
+After that, the duration of the test is recorded up to the current time. The reason for this is that 
+the sub-tests running in parallel are all registered first and then wait paused until the processing 
+of the parallel tests starts. The time from here until the moment when the current test is started 
+again is not included in the test duration - more about this later.
+
+In order for our parallel test to be executed, it is next added to the parent test as a sub-test. To 
+do this, it is simply appended to the sub slice.
+
+At first, the next code confused me a bit. What is behind these "raceErrors" in 
+`t.raceErrors += race.Errors()`? It is already clear from the field description that this is a 
+mechanism for detecting race conditions. Let's jump into the used function `race.Error()` and see 
+what is returned there.
+
+```golang
+func Errors() int { return 0 }
+```
+
+(Source: [internal/race/norace.go](https://golang.org/src/internal/race/norace.go?s=571:588#L32))
+
+Zero? It just returns zero? Ok, the file name "norace.go" suggests a default case, but where does 
+the use of this file come from - we don't initialize "race". So let's have a look at the all files 
+used by [internal/race package](https://golang.org/src/internal/race/), maybe we can find more 
+answers there.
+
+```bash
+.
+├── internal/race
+│   ├── doc.go
+│   ├── norace.go
+│   └── race.go
+```
+
+(Source: [internal/race](https://golang.org/src/internal/race/))
+
+First, let's take a look at the documentation.
+
+```golang
+/*
+Package race contains helper functions for manually instrumenting code for the race detector.
+
+The runtime package intentionally exports these functions only in the race build;
+this package exports them unconditionally but without the "race" build tag they are no-ops.
+*/
+package race
+```
+
+(Source: [internal/race/doc.go](https://golang.org/src/internal/race/doc.go))
+
+According to the documentation, the features are only provided in the race build. After a short 
+search for the mentioned "race" build tag, I came across the 
+[build package](https://golang.org/pkg/go/build/) and the 
+[build constraints](https://golang.org/pkg/go/build/#hdr-Build_Constraints). If we now take a look 
+at the build tags/build constraints of "norace.go", as well as "race.go", we notice that depending 
+on the tag, one or the other file is used during the build. In the [introduction of the "Go Race 
+Detector"](https://blog.golang.org/race-detector) it is also pointed out that the "-race" flag 
+activates the race detection during the build.
+
+```golang
+// +build !race
+
+package race
+```
+(Source: [internal/race/norace.go](https://golang.org/src/internal/race/norace.go?s=160:175))
+
+```golang
+// +build race
+
+package race
+```
+(Source: [internal/race/race.go](https://golang.org/src/internal/race/race.go?s=160:175))
+
+To complete the journey through the Go standard library, here is the 
+[Errors()](https://golang.org/src/internal/race/race.go?s=829:879#L52) function from the 
+"race.go".
+
+```golang
+func Errors() int {
+	return runtime.RaceErrors()
+}
+```
+
+(Source: [internal/race/race.go](https://golang.org/src/internal/race/race.go?s=829:879#L52))
+
+More complicated, deeper things happen here that even give different results depending on the 
+operating system. If you want to know more and have some experience in C, you are welcome to dive 
+deeper into the runtime – and if you find out more about it, feel free to let me know, I'm looking 
+forward to an answer!
+
+But now back to our [Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) 
+function. Since we build the tests without the "-race" flag, `t.raceErrors` is simply initialized 
+with 0, or incremented by 0, so we can safely ignore this line of code. Let's move on!
