@@ -571,7 +571,7 @@ CI/CP pipeline.
 Let's look at an example where we have an unusually long execution time of a test.
 
 ```golang
-func TestWithFatalInSubTests(t *testing.T) {
+func TestTimeConsumingSubTests(t *testing.T) {
 	testCases := []string{
 		"foo",
 		"foobar",
@@ -740,3 +740,393 @@ forward to an answer!
 But now back to our [Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) 
 function. Since we build the tests without the "-race" flag, `t.raceErrors` is simply initialized 
 with 0, or incremented by 0, so we can safely ignore this line of code. Let's move on!
+
+Next comes the check to see if `t.chatty` is nil. `t.chatty` is the pointer of a chattyPrinter and 
+we initialize it when we start `go test` with the verbose flag "-v". Via 
+`t.chatty.Updatef(t.name, "=== PAUSE %s\n", t.name)` there is now a logging that the sub-test is now 
+in pause mode.
+
+After chatty-logging there are two lines of code that exchange signals between goroutines. 
+
+```golang
+t.signal <- true   // Release calling test.
+<-t.parent.barrier // Wait for the parent test to complete.
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=32974:32996#L969))
+
+If you haven't had any contact with goroutines yet, I generally recommend you to work through the 
+[concurrency tour by golang](https://tour.golang.org/concurrency/1). Goroutines are a special kind 
+of multithreading which is not done by the operating system but by Go. A goroutine needs less 
+resources than a thread of the operating system and Go can manage thousands of goroutines at the 
+same time - but whether they actually run in parallel depends on the host system. You will learn 
+more about this in the [tour](https://tour.golang.org/concurrency/1).
+
+The lines of code we came across in the 
+[Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) function deal with the 
+exchange of signals between different goroutines. This signal exchange is done via so-called 
+channels. On these channels it is possible to send and receive bidirectional, to send only, or to 
+receive only.
+
+At the first signal transmission `t.signal <- true` a signal, in this case the boolean value "true", 
+is sent in the channel `t.signal`. The calling test is already waiting for this signal to complete 
+the initialization of this parallel test. We'll take a look at how this is expressed in the verbose 
+mode of test execution in a moment. First, let's look at where the calling test waits for the 
+signal.  
+
+```golang {hl_lines=[34,35]}
+func (t *T) Run(name string, f func(t *T)) bool {
+	atomic.StoreInt32(&t.hasSub, 1)
+	testName, ok, _ := t.context.match.fullName(&t.common, name)
+	if !ok || shouldFailFast() {
+		return true
+	}
+	// Record the stack trace at the point of this call so that if the subtest
+	// function - which runs in a separate stack - is marked as a helper, we can
+	// continue walking the stack into the parent test.
+	var pc [maxStackLen]uintptr
+	n := runtime.Callers(2, pc[:])
+	t = &T{
+		common: common{
+			barrier: make(chan bool),
+			signal:  make(chan bool),
+			name:    testName,
+			parent:  &t.common,
+			level:   t.level + 1,
+			creator: pc[:n],
+			chatty:  t.chatty,
+		},
+		context: t.context,
+	}
+	t.w = indenter{&t.common}
+
+	if t.chatty != nil {
+		t.chatty.Updatef(t.name, "=== RUN   %s\n", t.name)
+	}
+	// Instead of reducing the running count of this test before calling the
+	// tRunner and increasing it afterwards, we rely on tRunner keeping the
+	// count correct. This ensures that a sequence of sequential tests runs
+	// without being preempted, even when their parent is a parallel test. This
+	// may especially reduce surprises if *parallel == 1.
+	go tRunner(t, f)
+	if !<-t.signal {
+		// At this point, it is likely that FailNow was called on one of the
+		// parent tests by one of the subtests. Continue aborting up the chain.
+		runtime.Goexit()
+	}
+	return !t.failed
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=37631:37678#L1125))
+
+Each of our sub-tests is started via 
+[t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125) and passed to its own 
+goroutine via `go tRunner(t, f)`. After passing, 
+[t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125) waits for a signal in the 
+`t.signal` channel, which is either sent by `tRunner` when a test finishes or by the 
+[Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) function to release the 
+calling test. Since the latter is the case and `t.failed` has not yet been set and is therefore 
+"false", [t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125) passes 
+successfully and the next sub-test will be initialized by the calling test.
+
+Next, we look at the receiving channel `t.parent.barrier`. At this point, the code is waiting for a 
+signal to be sent to this channel. Waiting for a signal blocks the goroutine and thus the sub-test 
+is blocked. But why is test execution blocked and when will execution resume?
+
+The execution is blocked so that all previously initialized tests can be started and processed in 
+parallel after the calling test is completed. Now let's see where the signal comes from that allows 
+the execution of the sub-tests to continue again.
+
+```golang {hl_lines=[56,61]}
+func tRunner(t *T, fn func(t *T)) {
+	t.runner = callerName(0)
+
+	// When this goroutine is done, either because fn(t)
+	// returned normally or because a test failure triggered
+	// a call to runtime.Goexit, record the duration and send
+	// a signal saying that the test is done.
+	defer func() {
+		if t.Failed() {
+			atomic.AddUint32(&numFailed, 1)
+		}
+
+		if t.raceErrors+race.Errors() > 0 {
+			t.Errorf("race detected during execution of test")
+		}
+
+		// If the test panicked, print any test output before dying.
+		err := recover()
+		signal := true
+		if !t.finished && err == nil {
+			err = errNilPanicOrGoexit
+			for p := t.parent; p != nil; p = p.parent {
+				if p.finished {
+					t.Errorf("%v: subtest may have called FailNow on a parent test", err)
+					err = nil
+					signal = false
+					break
+				}
+			}
+		}
+
+		doPanic := func(err interface{}) {
+			t.Fail()
+			if r := t.runCleanup(recoverAndReturnPanic); r != nil {
+				t.Logf("cleanup panicked with %v", r)
+			}
+			// Flush the output log up to the root before dying.
+			for root := &t.common; root.parent != nil; root = root.parent {
+				root.mu.Lock()
+				root.duration += time.Since(root.start)
+				d := root.duration
+				root.mu.Unlock()
+				root.flushToParent(root.name, "--- FAIL: %s (%s)\n", root.name, fmtDuration(d))
+				if r := root.parent.runCleanup(recoverAndReturnPanic); r != nil {
+					fmt.Fprintf(root.parent.w, "cleanup panicked with %v", r)
+				}
+			}
+			panic(err)
+		}
+		if err != nil {
+			doPanic(err)
+		}
+
+		t.duration += time.Since(t.start)
+
+		if len(t.sub) > 0 {
+			// Run parallel subtests.
+			// Decrease the running count for this test.
+			t.context.release()
+			// Release the parallel subtests.
+			close(t.barrier)
+			// Wait for subtests to complete.
+			for _, sub := range t.sub {
+				<-sub.signal
+			}
+			cleanupStart := time.Now()
+			err := t.runCleanup(recoverAndReturnPanic)
+			t.duration += time.Since(cleanupStart)
+			if err != nil {
+				doPanic(err)
+			}
+			if !t.isParallel {
+				// Reacquire the count for sequential tests. See comment in Run.
+				t.context.waitParallel()
+			}
+		} else if t.isParallel {
+			// Only release the count for this test if it was run as a parallel
+			// test. See comment in Run method.
+			t.context.release()
+		}
+		t.report() // Report after all subtests have finished.
+
+		// Do not lock t.done to allow race detector to detect race in case
+		// the user does not appropriately synchronizes a goroutine.
+		t.done = true
+		if t.parent != nil && atomic.LoadInt32(&t.hasSub) == 0 {
+			t.setRan()
+		}
+		t.signal <- signal
+	}()
+	defer func() {
+		if len(t.sub) == 0 {
+			t.runCleanup(normalPanic)
+		}
+	}()
+
+	t.start = time.Now()
+	t.raceErrors = -race.Errors()
+	fn(t)
+
+	// code beyond here will not be executed when FailNow is invoked
+	t.finished = true
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=34467:34503#L1020))
+
+In the [tRunner()](https://golang.org/src/testing/testing.go?s=34467:34503#L1020) function a lot of 
+things happen, which I will not go into detail here. If you ignore the deferred functions, basically 
+only the passed test is started. Most of the magic happens in the last deferred function of the 
+[LIFO stack](https://de.wikipedia.org/wiki/Last_In_%E2%80%93_First_Out "Last In – First Out"). Since 
+we added several sub-tests during the test, `len(t.sub)` is greater than zero in any case, which 
+causes the `t.barrier` channel to be closed by `close(t.barrier)`. After that, all subtests are 
+iterated through until it is ensured that they have all been processed. 
+
+Let's leave the [tRunner()](https://golang.org/src/testing/testing.go?s=34467:34503#L1020) function 
+behind for now and take a look at the next code of the 
+[Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) function.
+
+The `t.context.waitParallel()` function ensures that the number of tests currently running does not 
+exceed the maximum number of parallel tests. If this is the case, the test is paused again until a 
+corresponding signal is received in the `c.startParallel` channel.
+
+
+```golang
+func (c *testContext) waitParallel() {
+	c.mu.Lock()
+	if c.running < c.maxParallel {
+		c.running++
+		c.mu.Unlock()
+		return
+	}
+	c.numWaiting++
+	c.mu.Unlock()
+	<-c.startParallel
+}
+```
+
+(Source: [testing/testing.go](https://golang.org/src/testing/testing.go?s=40201:40240#L1211))
+
+At the end of the [Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) 
+function, a verbose mode chatty logging is performed informing that the sub-test is now resuming, 
+also the start time of the test is changed to now and the `t.raceErrors` are reduced again, in our 
+case by zero since we did not start the test with the "-race" flag.
+
+Let's now run our tests from the beginning in parallel mode.
+
+```golang {hl_lines=[11,14]}
+func TestParallelTimeConsumingSubTests(t *testing.T) {
+	testCases := []string{
+		"foo",
+		"foobar",
+		"foobarfoo",
+		"foobarfoobar",
+		"foobarfoobarfoo",
+	}
+
+	for _, tc := range testCases {
+        tc := tc
+        
+		t.Run(tc, func(t *testing.T) {
+			t.Parallel()
+			timeConsumingOperation(tc)
+		})
+	}
+}
+
+func timeConsumingOperation(foo string) {
+	sec := len(foo)
+	time.Sleep(time.Duration(sec) * time.Second)
+}
+```
+```shell
+$ go test
+PASS
+ok      github.com/lrotermund/testing/pkg/parallel   15.003s
+```
+
+Woohoo! We saved 30 seconds of execution time using the 
+[Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) function. Two things have 
+been added to the test, firstly a copy of `tc` so that the correct value is used in the sub-test 
+when it is executed later and secondly the 
+[Parallel()](https://golang.org/src/testing/testing.go?s=32974:32996#L969) function was called at 
+the beginning of the sub-test. 
+
+Now let's add some logging and look at the execution order.
+
+```golang
+func TestParallelTimeConsumingSubTests(t *testing.T) {
+	testCases := []string{
+		"foo",
+		"foobar",
+		"foobarfoo",
+		"foobarfoobar",
+		"foobarfoobarfoo",
+    }
+    
+	fmt.Println("\n\t... START TC INIT")
+
+	for _, tc := range testCases {
+		tc := tc
+		start := time.Now()
+
+		t.Run(tc, func(t *testing.T) {
+			fmt.Printf("\t... INIT TC: %s (%s)\n", tc, time.Since(start))
+
+			t.Parallel()
+
+			fmt.Printf("\t... START TC: %s (%s)\n", tc, time.Since(start))
+			timeConsumingOperation(tc)
+			fmt.Printf("\t... FINISHED TC: %s (%s)\n", tc, time.Since(start))
+		})
+
+		fmt.Printf("\t... FINISHED TC INIT: %s (%s)\n", tc, time.Since(start))
+	}
+
+	fmt.Printf("\n\t... FINISHED CALLING TEST\n\n")
+}
+```
+```shell
+$ go test -v
+=== RUN   TestParallelTimeConsumingSubTests
+
+        ... START TC INIT
+=== RUN   TestParallelTimeConsumingSubTests/foo
+        ... INIT TC: foo (34.427µs)
+=== PAUSE TestParallelTimeConsumingSubTests/foo
+        ... FINISHED TC INIT: foo (76.882µs)
+=== RUN   TestParallelTimeConsumingSubTests/foobar
+        ... INIT TC: foobar (26.382µs)
+=== PAUSE TestParallelTimeConsumingSubTests/foobar
+        ... FINISHED TC INIT: foobar (57.325µs)
+=== RUN   TestParallelTimeConsumingSubTests/foobarfoo
+        ... INIT TC: foobarfoo (22.079µs)
+=== PAUSE TestParallelTimeConsumingSubTests/foobarfoo
+        ... FINISHED TC INIT: foobarfoo (54.013µs)
+=== RUN   TestParallelTimeConsumingSubTests/foobarfoobar
+        ... INIT TC: foobarfoobar (24.335µs)
+=== PAUSE TestParallelTimeConsumingSubTests/foobarfoobar
+        ... FINISHED TC INIT: foobarfoobar (52.606µs)
+=== RUN   TestParallelTimeConsumingSubTests/foobarfoobarfoo
+        ... INIT TC: foobarfoobarfoo (31.238µs)
+=== PAUSE TestParallelTimeConsumingSubTests/foobarfoobarfoo
+        ... FINISHED TC INIT: foobarfoobarfoo (64.466µs)
+
+        ... FINISHED CALLING TEST
+
+=== CONT  TestParallelTimeConsumingSubTests/foo
+        ... START TC: foo (363.31µs)
+=== CONT  TestParallelTimeConsumingSubTests/foobarfoobar
+        ... START TC: foobarfoobar (216.193µs)
+=== CONT  TestParallelTimeConsumingSubTests/foobarfoo
+        ... START TC: foobarfoo (325.005µs)
+=== CONT  TestParallelTimeConsumingSubTests/foobar
+        ... START TC: foobar (401.475µs)
+=== CONT  TestParallelTimeConsumingSubTests/foobarfoobarfoo
+        ... START TC: foobarfoobarfoo (240.937µs)
+        ... FINISHED TC: foo (3.000699096s)
+        ... FINISHED TC: foobar (6.000655952s)
+        ... FINISHED TC: foobarfoo (9.000769753s)
+        ... FINISHED TC: foobarfoobar (12.000636504s)
+        ... FINISHED TC: foobarfoobarfoo (15.000596721s)
+--- PASS: TestParallelTimeConsumingSubTests (0.00s)
+    --- PASS: TestParallelTimeConsumingSubTests/foo (3.00s)
+    --- PASS: TestParallelTimeConsumingSubTests/foobar (6.00s)
+    --- PASS: TestParallelTimeConsumingSubTests/foobarfoo (9.00s)
+    --- PASS: TestParallelTimeConsumingSubTests/foobarfoobar (12.00s)
+    --- PASS: TestParallelTimeConsumingSubTests/foobarfoobarfoo (15.00s)
+PASS
+ok      github.com/lrotermund/testing/pkg/parallelverbose   15.004s
+```
+
+The console output coincides with our code analysis. First, all test cases are initialized and their 
+execution is paused. Then, the calling test is terminated and parallel sub-test execution is 
+resumed.
+
+## Conclusion
+
+Testing is an essential part of software development and every developer should be encouraged to 
+integrate testing into their daily work. The [testing package](https://golang.org/pkg/testing/) is 
+extremely well done and provides a clean foundation for easy integration of testing into the 
+development workflow.
+
+Especially the approach of running multiple test cases as sub-tests in parallel, thus saving 
+execution time and logically grouping the test code, really excited me.
+
+I hope you were able to learn something new and also had fun taking a closer look at the 
+[testing package](https://golang.org/pkg/testing/). If you feel like discussing the article with me, 
+or if you just have some comments, feel free to contact me on 
+[Linkedin](https://www.linkedin.com/in/lukas-rotermund) or 
+[Xing](https://www.xing.com/profile/Lukas_Rotermund2).
