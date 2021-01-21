@@ -1,4 +1,4 @@
-baseURL = ""
+baseURL = "https://lukasrotermund.de"
 languageCode = "en-us"
 title = "coding blog"
 theme = "m10c"
