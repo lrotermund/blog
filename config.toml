@@ -2,6 +2,7 @@ baseURL = ""
 languageCode = "en-us"
 title = "coding blog"
 theme = "m10c"
+enableRobotsTXT = true
 
 [menu]
   [[menu.main]]
