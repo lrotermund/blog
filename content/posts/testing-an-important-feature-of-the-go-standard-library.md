@@ -1,8 +1,8 @@
 ---
 title: "Testing, an important feature of the Go standard library"
 tags: [go-standard-library, "development", "golang", "testing"]
-date: 2021-01-15T12:51:41+01:00
-draft: true
+date: 2021-01-21T12:51:41+01:00
+draft: false
 ---
 
 Testing should be a big part of our daily work routine as a software developer, which is the reason
