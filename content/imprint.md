@@ -14,6 +14,14 @@ Telephone: 01779378847\
 E-Mail: [lukas.rotermund[at]live.de](mailto:lukas.rotermund@live.de)\
 Internet address: [lukasrotermund.de](https://lukasrotermund.de)
 
+### Graphics and Image Sources
+
+pexels-veeterzy-39811.jpg\
+Photo by [veeterzy](https://www.pexels.com/@veeterzy?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels) from [Pexels](https://www.pexels.com/photo/road-between-pine-trees-39811/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels)
+
+pexels-dương-nhân-1529881.jpg\
+Photo by [Dương Nhân](https://www.pexels.com/@d-ng-nhan-324384?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels) from [Pexels](https://www.pexels.com/photo/grayscale-photography-of-trees-1529881/?utm_content=attributionCopyText&utm_medium=referral&utm_source=pexels)
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
