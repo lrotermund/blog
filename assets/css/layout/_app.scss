@@ -1,0 +1,11 @@
+@media (max-width: 510px) {
+    .app-container {
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 511px) and (max-width: 939px) {
+    .app-container {
+        padding: 1.5rem;
+    }
+}
