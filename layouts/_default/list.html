@@ -1,0 +1,34 @@
+{{ define "main" }}
+  <article>
+    {{$h := absURL "/assets/pexels-david-geib-3220828.jpg"}}
+    <div class="hero-image" style="background-image:linear-gradient(rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.7)),url({{ $h }})">
+      <div class="hero-text">
+        <h1 class="post-title">lukas rotermund – {{ .Title }}</h1>
+        <div class="post-meta">
+          This blog accompanies my self-study – here I write down what I have learned to share with 
+          others.
+        </div>
+      </div>
+    </div>
+    <ul class="posts-list">
+      {{ range where .Paginator.Pages "Type" "!=" "page" }}
+        <li class="posts-list-item">
+          <a class="posts-list-item-title" href="{{ .Permalink }}">{{ .Title }}</a>
+          <span class="posts-list-item-description">
+            {{ partial "icon.html" (dict "ctx" $ "name" "calendar") }}
+            <span>{{ .PublishDate.Format "Jan 2, 2006" }}</span>
+            <span>-</span>
+            {{ partial "icon.html" (dict "ctx" $ "name" "clock") }}
+            <span>{{ .ReadingTime }} min read</span>
+          </span>
+          {{- if isset .Params "description"}}
+            <p>
+              {{ .Params.description }}
+            </p>
+          {{- end}}
+        </li>
+      {{ end }}
+    </ul>
+    {{ partial "pagination.html" $ }}
+  </article>
+{{ end }}

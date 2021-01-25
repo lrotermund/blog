@@ -3,6 +3,8 @@ title: "Pearls of the Go standard library"
 tags: [go-standard-library, "development", "golang"]
 date: 2021-01-12T20:59:20+01:00
 draft: false
+description: "The Go standard library provides hundreds of features that make life easier for us Go 
+developers. In this series, we'll look at the library's code together."
 ---
 
 Go is a trending new programming language to build simple, efficient and reliable software solutions. Like the most modern programming languages it comes with a build in standard library to offer a lot of tools for the Go developers – e.g. io, net/http, os, encoding, strings and many more.

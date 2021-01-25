@@ -1,0 +1,18 @@
+.posts-list-item {
+    &:not(:first-child) {
+        margin-top: 25px;
+    }
+
+    &:not(:last-child) {
+        border-bottom: none;
+
+        &::after {
+            margin-top: 35px;
+            display: block;
+            content: "";
+            height: 4px;
+            background-color: $darkest-color;
+            box-shadow: 0 3px 0 lighten($color: $darkest-color, $amount: 10), 0 3px 0 #000;
+        }
+    }
+}
