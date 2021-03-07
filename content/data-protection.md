@@ -8,7 +8,11 @@ draft: false
 
 At lukasrotermund, accessible from lukasrotermund.de, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by lukasrotermund and how we use it.
 
-If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us. Our Privacy Policy was generated with the help of [GDPR Privacy Policy Generator from GDPRPrivacyNotice.com](https://www.gdprprivacynotice.com/)
+If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us. 
+
+E-Mail: [lukas.rotermund[at]live.de](mailto:lukas.rotermund@live.de)
+
+Our Privacy Policy was generated with the help of [GDPR Privacy Policy Generator from GDPRPrivacyNotice.com](https://www.gdprprivacynotice.com/)
 
 ## General Data Protection Regulation (GDPR)
 
