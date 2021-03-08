@@ -4,14 +4,15 @@ date: 2021-03-07T23:43:34+01:00
 draft: false
 images: ["/assets/pexels-dương-nhân-1529881.jpg"]
 tags: [go-standard-library, "development", "golang", "testing"]
-description: "In this post, we'll look at how Go tests are built more robustly with the quick 
-package and how we can avoid incorrectly chosen parameters."
+description: "In this post, we'll see how Go tests are built more robustly with the quick package 
+and how we can avoid incorrectly chosen parameters."
 ---
 
-Often when testing a function in Go tests only a few selected parameter combinations are used and in 
-most cases this may fit. In this article we follow up on the last article in the series 
-[Testing, an important feature of the Go standard library]({{< ref "/posts/testing-an-important-feature-of-the-go-standard-library.md" >}}) and look at why the classic test 
-parameters are often not sufficient to respond to unknown input parameters.
+foo, bar, foobar, John Doe – who doesn't know them? You often find these values as test parameters. 
+In most cases this may fit. In this article we follow up on the last article in the series 
+[Testing, an important feature of the Go standard library]({{< ref "/posts/testing-an-important-feature-of-the-go-standard-library.md" >}}) 
+and see why the classic test parameters are often not sufficient to respond to unknown input 
+parameters.
 
 {{< toc >}}
 
@@ -57,8 +58,8 @@ func GroupTransactionsByType(transactions []Transaction) GroupedTransactionsByTy
 ```
 
 The transaction service provides the function `GroupTransactionsByType()` which groups a slice with 
-transactions by the type of the transactions and returns the result as a map. Now let's create a 
-test to ensure the intended function.
+transactions by there type and returns the result as a map. Now let's create a test to ensure the 
+functionality.
 
 ```golang
 package transactions
@@ -143,7 +144,8 @@ func TestGroupTransactionsByType(t *testing.T) {
 	}
 }
 ```
-Before we run test, here's a quick shout out. In the service, as well as in the test, the 
+
+Before we run the test, here's a quick shout out. In the service, as well as in the test, the 
 [Decimal library](https://github.com/shopspring/decimal) was used to correctly represent the 
 floating points of the money amounts, as these cannot be correctly represented by a float or a 
 big.Rat in Go. Many thanks to Shopspring for this great library. 
@@ -157,10 +159,9 @@ PASS
 ok      github.com/lrotermund/quicktesting/pkg/transactions   0.001s
 ```
 
-My assumption now could be that my function works the way I want it to and maybe I use the function 
-in my code only with the tested values. Should I now be so convinced of my package that I make it 
-available to others, the probability is very high that someone uses the function with other 
-parameters and something fails. 
+My assumption now would be that my function works the way I want it to and maybe I use the function 
+in my code only with the tested values. If such weakly/ statically tested packages are now shared, 
+the new consumers may run into problems. 
 
 The function doesn't necessarily have to fail when it's used by others, often it's enough if project 
 requirements change or code is changed in the course of refactoring, resulting in new cases not yet 
@@ -174,9 +175,9 @@ subdirectory of the [testing package](https://golang.org/pkg/testing/).
 
 The function [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) is one of the 
 two functions of the [package quick](https://golang.org/pkg/testing/quick/) that allows fuzzy 
-testing[^fuzz] with unspecified parameters. We will pimp our previous unit test with the 
+testing[^fuzz] with random parameters. We will pimp our previous unit test with the 
 [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function after the 
-code analysis to make it more robust by not selecting the test parameters ourselves. 
+code analysis to make it more robust. 
 
 ```golang
 func Check(f interface{}, config *Config) error {
@@ -231,7 +232,7 @@ The second parameter is the pointer to the
 configure the test. The struct has, for example, the "MaxCount" field, which can be used to set the 
 maximum number of test iterations in which the function under test is tested with random parameters. 
 The [Config](https://golang.org/src/testing/quick/quick.go?s=4954:5679#L167) struct has two getters 
-that return values depending on the set fields, but more about that in the further analysis.
+that return values depending on the fields, but more about that in the further analysis.
 
 First, the function checks whether a configuration was passed. Since a pointer of the 
 [Config](https://golang.org/src/testing/quick/quick.go?s=4954:5679#L167) struct is expected, nil can 
@@ -240,7 +241,7 @@ an empty default configuration.
 
 In the next section of the function the passed value of the empty interface parameter "f" is checked 
 for validity, because the parameter must be of type function. The check and the determination of the 
-type is done by the function 
+type is performed by the function 
 [functionAndType()](https://golang.org/src/testing/quick/quick.go?s=9855:10036#L350).
 
 ```golang
@@ -268,8 +269,8 @@ First, the actual value of the interface is determined via
 [ValueOf](https://golang.org/src/reflect/value.go?s=70173:70206#L2337) and returned as 
 [Value](https://golang.org/src/reflect/value.go?s=1328:2547#L27). 
 [Value](https://golang.org/src/reflect/value.go?s=1328:2547#L27) now offers the possibility to find 
-out more about the value. In the function it is checked what 
-[Kind](https://golang.org/src/reflect/type.go?s=8409:8423#L220) the value is and whether this is a 
+out more about the value. The function checks what 
+[Kind](https://golang.org/src/reflect/type.go?s=8409:8423#L220) the value is and whether it is a 
 function.
 
 The return values of the function are first the 
@@ -526,7 +527,7 @@ Oh my goodness – I didn't expect such a complex and confusing function. Okay, 
 piece by piece. Basically, the function can be divided into two sections. The first part is small 
 and deals with random value generation via the 
 [quick Generator interface](https://golang.org/src/testing/quick/quick.go?s=575:764#L13) and the 
-second part is large switch case block, which is used for random value generation depending on the 
+second part is a large switch case block, which is used for random value generation depending on the 
 [reflect Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28).
 
 In the first part the reflect function 
@@ -557,7 +558,7 @@ summarize a large part of the cases with the fact that the
 [package reflect](https://golang.org/pkg/reflect/) provides multiple setters for the different types 
 through which the previously defined value is initialized.
 
-For setting the values in the first part of the switch case block the functions 
+For setting the values in the first cases of the switch case the functions 
 [randFloat32()](https://golang.org/src/testing/quick/quick.go?s=842:885#L16), 
 [randFloat64()](https://golang.org/src/testing/quick/quick.go?s=1059:1102#L33), as well as 
 [randInt64()](https://golang.org/src/testing/quick/quick.go?s=1228:1267#L41) are used and their 
@@ -578,7 +579,7 @@ func randFloat32(rand *rand.Rand) float32 {
 
 (Source: [quick/quick.go](https://golang.org/src/testing/quick/quick.go?s=842:885#L16))
 
-The first step to generate a random float32 value for via generating a random float64 using the 
+The first step to generate a random float32 value is by generating a random float64 using the 
 [Float64()](https://golang.org/src/math/rand/rand.go?s=5359:5391#L168) function of the 
 [package math/rand](https://golang.org/pkg/math/rand/). This function generates a pseudo-random 
 float64 value between 0.0 and 1.0, e.g. 0.498934. 
