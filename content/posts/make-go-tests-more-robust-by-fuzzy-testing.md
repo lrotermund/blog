@@ -159,13 +159,13 @@ PASS
 ok      github.com/lrotermund/quicktesting/pkg/transactions   0.001s
 ```
 
-My assumption now would be that my function works the way I want it to and maybe I use the function 
-in my code only with the tested values. If such weakly/ statically tested packages are now shared, 
-the new consumers may run into problems. 
+My assumption now would be that my function works the way I wanted it to and could perhaps use it in 
+my code with the tested values. If such weakly/ statically tested packages are now shared as is, the 
+new consumers may run into problems.
 
-The function doesn't necessarily have to fail when it's used by others, often it's enough if project 
-requirements change or code is changed in the course of refactoring, resulting in new cases not yet 
-covered by my unit test. 
+The function does not necessarily have to fail when it is used by others and often it even is enough 
+if project requirements change or code is changed while refactoring. This could result in new cases 
+not yet covered by my unit test.
 
 To circumvent these potential sources of errors and to avoid possible unknown test cases, the Go 
 standard library provides the [package quick](https://golang.org/pkg/testing/quick/) in the 
@@ -234,7 +234,7 @@ maximum number of test iterations in which the function under test is tested wit
 The [Config](https://golang.org/src/testing/quick/quick.go?s=4954:5679#L167) struct has two getters 
 that return values depending on the fields, but more about that in the further analysis.
 
-First, the function checks whether a configuration was passed. Since a pointer of the 
+First, the function checks if a configuration was passed. Since a pointer of the 
 [Config](https://golang.org/src/testing/quick/quick.go?s=4954:5679#L167) struct is expected, nil can 
 also be passed instead of the configuration. If this is the case, the parameter is overwritten with 
 an empty default configuration.
@@ -265,35 +265,35 @@ article [Laws of reflaction from golang.org](https://blog.golang.org/laws-of-ref
 let's assume that this package finds out more about our empty interface and detects whether it is a 
 function or something else.
 
-First, the actual value of the interface is determined via 
+First, the actual value of the interface is determined by 
 [ValueOf](https://golang.org/src/reflect/value.go?s=70173:70206#L2337) and returned as 
 [Value](https://golang.org/src/reflect/value.go?s=1328:2547#L27). 
 [Value](https://golang.org/src/reflect/value.go?s=1328:2547#L27) now offers the possibility to find 
 out more about the value. The function checks what 
-[Kind](https://golang.org/src/reflect/type.go?s=8409:8423#L220) the value is and whether it is a 
+[Kind](https://golang.org/src/reflect/type.go?s=8409:8423#L220) the value is and if it is a 
 function.
 
-The return values of the function are first the 
+The return values of the function are the 
 [value](https://golang.org/src/reflect/value.go?s=1328:2547#L27) of our empty interface, which in 
 the best case is our passed-in function, then the type of the empty interface and finally an "ok" 
-flag that informs whether our empty interface is a function, which is important to know for 
+flag that informs if our empty interface is a function, which is important to know for 
 subsequent validation.
 
 Back in the [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function, the 
 "ok" flag is now checked. If our empty interface is not a function, a setup error is returned to our 
 test. 
 
-The next step is the type validation, which is done via the 
+The next step is the type validation, which is done through the 
 [Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28) of 
-[reflect](https://golang.org/pkg/reflect/). First, it is ensured that exactly one return parameter 
-is available, otherwise a setup error is returned again. Then it is checked whether the type of this 
-return parameter is a Boolean, and if not, how could it be otherwise, a setup error is returned.
+[reflect](https://golang.org/pkg/reflect/). It is ensured that exactly one return parameter 
+is available, otherwise a setup error is returned again. Then it is checked if the type of this 
+return parameter is a Boolean, otherwise a setup error is returned.
 
-The next section is about the generation of random parameters and the test execution. Via 
-`make([]reflect.Value, fType.NumIn())` an array is created whose capacity corresponds to the number 
+The next section is about the generation of random parameters and the test execution. An array is 
+created by means of `make([]reflect.Value, fType.NumIn())`, which capacity corresponds to the number 
 of our parameters returned by `fType.NumIn()`. Directly afterwards, a random generator from the 
 [package math](https://golang.org/pkg/math/) and the value for the maximum number of test runs are 
-loaded via the passed configuration, or the default configuration.
+loaded from the passed configuration, or the default configuration.
 
 [config.getRand()](https://golang.org/src/testing/quick/quick.go?s=5768:5808#L193) and 
 [config.getMaxCount()](https://golang.org/src/testing/quick/quick.go?s=5992:6039#L193) both check if
@@ -316,7 +316,7 @@ func (c *Config) getRand() *rand.Rand {
 
 (Source: [quick/quick.go](https://golang.org/src/testing/quick/quick.go?s=5768:5808#L193))
 
-The default value for `maxCount` depends on whether the scaling factor `c.MaxCountScale` is set. In 
+The default value for `maxCount` depends on if the scaling factor `c.MaxCountScale` is set. In 
 the default configuration, the factor is 0, which initializes `maxCount` with the default value 100.
 If the scale factor is set, i.e. non-zero, then the default value is multiplied by the factor.
 
@@ -358,7 +358,7 @@ for i := 0; i < maxCount; i++ {
 (Source: [quick/quick.go](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253))
 
 The first step of any test execution is the generation and filling of the previously created array 
-`arguments` via the function 
+`arguments`. We obtain this by the function 
 [arbitraryValues()](https://golang.org/src/testing/quick/quick.go?s=9450:9556#L333).
 
 ```golang
@@ -390,9 +390,9 @@ this is the case, it is called. Otherwise the arguments are looped and filled vi
 [Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49) 
 function. The first parameter of 
 [Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49) is the type of the 
-argument, which is determined via the 
+argument, which is determined through the 
 [In()](https://golang.org/src/reflect/type.go?s=6778:6792#L175) function of the 
-[Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28) and via the position of the 
+[Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28) and by the position of the 
 element. Now let's see where the random value for our argument `args[j]` comes from.
 
 ```golang
@@ -525,7 +525,7 @@ func sizedValue(t reflect.Type, rand *rand.Rand, size int) (value reflect.Value,
 
 Oh my goodness – I didn't expect such a complex and confusing function. Okay, but we'll work it out, 
 piece by piece. Basically, the function can be divided into two sections. The first part is small 
-and deals with random value generation via the 
+and deals with random value generation through the 
 [quick Generator interface](https://golang.org/src/testing/quick/quick.go?s=575:764#L13) and the 
 second part is a large switch case block, which is used for random value generation depending on the 
 [reflect Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28).
@@ -543,18 +543,15 @@ result is returned.
 We continue with the next section, which covers all types that do not implement the 
 [Generator](https://golang.org/src/testing/quick/quick.go?s=575:764#L13) interface. First, a reflect 
 [Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49) is created that is filled 
-via the switch case depending on the type. The 
-[Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49) is created via the reflect 
-function [New()](https://golang.org/src/reflect/value.go?s=71172:71196#L2370), which returns a 
-pointer to a new zero value of the type and via the reflect function 
+inside the switch-case depending on the type. The 
+[Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49) is created by means of the reflection function [New()](https://golang.org/src/reflect/value.go?s=71172:71196#L2370), which 
+returns a pointer to a new zero value of the type and by the reflection function 
 [Elem()](https://golang.org/src/reflect/value.go?s=25742:25769#L801) the value is determined to 
 which the previously created pointer points.
 
-Some simple case treatments now follow and I will not go into every case. Of particular interest to 
-me in this article is what code the [package quick](https://golang.org/pkg/testing/quick/) provides 
-and that is the focus here as well. The code of the 
-[package reflect](https://golang.org/pkg/reflect/) may come in a future post. In general, we can 
-summarize a large part of the cases with the fact that the 
+The kind of code the [package quick](https://golang.org/pkg/testing/quick/) provides is of 
+particular interest to me. The code of the [package reflect](https://golang.org/pkg/reflect/) may 
+come in a future post. In general, we can summarize a large part of the cases with the fact that the 
 [package reflect](https://golang.org/pkg/reflect/) provides multiple setters for the different types 
 through which the previously defined value is initialized.
 
@@ -591,7 +588,7 @@ the float32 range, e.g. the random value 0.498934 multiplied by
 1.6977833628035685e+38.
 
 Because we only get positive values from the previous calculation, the next step is to randomly 
-determine whether the value is negated. For this purpose, a random number is generated via 
+determine if the value is negated. For this purpose, a random number is generated via 
 [Int()](https://golang.org/src/math/rand/rand.go?s=3272:3296#L92) in order to perform a logical
 conjunction with the binary value of one. This bitwise AND operation[^bitwiseAND] tells us whether 
 the generated random number is even (false) or odd (true). If the number is odd, the random float32 
@@ -631,7 +628,7 @@ random uint64 value which is then converted to an int64 value.
 
 We now return to the function 
 [arbitraryValues()](https://golang.org/src/testing/quick/quick.go?s=9450:9556#L333), where we wanted 
-to determine the random value via 
+to determine the random value through 
 [Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49). 
 
 ```golang {hl_lines=[3]}
@@ -647,9 +644,9 @@ for j := 0; j < len(args); j++ {
 
 (Source: [quick/quick.go](https://golang.org/src/testing/quick/quick.go?s=9450:9556#L333))
 
-The only thing that is checked here is whether a value could be generated and if this is not the 
-case, a [SetupError](https://golang.org/src/testing/quick/quick.go?s=6360:6382#L213) with a 
-corresponding error message is created and returned.
+The only thing that is checked here is if a value could be generated and if this is not the case, a 
+[SetupError](https://golang.org/src/testing/quick/quick.go?s=6360:6382#L213) with a corresponding 
+error message is created and returned.
 
 We now jump further back into the 
 [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function where 
@@ -675,7 +672,7 @@ return nil
 
 If an error occurred during the determination, it is now returned. If everything went smoothly and 
 we received the required arguments, then the test function with the random parameters is executed 
-via the reflection function [Call()](https://golang.org/src/reflect/value.go?s=10504:10543#L324).
+by the reflection function [Call()](https://golang.org/src/reflect/value.go?s=10504:10543#L324).
 
 The result of the function is interpreted as a boolean and if it is false, the test has failed and a 
 [CheckError](https://golang.org/src/testing/quick/quick.go?s=6498:6556#L218) is generated and a 
@@ -788,8 +785,8 @@ configuration and the test execution.
 
 First, a variable is initialized with the test function, whose signature is used in the 
 [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function for generating 
-the random values. All parameters of the function are automatically determined via reflection. The 
-function is only executed within the 
+the random values. All parameters of the function are automatically determined through reflection. 
+The function is only executed within the 
 [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function together with the 
 random values.
 
@@ -989,12 +986,12 @@ have to write a generator through private fields in my structs, but you get used
 quickly. Just by the enormous added value generated by the sheer amount of test runs.
 
 Of course there are other libraries that offer fuzzy testing[^fuzz] for Golang, but before you get a 
-lot of external dependencies into your project, you should try the way via the standard library.
+lot of external dependencies into your project, you should try the way of the standard library 
+offers.
 
-I will definitely continue to enrich my classic tests with fuzzy tests[^fuzz] through quick. 
-
-Do you disagree with me, have you had bad or good experiences with quick, or do you know a way to 
-make fuzzy testing[^fuzz] much more efficient and better? Let's discuss it on 
+I will definitely continue to enrich my classic tests with fuzzy tests[^fuzz] through quick. Do you 
+disagree with me, have you had bad or good experiences with quick, or do you know a way to make 
+fuzzy testing[^fuzz] much more efficient and better? Let's discuss it on 
 [LinkedIn](https://www.linkedin.com/in/lukas-rotermund) or 
 [Xing](https://www.xing.com/profile/Lukas_Rotermund2) – I look forward to your opinion!
 
