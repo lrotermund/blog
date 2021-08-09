@@ -25,6 +25,9 @@ Photo by [veeterzy](https://www.pexels.com/@veeterzy) from [Pexels](https://www.
 pexels-dương-nhân-1529881.jpg\
 Photo by [Dương Nhân](https://www.pexels.com/@d-ng-nhan-324384) from [Pexels](https://www.pexels.com/photo/grayscale-photography-of-trees-1529881/)
 
+pexels-cottonbro-4874323.jpg\
+Photo by [cottonbro](https://www.pexels.com/@cottonbro) from [Pexels](https://www.pexels.com/photo/black-and-brown-metal-machine-4874323/)
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
