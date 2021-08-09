@@ -1,39 +1,59 @@
 baseURL = "https://lukasrotermund.de"
 languageCode = "en-us"
+defaultContentLanguage = "en"
 title = "coding blog"
-theme = "m10c"
+theme = "cupper-hugo-theme"
 enableRobotsTXT = true
+enableGitInfo = true
+
+[imaging]
+  quality = 99
 
 [menu]
-  [[menu.main]]
-    identifier = "home"
-    name = "Home"
+  [[menu.nav]]
+    identifier = "blog"
+    name = "Blog"
     url = "/"
     weight = 10
-  [[menu.main]]
+  [[menu.nav]]
     identifier = "about"
     name = "About"
     url = "/about/"
     weight = 20
-  [[menu.main]]
+  [[menu.nav]]
     identifier = "tags"
     name = "Tags"
     url = "/tags/"
     weight = 30
-  [[menu.main]]
+  [[menu.nav]]
     identifier = "imprint"
     name = "Imprint"
     url = "/imprint/"
     weight = 40
-  [[menu.main]]
+  [[menu.nav]]
     identifier = "data-protection"
     name = "Data Protection"
     url = "/data-protection/"
     weight = 50
+  [[menu.nav]]
+    identifier = "rss"
+    name = "RSS"
+    url = "/index.xml"
+    weight = 60
 
 [params]
   author = "Lukas Rotermund"
-  description = "hobby coding blog about all dev topics that interest me"
+  description = "***Lukas Rotermund***<br>Software Engineer Backend at fino<br>Golang • microservices • APIs"
+  homeMetaContent = "An accessibility-friendly Hugo theme, ported from the original Cupper project."
+  footer = "Made with [Hugo](https://gohugo.io/). Themed by [Cupper](https://github.com/zwbetz-gh/cupper-hugo-theme). Deployed to [K3s](https://k3s.io/)."
+  dateFormat = "02.01.2006"
+  #codePenUser = someUser
+  katex = false
+  hideHeaderLinks = false
+  search = true
+  showThemeSwitcher = true
+  moveFooterToHeader = false
+  logoAlt = "Thats me, Lukas Rotermund"
   avatar = "/assets/lukas-rotermund.jpg"
   favicon = "/assets/favicon.ico"
   [[params.social]]
@@ -51,3 +71,38 @@ enableRobotsTXT = true
     primaryColor = "#dad865"
     lightColor = "#96a879"
     lightestColor = "#fff"
+
+[markup]
+  defaultMarkdownHandler = "goldmark"
+
+[markup.goldmark.extensions]
+  definitionList = true
+  footnote = true
+  linkify = true
+  strikethrough = true
+  table = true
+  taskList = true
+  typographer = true
+
+[markup.goldmark.parser]
+  attribute = true
+  autoHeadingID = true
+
+[markup.goldmark.renderer]
+  hardWraps = false
+  unsafe = true
+  xHTML = false
+
+  [markup.highlight]
+    codeFences = false
+    hl_Lines = ""
+    lineNoStart = 1
+    lineNos = false
+    lineNumbersInTable = true
+    noClasses = true
+    style = "monokai"
+    tabWidth = 4
+
+  [markup.tableOfContents]
+    endLevel = 6
+    startLevel = 2

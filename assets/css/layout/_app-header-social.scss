@@ -1,3 +1,28 @@
-.app-header-social a {
-    margin: 0 10px;
+.app-header-social {
+  margin-top: 1.5rem;
+  text-align: center;
+
+  svg {
+    margin: 0;
+    width: 32px;
+    height: 32px;
+  }
+
+  a {
+    font-size: 32px;
+
+    @media (max-width: 310px) {
+      margin: 0 1rem;
+    }
+
+    @media (min-width: 311px) and (max-width: 720px) {
+      margin: 0 1.5rem;
+    }
+
+    @media (min-width: 721px) {
+      margin: 0 0.5rem;
+    }
+
+    border-bottom: 0;
+  }
 }

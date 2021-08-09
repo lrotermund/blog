@@ -5,6 +5,7 @@ date: 2021-01-12T21:02:34+01:00
 draft: false
 description: "I/O operations are among the most commonly used tasks in Go. Let's take a look 
 together at the implementation in the Go standard library."
+toc: false
 ---
 
 Input and output are probably the most frequently occurring tasks within a program and are therefore important modules of a programming language. In Go, C, C++ and many other languages byte operations are a common, if not the best choice for processing all kinds of data. 

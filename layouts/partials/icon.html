@@ -1,3 +1,5 @@
+{{ $JSON := .ctx.Site.Data.icons.icons }}
+
 {{- if (eq .name "xing") -}}
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-xing">
     <title>{{ .name }}</title>
@@ -10,10 +12,10 @@
         c0.355,0,0.684-0.188,0.863-0.494l8.111-13.846C23.312,26.386,23.333,26.053,23.208,25.761z M13.604,39H5.266l7.057-12.949
         c0.146-0.269,0.162-0.59,0.042-0.872L7.581,14h8.419l5.17,12.084L13.604,39z"/>
 </svg>
-{{- else if isset .ctx.Site.Data.m10c.icons .name -}}
+{{- else if isset $JSON .name -}}
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-{{ .name }}">
   <title>{{ .name }}</title>
-  {{ safeHTML (index .ctx.Site.Data.m10c.icons .name) }}
+  {{ safeHTML (index $JSON .name) }}
 </svg>
 {{- else -}}
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-link">
