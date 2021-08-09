@@ -1,0 +1,9 @@
+.tag {
+    padding: 5px;
+    margin: 5px 5px;
+    background: rgba(255, 255, 255, 0.18);
+
+    &:last-child {
+        margin-right: 0;
+    } 
+}

@@ -5,6 +5,12 @@
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
+
+    &-list {
+        @media (max-width: 939px) {
+            display: none;
+        }
+    }
 }
 
 .hero-text {
@@ -15,8 +21,8 @@
     right: 5%;
     @media (min-width: 940px) {
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        left: 25%;
+        transform: translate(-15%, -50%);
     }
     color: white;
 }
