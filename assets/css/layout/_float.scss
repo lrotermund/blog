@@ -1,0 +1,13 @@
+.float {
+  @media (min-width: 1040px) {
+    &-left {
+        float: left;
+        margin-right: 15px;
+    }
+
+    &-right {
+        float: right;
+        margin-left: 15px;
+    }
+  }
+}

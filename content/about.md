@@ -4,6 +4,8 @@ date: 2021-01-13T00:49:25+01:00
 draft: false
 ---
 
+<img class="float-right" src="/assets/lukas-rotermund.jpg" alt="Thats me, Lukas">
+
 My name is Lukas Rotermund and I am a passionate backend software developer working on APIs and 
 microservices for [fino](https://www.fino.ai/en/), a german fintech based in Kassel.
 
