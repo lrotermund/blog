@@ -3,6 +3,7 @@ title: "io - a pearl of the Go standard library"
 tags: ["go-standard-library", "development", "golang", "io"]
 date: 2021-01-12T21:02:34+01:00
 draft: false
+images: ["assets/io-a-pearl-of-the-go-standard-library.png"]
 description: "I/O operations are among the most commonly used tasks in Go. Let's take a look 
 together at the implementation in the Go standard library."
 toc: false

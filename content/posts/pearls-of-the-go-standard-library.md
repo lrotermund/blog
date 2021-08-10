@@ -3,6 +3,7 @@ title: "Pearls of the Go standard library"
 tags: [go-standard-library, "development", "golang"]
 date: 2021-01-12T20:59:20+01:00
 draft: false
+images: ["assets/pexels-veeterzy-39811.jpg"]
 description: "The Go standard library provides hundreds of features that make life easier for us Go 
 developers. In this series, we'll look at the library's code together."
 toc: false
