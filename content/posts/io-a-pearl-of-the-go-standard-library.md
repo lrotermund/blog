@@ -29,7 +29,7 @@ One of the two essential components of I/O is the input. io offers the simplest 
 
 The reader interface only contains the signature for the function Read.
 
-```golang
+```go
 type Reader interface {
     Read(p []byte) (n int, err error)
 }
@@ -38,7 +38,7 @@ type Reader interface {
 
 To become aware of the possibilities of this simple interface you should look for its implementations. Fortunately io is very often used in the other packages of the standard library. For simplicity's sake, the following is the integration in the string package.
 
-```golang
+```go
 type Reader struct {
 	s        string
 	i        int64
@@ -47,12 +47,12 @@ type Reader struct {
 ```
 (Source: [golang.org/src/strings/reader.go](https://golang.org/src/strings/reader.go?s=446:576#L7))
 
-```golang
+```go
 func NewReader(s string) *Reader { return &Reader{s, 0, -1} }
 ```
 (Source: [golang.org/src/strings/reader.go](https://golang.org/src/strings/reader.go?s=3567:3599#L144))
 
-```golang
+```go
 func (r *Reader) Read(b []byte) (n int, err error) {
 	if r.i >= int64(len(r.s)) {
 		return 0, io.EOF
@@ -75,20 +75,20 @@ Let's take a look at some possible uses of the returned Reader `r`.
 
 As already mentioned, here is an example with the direct use of the `Read(b []byte)` function.
 
-```golang
+```go
 b := make([]byte, 124)
 n, err := r.Read(b)
 ```
 
 Via the package ioutil the function `ReadAll(r io.Reader)` can be used to read the entire content of `r`. As result a byte slice `[]byte` is returned.
 
-```golang
+```go
 b, err := ioutil.ReadAll(r)
 ```
 
 If our Reader `r` contains a JSON string, it can be passed directly into a JSON decoder `NewDecoder(r io.Reader)`. With the function `Decode(v interface{})` our string can then be written into the passed pointer `gl`. 
 
-```golang
+```go
 type GoLibrary struct {
 	Name, Link string
 }
@@ -100,7 +100,7 @@ err := json.NewDecoder(r).Decode(&gl)
 
 Of course, the standard library also provides a generic way to output data – the Writer. The Writer interface also has a very simple structure, as shown in the following code of the standard library.
 
-```golang
+```go
 type Writer interface {
     Write(p []byte) (n int, err error)
 }
@@ -111,7 +111,7 @@ The integration of the Writer is as easy as the integration of the Reader, but i
 
 Before we get to the code example, let's take a look at how the Writer is used, so that the concept and idea behind this decoupling can be clarified at the same time.
 
-```golang
+```go
 package main
 
 import (
@@ -135,14 +135,14 @@ The reader `r` created in the above example is passed as a parameter to `io.Copy
 
 Let's take a closer look at the `io.Copy` function and the public variable Stdout of the os library, which is passed as a writer parameter to the Copy function.
 
-```golang
+```go
 func Copy(dst Writer, src Reader) (written int64, err error) {
 	return copyBuffer(dst, src, nil)
 }
 ```
 (Source: [golang.org/src/os/file.go](https://golang.org/src/os/file.go?s=2156:2335#L54))
 
-```golang
+```go
 var (
 	Stdin  = NewFile(uintptr(syscall.Stdin), "/dev/stdin")
 	Stdout = NewFile(uintptr(syscall.Stdout), "/dev/stdout")
@@ -157,7 +157,7 @@ But why can a variable of type File be passed as a parameter in a function that 
 
 The answer can be found in the os library, the struct File is developed against the interface Writer and has the function Write.
 
-```golang
+```go
 func (f *File) Write(b []byte) (n int, err error) {
 	if err := f.checkValid("write"); err != nil {
 		return 0, err
@@ -183,7 +183,7 @@ func (f *File) Write(b []byte) (n int, err error) {
 
 To complete this example, we now change the `os.File` Writer to a `bytes.Buffer` Writer. This change causes the buffer, which is now passed to the `io.Copy` function, to be filled with the string. The String function of the buffer should now return the string of the reader `r`.
 
-```golang
+```go
 package main
 
 import (

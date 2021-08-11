@@ -28,7 +28,7 @@ in the previous blog post and see what a classic test looks like.
 In the following example, there is a service that takes care of credit and debit entries, i.e. 
 transactions, from bank accounts.
 
-```golang
+```go
 package transactions
 
 import (
@@ -64,7 +64,7 @@ The transaction service provides the function `GroupTransactionsByType()` which 
 transactions by there type and returns the result as a map. Now let's create a test to ensure the 
 functionality.
 
-```golang
+```go
 package transactions
 
 import (
@@ -182,7 +182,7 @@ testing[^fuzz] with random parameters. We will pimp our previous unit test with 
 [Check()](https://golang.org/src/testing/quick/quick.go?s=7499:7546#L253) function after the 
 code analysis to make it more robust. 
 
-```golang
+```go
 func Check(f interface{}, config *Config) error {
 	if config == nil {
 		config = &defaultConfig
@@ -247,7 +247,7 @@ for validity, because the parameter must be of type function. The check and the 
 type is performed by the function 
 [functionAndType()](https://golang.org/src/testing/quick/quick.go?s=9855:10036#L350).
 
-```golang
+```go
 func functionAndType(f interface{}) (v reflect.Value, t reflect.Type, ok bool) {
 	v = reflect.ValueOf(f)
 	ok = v.Kind() == reflect.Func
@@ -307,7 +307,7 @@ The default value determined in
 [getRand()](https://golang.org/src/testing/quick/quick.go?s=5768:5808#L193) is a new random 
 generator that uses a pseudo-random source with the seed of the current unix time in nanoseconds. 
 
-```golang {hl_lines=[4]}
+```go {hl_lines=[4]}
 // getRand returns the *rand.Rand to use for a given Config.
 func (c *Config) getRand() *rand.Rand {
 	if c.Rand == nil {
@@ -323,7 +323,7 @@ The default value for `maxCount` depends on if the scaling factor `c.MaxCountSca
 the default configuration, the factor is 0, which initializes `maxCount` with the default value 100.
 If the scale factor is set, i.e. non-zero, then the default value is multiplied by the factor.
 
-```golang {hl_lines=[7,9]}
+```go {hl_lines=[7,9]}
 // getMaxCount returns the maximum number of iterations to run for a given
 // Config.
 func (c *Config) getMaxCount() (maxCount int) {
@@ -345,7 +345,7 @@ func (c *Config) getMaxCount() (maxCount int) {
 Now we start the test execution with the determined configuration values. The runs of the for loop 
 are limited to the previously determined `maxCount` value. 
 
-```golang
+```go
 for i := 0; i < maxCount; i++ {
 	err := arbitraryValues(arguments, fType, config, rand)
 	if err != nil {
@@ -364,7 +364,7 @@ The first step of any test execution is the generation and filling of the previo
 `arguments`. We obtain this by the function 
 [arbitraryValues()](https://golang.org/src/testing/quick/quick.go?s=9450:9556#L333).
 
-```golang
+```go
 // arbitraryValues writes Values to args such that args contains Values
 // suitable for calling f.
 func arbitraryValues(args []reflect.Value, f reflect.Type, config *Config, rand *rand.Rand) (err error) {
@@ -398,7 +398,7 @@ argument, which is determined through the
 [Type interface](https://golang.org/src/reflect/type.go?s=1335:7577#L28) and by the position of the 
 element. Now let's see where the random value for our argument `args[j]` comes from.
 
-```golang
+```go
 func Value(t reflect.Type, rand *rand.Rand) (value reflect.Value, ok bool) {
 	return sizedValue(t, rand, complexSize)
 }
@@ -412,7 +412,7 @@ with the size 50, which is stored in the constant `const complexSize = 50`. So l
 the function.
 
 
-```golang
+```go
 func sizedValue(t reflect.Type, rand *rand.Rand, size int) (value reflect.Value, ok bool) {
 	if m, ok := reflect.Zero(t).Interface().(Generator); ok {
 		return m.Generate(rand, size), true
@@ -567,7 +567,7 @@ functions.
 
 #### randFloat32
 
-```golang
+```go
 func randFloat32(rand *rand.Rand) float32 {
 	f := rand.Float64() * math.MaxFloat32
 	if rand.Int()&1 == 1 {
@@ -599,7 +599,7 @@ value is negated. Finally, the value is converted to a float32 and returned.
 
 #### randFloat64
 
-```golang
+```go
 func randFloat64(rand *rand.Rand) float64 {
 	f := rand.Float64() * math.MaxFloat64
 	if rand.Int()&1 == 1 {
@@ -617,7 +617,7 @@ first calculation and the result is not converted to a float32.
 
 #### randInt64
 
-```golang
+```go
 func randInt64(rand *rand.Rand) int64 {
 	return int64(rand.Uint64())
 }
@@ -634,7 +634,7 @@ We now return to the function
 to determine the random value through 
 [Value()](https://golang.org/src/testing/quick/quick.go?s=1618:1692#L49). 
 
-```golang {hl_lines=[3]}
+```go {hl_lines=[3]}
 for j := 0; j < len(args); j++ {
 	var ok bool
 	args[j], ok = Value(f.In(j), rand)
@@ -656,7 +656,7 @@ We now jump further back into the
 [arbitraryValues()](https://golang.org/src/testing/quick/quick.go?s=9450:9556#L333) was called to 
 determine the random arguments.
 
-```golang {hl_lines=[2]}
+```go {hl_lines=[2]}
 for i := 0; i < maxCount; i++ {
 	err := arbitraryValues(arguments, fType, config, rand)
 	if err != nil {
@@ -715,7 +715,7 @@ that the grouping function can be tested.
 
 Let's jump into the test and take a closer look. 
 
-```golang
+```go
 package transactions
 
 import (
@@ -837,7 +837,7 @@ well as an illustration. For this function we now build another test – let's t
 service code.
 
 
-```golang
+```go
 package transactions
 
 import (
@@ -890,7 +890,7 @@ func FindTransactionsByPartnerName(
 
 We continue with the new test and the adjustment to the `Generate` function.
 
-```golang
+```go
 package transactions
 
 import (

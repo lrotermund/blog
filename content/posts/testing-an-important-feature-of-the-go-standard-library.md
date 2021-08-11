@@ -46,7 +46,7 @@ description written in PascalCase for an automatic test execution on `go test` a
 avoid the automatic test execution. 
 
 Test with automatic test execution on `go test`:
-```golang
+```go
 func TestValidateStringNotBlank(*testing.T)
 ```
 ```shell
@@ -56,7 +56,7 @@ ok      github.com/lrotermund/testing/pkg/validation   0.003s
 ```
 
 Test _without_ automatic test execution:
-```golang
+```go
 func TestvalidateStringNotBlank(*testing.T)
 ```
 ```shell
@@ -70,7 +70,7 @@ make the current test fail. But what does a test that integrates
 [testing.T](https://golang.org/src/testing/testing.go?s=23377:23479#L647) look like and how do I 
 make a test fail?
 
-```golang
+```go
 func TestValidateStringNotBlank(t *testing.T) {
     s := buggyFuncReturningBlankStr()
 
@@ -122,7 +122,7 @@ function.
 
 ### Use the Fail function to mark a test as failed
 
-```golang
+```go
 func (c *common) Fail() {
 	if c.parent != nil {
 		c.parent.Fail()
@@ -141,7 +141,7 @@ func (c *common) Fail() {
 Below you find the common struct used in `Fail()` so you have the fields and their types available 
 for reference. (in a shortened form).
 
-```golang
+```go
 type common struct {
     ...
     mu     sync.RWMutex // guards this group of fields
@@ -173,7 +173,7 @@ classic [sync.Mutex](https://golang.org/src/sync/mutex.go?s=765:813#L15). A
 common struct in our case, from race conditions due to an simultaneously read or write access. Let's 
 have a brief look into the description of the `Lock()` function.
 
-```golang
+```go
 // Lock locks m.
 // If the lock is already in use, the calling goroutine
 // blocks until the mutex is available.
@@ -204,7 +204,7 @@ The next lines of code are a reaction to a race condition that occurs when the u
 synchronized his sub-tests/ goroutines appropriately and the test function completes successfully 
 even though sub-tests are still running.
 
-```golang
+```go
 // c.done needs to be locked to synchronize checks to c.done in parent tests.
 if c.done {
     panic("Fail in goroutine after " + c.name + " has completed")
@@ -216,7 +216,7 @@ aborted__ at this point. To abort a test completely in case of an error, the fun
 [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) can be used, which we'll 
 look in the next section – but first, an example of what I meant by "not aborted":
 
-```golang
+```go
 func TestMultipleAssertions(t *testing.T) {
 	s := buggyFuncReturningNil()
 
@@ -256,7 +256,7 @@ Let's take another look at an example where multiple test cases are tested seque
 [t.Run()](https://golang.org/src/testing/testing.go?s=37631:37678#L1125) function with different 
 parameters.
 
-```golang
+```go
 func TestWithSubTests(t *testing.T) {
 	testCases := []struct {
 		foo string
@@ -314,7 +314,7 @@ shows which of the sub-tests failed and which parameter combinations did not wor
 Let's have a look at the [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) 
 code before we jump into an example.
 
-```golang
+```go
 func (c *common) FailNow() {
 	c.Fail()
 
@@ -356,7 +356,7 @@ Now let's pick up the previous example and replace the
 [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) function and look at the 
 output of `go test`.
 
-```golang
+```go
 func TestMultipleAssertionsWithFailNow(t *testing.T) {
 	s := buggyFuncReturningNil()
 
@@ -400,7 +400,7 @@ standard library provides a way to avoid this boilerplate code:
 
 Let's take a look at the code.
 
-```golang
+```go
 func (c *common) Error(args ...interface{}) {
 	c.log(fmt.Sprintln(args...))
 	c.Fail()
@@ -418,7 +418,7 @@ Now let's replace
 [Fail()](https://golang.org/src/testing/testing.go?s=23815:23838#L670) with
 [Error()](https://golang.org/src/testing/testing.go?s=27660:27703#L776) in our first example.
 
-```golang
+```go
 func TestValidateStringNotBlank(t *testing.T) {
     s := buggyFuncReturningBlankStr()
 
@@ -444,7 +444,7 @@ Now let's look at [Errorf()](https://golang.org/src/testing/testing.go?s=27799:2
 calls the [c.log()](https://golang.org/src/testing/testing.go?s=25730:25763#L736) function with a 
 formatted string to output the passed arguments in the specified formatting.
 
-```golang
+```go
 func (c *common) Errorf(format string, args ...interface{}) {
 	c.log(fmt.Sprintf(format, args...))
 	c.Fail()
@@ -456,7 +456,7 @@ func (c *common) Errorf(format string, args ...interface{}) {
 Let's look at an example of how 
 [Errorf()](https://golang.org/src/testing/testing.go?s=27799:27858#L782) can be used.
 
-```golang
+```go
 func TestPrintingFormattedError(t *testing.T) {
     input := "foobar"
     expected := "barfoo"
@@ -492,7 +492,7 @@ code by logging a desired value and then terminating the test directly via
 FailNow has already been explained in the previous section 
 [Stop test execution directly with the FailNow function](#stop-test-execution-directly-with-the-failnow-function). Let's take a look at the code of the two functions before we implement them in an example.
 
-```golang
+```go
 // Fatal is equivalent to Log followed by FailNow.
 func (c *common) Fatal(args ...interface{}) {
 	c.log(fmt.Sprintln(args...))
@@ -513,7 +513,7 @@ As already mentioned, logging or formatted logging is done here via
 [FailNow()](https://golang.org/src/testing/testing.go?s=24706:24732#L699) follows afterwards. Let's 
 jump now to an example where both functions are included.
 
-```golang
+```go
 func TestWithFatalInSubTests(t *testing.T) {
 	testCases := []struct {
 		foo string
@@ -579,7 +579,7 @@ time contingent of a CI/CP pipeline.
 
 Let's look at an example where we have an unusually long execution time of a test.
 
-```golang
+```go
 func TestTimeConsumingSubTests(t *testing.T) {
 	testCases := []string{
 		"foo",
@@ -614,7 +614,7 @@ execute sub-tests in parallel in own goroutines via
 the code again – unlike the last functions for simplified logging, exciting code is waiting for us 
 again.
 
-```golang
+```go
 func (t *T) Parallel() {
 	if t.isParallel {
 		panic("testing: t.Parallel called multiple times")
@@ -671,7 +671,7 @@ At first, the next code confused me a bit. What is behind these "raceErrors" in
 mechanism for detecting race conditions. Let's jump into the used function `race.Error()` and see 
 what is returned there.
 
-```golang
+```go
 func Errors() int { return 0 }
 ```
 
@@ -694,7 +694,7 @@ answers there.
 
 First, let's take a look at the documentation.
 
-```golang
+```go
 /*
 Package race contains helper functions for manually instrumenting code for the race detector.
 
@@ -715,14 +715,14 @@ on the tag, only one of the two files is used during the build. In the [introduc
 Detector"](https://blog.golang.org/race-detector) it is also pointed out that the "-race" flag 
 activates the race detection during the build.
 
-```golang
+```go
 // +build !race
 
 package race
 ```
 (Source: [internal/race/norace.go](https://golang.org/src/internal/race/norace.go?s=160:175))
 
-```golang
+```go
 // +build race
 
 package race
@@ -733,7 +733,7 @@ To complete the short journey through the Go standard library, this is the
 [Errors()](https://golang.org/src/internal/race/race.go?s=829:879#L52) function from the 
 "race.go":
 
-```golang
+```go
 func Errors() int {
 	return runtime.RaceErrors()
 }
@@ -757,7 +757,7 @@ in pause mode.
 
 After chatty-logging there are two lines of code that exchange signals between goroutines. 
 
-```golang
+```go
 t.signal <- true   // Release calling test.
 <-t.parent.barrier // Wait for the parent test to complete.
 ```
@@ -783,7 +783,7 @@ the initialization of this parallel test. We'll take a look at how this is expre
 mode of test execution in a moment. First, let's look at where the calling test waits for the 
 signal.  
 
-```golang {hl_lines=[34,35]}
+```go {hl_lines=[34,35]}
 func (t *T) Run(name string, f func(t *T)) bool {
 	atomic.StoreInt32(&t.hasSub, 1)
 	testName, ok, _ := t.context.match.fullName(&t.common, name)
@@ -847,7 +847,7 @@ The execution is blocked so that all previously initialized tests can be started
 parallel after the calling test is completed. Now let's see where the signal comes from that allows 
 the execution of the sub-tests to continue again.
 
-```golang {hl_lines=[56,61]}
+```go {hl_lines=[56,61]}
 func tRunner(t *T, fn func(t *T)) {
 	t.runner = callerName(0)
 
@@ -972,7 +972,7 @@ exceed the maximum number of parallel tests. If this is the case, the test is pa
 corresponding signal is received in the `c.startParallel` channel.
 
 
-```golang
+```go
 func (c *testContext) waitParallel() {
 	c.mu.Lock()
 	if c.running < c.maxParallel {
@@ -995,7 +995,7 @@ case by zero since we did not start the test with the "-race" flag.
 
 Let's now run our tests from the beginning in parallel mode.
 
-```golang {hl_lines=[11,14]}
+```go {hl_lines=[11,14]}
 func TestParallelTimeConsumingSubTests(t *testing.T) {
 	testCases := []string{
 		"foo",
@@ -1035,7 +1035,7 @@ the beginning of the sub-test.
 
 Now let's add some logging and look at the execution order.
 
-```golang
+```go
 func TestParallelTimeConsumingSubTests(t *testing.T) {
 	testCases := []string{
 		"foo",
