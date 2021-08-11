@@ -2,9 +2,11 @@
 title: "Make Go tests more robust by fuzzy testing"
 date: 2021-03-07T23:43:34+01:00
 draft: false
-images: ["/assets/make-go-tests-more-robust-by-fuzzy-testing.png"]
+images: ["/assets/make-go-tests-more-robust-by-fuzzy-testing.webp"]
 tags: [go-standard-library, "development", "golang", "testing"]
 description: "In this post, we'll see how Go tests are built more robustly with the quick package 
+and how we can avoid incorrectly chosen parameters."
+summary: "In this post, we'll see how Go tests are built more robustly with the quick package 
 and how we can avoid incorrectly chosen parameters."
 toc: false
 ---

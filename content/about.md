@@ -4,14 +4,14 @@ date: 2021-01-13T00:49:25+01:00
 draft: false
 ---
 
-<img class="float-right" src="/assets/lukas-rotermund.jpg" alt="Thats me, Lukas">
+<img class="float-right" src="/assets/lukas-rotermund.webp" alt="Thats me, Lukas">
 
 My name is Lukas Rotermund and I am a passionate backend software developer working on APIs and 
 microservices for [fino](https://www.fino.ai/en/), a german fintech based in Kassel.
 
 As far as I can remember, I’ve been developing software. After graduating from technical secondary 
-school with a focus on informatics, I went straight into an apprenticeship 
-([a german vocational training system](https://www.bmbf.de/en/the-german-vocational-training-system-2129.html)) 
+school with a focus on informatics, I went straight into an 
+[apprenticeship, a german vocational training system](https://www.bmbf.de/bmbf/en/education/the-german-vocational-training-system/the-german-vocational-training-system_node.html), 
 as an IT specialist for application development at a global service provider in the area of market 
 analysis for the automotive industry.
 
