@@ -8,17 +8,21 @@ $color_grey_dark: #a2a2a2;
 }
 
 .post-item {
-  display: flex;
-  flex-direction: column;
   margin: 1rem auto;
   box-shadow: 0 3px 7px -1px rgba(#000, 0.1);
   margin-bottom: 1.6%;
   background: $color_white;
-  line-height: 1.4;
-  font-family: sans-serif;
-  border-radius: 5px;
+  border: 1px solid #000;
   overflow: hidden;
   z-index: 0;
+
+  a:first-child {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+    font-family: sans-serif;
+    border-bottom: 0;
+  }
 
   a {
     color: inherit;
@@ -80,11 +84,12 @@ $color_grey_dark: #a2a2a2;
     .read-more {
       text-align: right;
 
-      a {
+      span {
         color: $color_prime;
         display: inline-block;
         position: relative;
         font-size: 1rem;
+        border-bottom: solid 1px #000;
       }
     }
   }
@@ -118,43 +123,47 @@ $color_grey_dark: #a2a2a2;
     (min-width: 850px),
     (min-width: 640px) and (max-width: 720px)
     {
-    flex-direction: row;
-
-    .meta {
-      flex-basis: 40%;
-      height: auto;
-    }
-
-    .description {
-      flex-basis: 60%;
-
-      &:before {
-        transform: skewX(-3deg);
-        content: "";
-        background: #fff;
-        width: 30px;
-        position: absolute;
-        left: -10px;
-        top: 0;
-        bottom: 0;
-        z-index: -1;
+      a:first-child {
+        flex-direction: row;
       }
-    }
 
-    &.alt {
-      flex-direction: row-reverse;
+      .meta {
+        flex-basis: 40%;
+        height: auto;
+      }
 
       .description {
+        flex-basis: 60%;
+
         &:before {
-          left: inherit;
-          right: -10px;
-          transform: skew(3deg);
+          transform: skewX(-3deg);
+          content: "";
+          background: #fff;
+          width: 30px;
+          position: absolute;
+          left: -10px;
+          top: 0;
+          bottom: 0;
+          z-index: -1;
         }
       }
 
-      .details {
-        padding-left: 25px;
+      &.alt {
+        a:first-child {
+          flex-direction: row-reverse;
+        }
+
+        .description {
+          &:before {
+            left: inherit;
+            right: -10px;
+            transform: skew(3deg);
+          }
+        }
+
+        .details {
+          padding-left: 25px;
+        }
       }
     }
-  }
 }

@@ -12,19 +12,23 @@
   <ul class="posts-list" id="list">
     {{ range $i, $p := where .Paginator.Pages.ByPublishDate.Reverse "Type" "!=" "page" }}
     <li class="post-item{{ if not (modBool $i 2) }} alt{{ end }}">
-      <div class="meta">
-        {{$images := apply $p.Params.images "absURL" "."}}
-        {{$postImage := index $images 0}}
-        <div class="photo" style="background-image: url({{ $postImage }})"></div>
-      </div>
-      <div class="description">
-        <h2>{{ $p.Title }}</h2>
-        <p>
-          {{ $p.Params.description }}
-        </p>
-        <p class="read-more">
-          <a href="{{ $p.RelPermalink }}">Read More</a>
-        </p>
+      <a
+        href="{{ $p.RelPermalink }}"
+        aria-label="Read more about: {{ $p.Title }}"
+      >
+        <div class="meta">
+          {{$images := apply $p.Params.images "absURL" "."}} {{$postImage :=
+          index $images 0}}
+          <div
+            class="photo"
+            style="background-image: url({{ $postImage }})"
+          ></div>
+        </div>
+        <div class="description">
+          <h2>{{ $p.Title }}</h2>
+          <p>{{ $p.Params.description }}</p>
+          <p class="read-more"><span>Read More</span></p>
+        </div>
       </a>
     </li>
     {{ end }}
