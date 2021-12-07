@@ -7,7 +7,7 @@ draft: false
 Information in accordance with Section 5 TMG
 
 Kohlenstraße 7\
-34121 Kassel
+34121 *Kassel*
 
 ### Contact Information
 Telephone: 01779378847\
@@ -16,14 +16,29 @@ Internet address: [lukasrotermund.de](https://lukasrotermund.de)
 
 ### Graphics and Image Sources
 
-pexels-david-geib-3220828.jpg\
-Photo by [David Geib](https://www.pexels.com/@david-geib-1265112) from [Pexels](https://www.pexels.com/photo/road-near-sea-3220828/)
+{{< figureCupper
+img="pexels-david-geib-3220828.webp" 
+caption="pexels-david-geib-3220828.webp – Photo by [David Geib](https://www.pexels.com/@david-geib-1265112) from [Pexels](https://www.pexels.com/photo/road-near-sea-3220828/)." 
+command="Resize" 
+options="150x" >}}
 
-pexels-veeterzy-39811.jpg\
-Photo by [veeterzy](https://www.pexels.com/@veeterzy) from [Pexels](https://www.pexels.com/photo/road-between-pine-trees-39811/)
+{{< figureCupper
+img="pexels-veeterzy-39811.webp" 
+caption="pexels-veeterzy-39811.webp – Photo by [veeterzy](https://www.pexels.com/@veeterzy) from [Pexels](https://www.pexels.com/photo/road-between-pine-trees-39811/)." 
+command="Resize" 
+options="150x" >}}
 
-pexels-dương-nhân-1529881.jpg\
-Photo by [Dương Nhân](https://www.pexels.com/@d-ng-nhan-324384) from [Pexels](https://www.pexels.com/photo/grayscale-photography-of-trees-1529881/)
+{{< figureCupper
+img="pexels-dương-nhân-1529881.webp" 
+caption="pexels-dương-nhân-1529881.webp – Photo by [Dương Nhân](https://www.pexels.com/@d-ng-nhan-324384) from [Pexels](https://www.pexels.com/photo/grayscale-photography-of-trees-1529881/)." 
+command="Resize" 
+options="150x" >}}
+
+{{< figureCupper
+img="pexels-guduru-ajay-bhargav-1044302.webp" 
+caption="pexels-guduru-ajay-bhargav-1044302.webp – Photo by [Guduru Ajay bhargav](https://www.pexels.com/@ajaybhargavguduru) from [Pexels](https://www.pexels.com/photo/multi-floor-stairs-grayscale-photo-1044302/)." 
+command="Resize" 
+options="150x" >}}
 
 ### Disclaimer
 *Accountability for content*\
