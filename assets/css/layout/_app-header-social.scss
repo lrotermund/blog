@@ -11,12 +11,8 @@
   a {
     font-size: 32px;
 
-    @media (max-width: 310px) {
+    @media (max-width: 720px) {
       margin: 0 1rem;
-    }
-
-    @media (min-width: 311px) and (max-width: 720px) {
-      margin: 0 1.5rem;
     }
 
     @media (min-width: 721px) {
