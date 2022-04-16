@@ -1,7 +1,7 @@
-FROM debian:10.0 AS build
+FROM debian AS build
 
 # Hugo version
-ARG VERSION=0.81.0
+ARG VERSION=0.96.0
 ADD https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_extended_${VERSION}_Linux-64bit.tar.gz /hugo_extended.tar.gz
 RUN tar -zxvf hugo_extended.tar.gz
 RUN /hugo version
@@ -15,7 +15,7 @@ WORKDIR /site
 RUN /hugo --minify --enableGitInfo
 
 # stage 2
-FROM nginx:1.15-alpine
+FROM nginx:alpine
 
 WORKDIR /usr/share/nginx/html/
 
