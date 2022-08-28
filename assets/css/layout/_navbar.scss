@@ -1,4 +1,10 @@
-@media (max-width: 1210px) {
+@media (min-width: 1371px) {
+    .intro-and-nav>div {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 1370px) {
     .intro-and-nav>div {
         padding: 1rem;
     }

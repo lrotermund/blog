@@ -65,6 +65,9 @@ enableGitInfo = true
   [[params.social]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/lukas-rotermund"
+  [[params.social]]
+    name = "twitter"
+    url = "https://twitter.com/LukasRotermund"
   [params.style]
     darkestColor = "#315659"
     darkColor = "#253031"
