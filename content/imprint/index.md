@@ -40,6 +40,12 @@ caption="pexels-guduru-ajay-bhargav-1044302.webp – Photo by [Guduru Ajay bharg
 command="Resize" 
 options="150x" >}}
 
+{{< figureCupper
+img="heaven-gd38ed956a_1280.webp" 
+caption="heaven-gd38ed956a_1280.webp – Photo by [yeniguel](https://pixabay.com/users/yeniguel-43296) from [Pixabay](https://pixabay.com/photos/heaven-sun-water-sunset-tree-648023/)." 
+command="Resize" 
+options="150x" >}}
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
