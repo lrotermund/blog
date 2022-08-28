@@ -170,26 +170,4 @@ Referenz: Definitionen & Muster*
 
 ## Disclaimer
 
-I'm not a certified software architect (e.g. by [iSAQB](https://www.isaqb.org/)). I'm using all 
-posts on this website as a summary of my self studies. Don't take everything too literally. This 
-article is not intended as advice for your software projects, nor does it claim to be perfect or 
-complete. I do not guarantee anything I write about in this article to be accurate or current. If 
-you are interested in Domain-driven Design or software architecture, please contact official and 
-certified organizations such as [iSAQB](https://www.isaqb.org/).
-
-### Why do I write about topics in which I am not an expert?
-
-This is best summed up in the (translated) words of [Dina Brandt](https://www.linkedin.com/in/dina-brandt-trotziger-millennial), a German LinkedIn influencer:
-
-> "New" insights are often just the opposite of new. The more "new" you recognize, the more aware 
-> you become that "new" doesn't even exist in most cases. Then it quickly happens that you stop 
-> sharing these things with others - because they seem so unimportant and trivial.  But this is not 
-> quite true. On the one hand, there are people who have not yet had the aforementioned knowledge. 
-> On the other hand, even people who already know a lot still like to exchange information. The 
-> fear that one's own experiences or thoughts are not worth sharing is usually completely unfounded.
-> Most of the time, it's only self-doubt that keeps you from doing so.
-
-[Source: Diana Brandt — "Neue" Erkenntnisse sind oft genau das Gegenteil von neu](https://www.linkedin.com/posts/dina-brandt-trotziger-millennial_neue-erkenntnisse-sind-oft-genau-das-gegenteil-activity-6851418669872910336-YUQm)
-
-
-## My conclusion and a preview of upcoming articles
+{{< disclaimer >}}
