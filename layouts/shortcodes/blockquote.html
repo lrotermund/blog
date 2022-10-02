@@ -1,0 +1,17 @@
+{{ $quote := .Get "quote" }}
+{{ $author := .Get "author" }}
+{{ $title := .Get "title" }}
+{{ $link := .Get "link" }}
+
+
+<figure role="group" aria-describedby="caption-{{ $quote | md5 }}">
+  <blockquote{{ if $link }} cite="{{$link}}"{{ end }}>
+    <p>{{ $quote }}</p>
+  </blockquote>
+  {{ if $author }}
+    <figcaption id="caption-{{ $quote | md5 }}">
+      <p>– {{ $author }}</p>
+      {{ if $title }}<cite>{{ $title }}</cite>{{ end }}
+    </figcaption>
+  {{ end }}
+</figure>
