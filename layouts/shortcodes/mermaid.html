@@ -1,1 +1,30 @@
-<div class="mermaid" align="{{ if .Get "align" }}{{ .Get "align" }}{{ else }}center{{ end }}">{{ safeHTML .Inner }}</div>
+{{ $align := .Get "align" }}
+{{ $caption := .Get "caption" }}
+{{ $ariaLabel := .Get "aria-label" }}
+{{ $defaultAriaLabel := "This is a mermaid diagram. It's a text-first diagram, rendered by a JavaScript program called mermaid." }}
+{{ $responsive := .Get "responsive" }}
+{{ $uniqueID := substr (md5 .Inner) 0 16 }}
+{{ $diagram := safeHTML .Inner }}
+
+<figure aria-label="{{ if $ariaLabel }}{{ $ariaLabel }}{{ else }}{{ $defaultAriaLabel }}{{ end }}">
+    <pre class="mermaid mermaid-{{ $uniqueID }}{{ if $responsive }} screen{{ end }}" 
+        align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+        {{ $diagram }}
+    </pre>
+    {{ if $responsive }}
+        <pre class="mermaid mermaid-{{ $uniqueID }}{{ if $responsive }} mobile{{ end }}" 
+            align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+            {{ replace (replace $diagram "LR" "TB") "RL" "TB" }}
+        </pre>
+    {{ end }}
+    <button 
+        class="btn-mermaid" 
+        onclick="renderMermaid('.mermaid-{{ $uniqueID }}')">
+        {{ partial "icon.html" (dict "ctx" $ "name" "flow-chart" ) }} Render diagram with mermaid-js
+    </button>
+    <figcaption>
+        {{ $caption }}
+    </figcaption>
+</figure>
+
+{{ .Page.Store.Set "hasMermaid" true }}

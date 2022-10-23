@@ -1,5 +1,49 @@
 .mermaid {
-    background: #ececff;
+    background: #ffffff;
+    border: 2px #000 solid;
     padding: 15px;
     margin: 15px 0;
+    text-align: left;
+}
+
+@media (max-width: 1069px) {
+    .mermaid {
+        padding: 0;
+    }
+}
+
+.mermaid .node path,
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+    fill: #ffffff !important;
+    stroke: #000000 !important;
+    stroke-width: 2px !important;
+}
+
+.mermaid .nodes .edgeLabel {
+    background-color: #ffffff !important;
+    border: 1px #000 solid !important;
+    padding: 1px 10px !important;
+}
+
+.mermaid .cluster rect {
+    fill: #f9f9f9 !important;
+}
+
+.mermaid.screen, .mermaid.mobile {
+    display: none;
+}
+
+@media (min-width: 1070px) {
+    .mermaid.screen {
+        display: block;
+    }
+}
+
+@media (max-width: 1069px) {
+    .mermaid.mobile {
+        display: block;
+    }
 }

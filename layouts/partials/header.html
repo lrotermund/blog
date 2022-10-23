@@ -15,7 +15,8 @@
       </p>
       <div class="app-header-social">
         {{ range .Site.Params.social }}
-          <a target="_blank" href="{{ .url }}" rel="noreferrer noopener" aria-label="{{.name}}">{{ partial "icon.html" (dict "ctx" $ "name" .name ) }}</a>
+          <a target="_blank" href="{{ .url }}" rel="noreferrer noopener" aria-label="{{.name}}">
+            {{ partial "icon.html" (dict "ctx" $ "name" .name ) }}</a>
         {{ end }}
       </div>
     </div>

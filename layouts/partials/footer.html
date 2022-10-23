@@ -11,4 +11,18 @@
   {{ with .Site.Params.footer }}
     <p>{{ . | markdownify }}</p>
   {{ end }}
+  {{ if .Page.Store.Get "hasMermaid" }}
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+      function renderMermaid(id) {
+        let elements = document.querySelectorAll(id);
+        mermaid.init(undefined, elements);
+        elements.forEach((diagram) => {
+          diagram.setAttribute('align', 'center');
+          diagram.classList.add("text-center");
+        });
+      }
+      mermaid.initialize({ startOnLoad: false });
+    </script>
+  {{ end }}
 </footer>

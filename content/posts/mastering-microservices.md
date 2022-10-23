@@ -303,8 +303,8 @@ or your companies guidelines.
 
 ### Microservices won't fix your organization
 
-One last thought. The switch from a **working**, unwanted, messy, deeply coupled, non-modular
-system or from a monolithic applicable to several, well-designed microservices requires a lot of
+One last thought. The switch from a **working** but unwanted, messy, deeply coupled, non-modular
+system or from a monolithic application to several, well-designed microservices requires a lot of
 trust in your developers and domain experts.
 
 There are reasons that lead to such systems and the concept, the idea behind this is well-known as
@@ -319,7 +319,134 @@ link="http://www.melconway.com/Home/Committees_Paper.html" >}}
 Trusting that and how your developers make these decisions is critical. Otherwise, only the 
 disadvantages remain, such as complexity.
 
+German-speaking readers will find some valuable information about Conway's law (& software 
+architecture) in one of Eberhard Wolff's podcast episodes on
+[software-architektur.tv](https://software-architektur.tv).
+
+{{< _figureCupper
+img="https://software-architektur.tv/thumbnails/folge110.png"
+imgLink="https://software-architektur.tv/2022/02/18/folge110.html"
+alt="Preview image of the German software architecture podcast Software Architektur im Stream"
+caption="Software Architektur im Stream [Folge 110 - Conway's Law](https://software-architektur.tv/2022/02/18/folge110.html)." >}}
+
 ## Microservice communication – Let's talk about protocols
+
+Now let's move from abstract organizational communications and their influences to something more 
+technical – how do our systems talk to each other? 
+
+As in the Tower of Babel, dozens, hundreds of ways exist for systems to communicate. There is not
+the one perfect communication system or protocol to rule them all. Every protocol, every technology
+has advantages and disadvantages depending on its use case.
+
+Among all these protocols & communication systems, two appear particularly frequently,
+{{< abbr "REST" "Representational state transfer" >}} and message brokers. And among message
+brokers, Kafka and RabbitMQ are among the most common. Other of the common cloud providers are
+Amazon's {{< abbr "SQS" "Simple Queue Service" >}} and Google's Cloud Pub/Sub.
+
+### REST vs. message broker
+
+First, a rough classification, for all those who have not yet heard of one or both systems.
+
+#### REST
+REST, abbreviation of representational state transfer, is an architectural style, an internet
+protocol for synchronous communication between systems, usually over the internet. Clients send
+requests to a system and expect responses. Each request targets a specific, usually known and
+expected version of the requested resource, e.g. v1, or v2. It's easy for an endpoint provider to
+provide multiple versions of given resources, and it is just as easy for the consumer to switch to
+an older or a newer version.
+
+The communication with REST is a client-driven communication. The only way to receive information
+is to actively request a resource. The resource never sends the information to all possible
+consumers.
+
+{{< 
+    mermaid 
+    caption="mermaid flowchart diagram of an HTTP REST request from a client to a server"
+    responsive="true"
+>}}
+flowchart LR
+    subgraph oauth REST API
+        direction TB
+        subgraph v1
+            direction RL
+            a[auth adapter] -->|/api/v1/users| b[user resource]
+            b[user resource] -->|users response| a[auth adapter]
+        end
+        subgraph v2
+            direction RL
+            c[auth adapter] -->|/api/v2/users| d[user resource]
+            d[user resource] -->|users response| c[auth adapter]
+        end
+    end
+    cl[Client] --- v1 --- op[oauth Provider]
+    cl[Client] --- v2 --- op[oauth Provider]
+{{< /mermaid >}}
+
+#### Message broker
+A message broker is an application that receives and dispatches messages. You can think of it as a
+phone system. A person/ system can send or dispatch a message to a mailbox. The owner or consumer of
+this mailbox can read all the messages and answer each of them.
+
+The hole concept behind a message broker is an asynchronous communication. It allows systems to
+communicate with each other on a time-delayed basis without knowing the recipient(s) of the mailbox,
+as well as the sender(s) of the message. The consumer may be another system, a dozen of systems or
+nobody.
+
+Due to the message character of this system, the communication is so called producer-driven. Usually
+messages represent events from the producer's domain, e.g. "shipment failed". The producer
+dispatches a message to a shared queue of the message broker. The message has the version of the
+data, at the moment of sending. But most important, a message is not necessarily retrieved directly.
+It can take milliseconds or even months.
+
+{{< 
+    mermaid 
+    caption="mermaid flowchart diagram of a message broker receiving and providing the messages of its queues"
+    responsive="true"
+>}}
+flowchart LR
+    subgraph mb[message broker]
+        direction TB
+        q1[(user registration queue)]
+        q2[(shipment queue)]
+    end
+    up1[producer 1] -->|"user registered (version 1)"| q1[(user registration queue)] --- ur1[receiver 1]
+    upN[producer N] -->|"user registered (version N)"| q1[(user registration queue)] --- urN[receiver N]
+    sp1[producer 1] -->|"shipment failed (version 1)"| q2[(shipment queue)] --- sr1[receiver 1]
+    spN[producer N] -->|"shipment failed (version N)"| q2[(shipment queue)] --- srN[receiver N]
+{{< /mermaid >}}
+
+#### What are we looking for?
+
+If we consider only these two approaches to inter-service-communication, we already see huge
+differences in terms of availability of information and its version security.
+
+Depending on the responsiveness of the development teams, both ways offer advantages and
+disadvantages. In the context of small teams or individual developers in small companies, there will
+hardly be many parallel changes of system interfaces and a quick reaction/ update is not necessary.
+Therefore, the choice here falls more on the simpler, easier-to-implement communication. This is
+probably just REST.
+
+This contrasts in the context of distributed systems and large team structures of different bounded
+contexts, where changes to interfaces can occur frequently. Thus, both ways in their pure form are
+not what we are looking for.
+
+Here we can't just choose the simplest and easiest-to-implement communication. We need rules and
+fixed boundries for our API's and their development. These rules and boundries come in form of
+contracts. Through contracts we can enforce message formats as well as there syntax.
+
+Unfortunately, the contracts are not enough. In addition, contracts must be able to evolve and
+regress. This compatibility can prevent unwanted/ unplanned breaking changes on the format and the
+maximum possible format changes are limited to a certain known number.
+
+In summary, we achieve a particularly high level of consumer safety through the contracts and their
+development. Without the fixes that come from unannounced or poorly communicated breaking changes,
+the focus shifts back to planned development, dirven by stability, away from reactive API patchwork.
+
+### Communication via REST
+
+### Consumer-Driven Contracts within a message broker based communication
+
+### Non-functional requirements
 
 ## Micro Frontends – Decoupling down to the user interface
 
