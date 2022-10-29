@@ -6,7 +6,7 @@
 
 <figure role="group" aria-describedby="caption-{{ $quote | md5 }}">
   <blockquote{{ if $link }} cite="{{$link}}"{{ end }}>
-    <p>{{ $quote }}</p>
+    <p>{{ $quote | markdownify }}</p>
   </blockquote>
   {{ if $author }}
     <figcaption id="caption-{{ $quote | md5 }}">
