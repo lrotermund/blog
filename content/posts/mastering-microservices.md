@@ -11,8 +11,8 @@ draft: false
 
 Most developers today have a more or less good definition of microservices in their head. Some are
 developing within a microservice architectural environment and some are not. Long time I've
-developed monolithic web applications and internal services/ APIs without knowing of further
-software architectures.
+developed monolithic web applications and internal services/
+{{< abbr "API" "Application Programming Interface" >}}'s without knowing of further software architectures.
 
 Meanwhile, I've been working with microservices for some years. This year my employer
 [Tasko](https://www.tasko.de/) offered me to visit Heise's
@@ -348,16 +348,17 @@ Amazon's {{< abbr "SQS" "Simple Queue Service" >}} and Google's Cloud Pub/Sub.
 First, a rough classification, for all those who have not yet heard of one or both systems.
 
 #### REST
-REST, abbreviation of representational state transfer, is an architectural style, an internet
-protocol for synchronous communication between systems, usually over the internet. Clients send
-requests to a system and expect responses. Each request targets a specific, usually known and
-expected version of the requested resource, e.g. v1, or v2. It's easy for an endpoint provider to
-provide multiple versions of given resources, and it is just as easy for the consumer to switch to
-an older or a newer version.
 
-The communication with REST is a client-driven communication. The only way to receive information
-is to actively request a resource. The resource never sends the information to all possible
-consumers.
+{{< abbr "REST" "Representational state transfer" >}}, abbreviation of representational state
+transfer, is an architectural style, an internet protocol for synchronous communication between
+systems, usually over the internet. Clients send requests to a system and expect responses. Each
+request targets a specific, usually known and expected version of the requested resource, e.g. v1,
+or v2. It's easy for an endpoint provider to provide multiple versions of given resources, and it is
+just as easy for the consumer to switch to an older or a newer version.
+
+The communication with {{< abbr "REST" "Representational state transfer" >}} is a client-driven
+communication. The only way to receive information is to actively request a resource. The resource
+never sends the information to all possible consumers.
 
 {{< 
     mermaid 
@@ -383,6 +384,7 @@ flowchart LR
 {{< /mermaid >}}
 
 #### Message broker
+
 A message broker is an application that receives and dispatches messages. You can think of it as a
 phone system. A person/ system can send or dispatch a message to a mailbox. The owner or consumer of
 this mailbox can read all the messages and answer each of them.
@@ -424,15 +426,16 @@ Depending on the responsiveness of the development teams, both ways offer advant
 disadvantages. In the context of small teams or individual developers in small companies, there will
 hardly be many parallel changes of system interfaces and a quick reaction/ update is not necessary.
 Therefore, the choice here falls more on the simpler, easier-to-implement communication. This is
-probably just REST.
+probably just {{< abbr "REST" "Representational state transfer" >}}.
 
 This contrasts in the context of distributed systems and large team structures of different bounded
 contexts, where changes to interfaces can occur frequently. Thus, both ways in their pure form are
 not what we are looking for.
 
 Here we can't just choose the simplest and easiest-to-implement communication. We need rules and
-fixed boundries for our API's and their development. These rules and boundries come in form of
-contracts. Through contracts we can enforce message formats as well as there syntax.
+fixed boundaries for our {{< abbr "API" "Application Programming Interface" >}}'s and their
+development. These rules and boundaries some in form of contracts. Through contracts, we can enforce
+message formats as well as there syntax.
 
 Unfortunately, the contracts are not enough. In addition, contracts must be able to evolve and
 regress. This compatibility can prevent unwanted/ unplanned breaking changes on the format and the
@@ -440,11 +443,47 @@ maximum possible format changes are limited to a certain known number.
 
 In summary, we achieve a particularly high level of consumer safety through the contracts and their
 development. Without the fixes that come from unannounced or poorly communicated breaking changes,
-the focus shifts back to planned development, dirven by stability, away from reactive API patchwork.
+the focus shifts back to planned development, driven by stability, away from reactive
+{{< abbr "API" "Application Programming Interface" >}} patchwork.
+
+By decoupling producers and consumers via contracts, we avoid the implicit coupling that would
+result from implementing non-contract message structures. You can recognize these implicit couplings
+when you have to deploy your services simultaneously to prevent the system from crashing.
 
 ### Communication via REST
 
+Pure {{< abbr "REST" "Representational state transfer" >}} communication between services is a valid
+software architectural decision. It does not always require communication with a high compatibility
+that is contractually enforced.
+
+It is not my intention to demonize the common, widely used
+{{< abbr "REST" "Representational state transfer" >}} in any way. I use it a lot myself and I love
+the lightness and speed when implementing the resource endpoints. If I wanted to demonize it, that
+would be hypocritical.
+
+{{< abbr "REST" "Representational state transfer" >}} as well as other lightweight, architectural
+{{< abbr "API" "Application Programming Interface" >}} decisions, like
+{{< abbr "CQRS" "Command-Query-Responsibility-Segregation" >}}, show their full potential when used
+in encapsulated, team and software architectures that in particular do not rely on parallel,
+independent deployment processes.
+
+If the decision is finally made to use {{< abbr "REST" "Representational state transfer" >}}, then
+it is important to adhere to some basic pillars from the beginning that ensure a certain
+{{< abbr "API" "Application Programming Interface" >}} compatibility.
+
+One of these pillars is a versioned {{< abbr "API" "Application Programming Interface" >}}.
+Depending on the quality attributes of changeability and maintainability as well as portability, it
+is important to determine within the team and with the customer how many versions of the resources
+must be provided.
+
+At the outermost architecture level, it must now be ensured that different resource versions can be
+provided in coexistence.
+
 ### Consumer-Driven Contracts within a message broker based communication
+
+Nevertheless, I would like to sharpen your and my focus on the essentials. Whether we use a
+technology or not depends in essence on several influencing factors. These factors are so-called
+"non-functional requirements".
 
 ### Non-functional requirements
 
