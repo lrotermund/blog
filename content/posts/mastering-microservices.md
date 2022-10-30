@@ -501,8 +501,13 @@ What remains is, at best, an [OpenAPI](https://www.openapis.org/) specification 
 and manual end-to-end tests in test environments or constructed, complex end-to-end tests in
 container environments developed specifically for this purpose, which are started up per release.
 
-### Consumer-Driven Contracts within an REST/ HTTP based communication
+Consumer-driven contracts offer a way out of this. The entire
+{{< abbr "API" "Application Programming Interface" >}} integration, including the request and
+response models, is driven by the consumer, not the provider. The resulting machine-readable
+contracts are in {{< abbr "JSON" "JavaScript Object Notation" >}} format and can be verified and
+processed manually or automatically.
 
+### Consumer-Driven Contracts within an REST/ HTTP based communication
 
 
 ### Consumer-Driven Contracts within a message broker based communication
