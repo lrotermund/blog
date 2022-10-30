@@ -262,8 +262,8 @@ Within our bounded contexts, internal data models now emerge, driven by function
 service requires a billing address which is totally separated and independent of the shipping
 address from the shipping service. When users change their address, the information must not be 
 shared automatically with all modules. If this would automatically lead to a change of address in
-the invoicing, this could even have consequences for the tax office (in Germany), depending on the
-necessity.
+the invoicing, this could even have consequences, depending on the necessity, where the tax office
+(in Germany) gets involved.
 
 Not only do the data models differ between bounded contexts, but the design decisions can be, and
 often are, fundamentally different. From data storage, to the programming language, to the
@@ -411,10 +411,10 @@ flowchart LR
         q1[(user registration queue)]
         q2[(shipment queue)]
     end
-    up1[producer 1] -->|"user registered (version 1)"| q1[(user registration queue)] --- ur1[receiver 1]
-    upN[producer N] -->|"user registered (version N)"| q1[(user registration queue)] --- urN[receiver N]
-    sp1[producer 1] -->|"shipment failed (version 1)"| q2[(shipment queue)] --- sr1[receiver 1]
-    spN[producer N] -->|"shipment failed (version N)"| q2[(shipment queue)] --- srN[receiver N]
+    up1[producer 1] -->|"user registered (version 1)"| q1[(user registration queue)] --- ur1[consumer 1]
+    upN[producer N] -->|"user registered (version N)"| q1[(user registration queue)] --- urN[consumer N]
+    sp1[producer 1] -->|"shipment failed (version 1)"| q2[(shipment queue)] --- sr1[consumer 1]
+    spN[producer N] -->|"shipment failed (version N)"| q2[(shipment queue)] --- srN[consumer N]
 {{< /mermaid >}}
 
 #### What are we looking for?
@@ -479,7 +479,34 @@ must be provided.
 At the outermost architecture level, it must now be ensured that different resource versions can be
 provided in coexistence.
 
+Eventually we end up with something that is similar to a contract between our the
+{{< abbr "API" "Application Programming Interface" >}} consumer and the provider. In the first place
+the {{< abbr "API" "Application Programming Interface" >}} is provider-/ producer-driven. If
+necessary, endpoints required for consumers are provided separately. However, in all cases,
+endpoints must be implemented by the consumer and provided by the provider.
+
+But how does an {{< abbr "API" "Application Programming Interface" >}} consumer ensure that the
+given endpoints do not change? How does the {{< abbr "API" "Application Programming Interface" >}}
+provider ensure that the endpoints match the consumers requirements? For example, an
+[OpenAPI](https://www.openapis.org/) documentation could be used as a contractual artifact. Both
+sides could agree on this and even more, they could use appropriate tooling to test the generated
+specification in an automated way.
+
+Unfortunately, with pure {{< abbr "REST" "Representational state transfer" >}} we can't get around
+verbal agreements and usually manual {{< abbr "API" "Application Programming Interface" >}} tests.
+Even then, we run the risk of overlooking that one important email or Slack message from a
+colleague alerting us that the "v1 endpoint" is about to be shut down.
+
+What remains is, at best, an [OpenAPI](https://www.openapis.org/) specification of the endpoints
+and manual end-to-end tests in test environments or constructed, complex end-to-end tests in
+container environments developed specifically for this purpose, which are started up per release.
+
+### Consumer-Driven Contracts within an REST/ HTTP based communication
+
+
+
 ### Consumer-Driven Contracts within a message broker based communication
+
 
 Nevertheless, I would like to sharpen your and my focus on the essentials. Whether we use a
 technology or not depends in essence on several influencing factors. These factors are so-called
