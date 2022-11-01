@@ -1,6 +1,6 @@
 ---
 title: "Mastering microservices"
-tags: []
+tags: ["microservice", "software-architecture", "conference"]
 date: 2022-08-28T13:42:15+02:00
 images: ["/assets/heaven-gd38ed956a_1280.webp"]
 description: "Many developers today have a rough definition of microservices in their head. Let's take a look at all the essential elements that make up microservices."
@@ -36,7 +36,7 @@ Not every team member is able to understand all projects down to the smallest de
 with software architecture. Depending on the size of a project it's nearly impossible to understand
 and control each part of the code, whether it's a monolith or several hundreds of microservices.
 
-Within healthy organizations and teams there are and there will always will be natural, individual
+Within healthy organizations and teams there are and there will always be natural, individual
 information islands. This is a totally normal process of growth, professionalization, employee and
 project development. This shouldn't be handled as a problem because it's OK and sometimes even
 wanted.
@@ -347,7 +347,7 @@ Amazon's {{< abbr "SQS" "Simple Queue Service" >}} and Google's Cloud Pub/Sub.
 
 First, a rough classification, for all those who have not yet heard of one or both systems.
 
-#### REST
+#### What is REST?
 
 {{< abbr "REST" "Representational state transfer" >}}, abbreviation of representational state
 transfer, is an architectural style, an internet protocol for synchronous communication between
@@ -383,7 +383,7 @@ flowchart LR
     cl[Client] --- v2 --- op[oauth Provider]
 {{< /mermaid >}}
 
-#### Message broker
+#### What is a message broker?
 
 A message broker is an application that receives and dispatches messages. You can think of it as a
 phone system. A person/ system can send or dispatch a message to a mailbox. The owner or consumer of
@@ -486,11 +486,11 @@ necessary, endpoints required for consumers are provided separately. However, in
 endpoints must be implemented by the consumer and provided by the provider.
 
 But how does an {{< abbr "API" "Application Programming Interface" >}} consumer ensure that the
-given endpoints do not change? How does the {{< abbr "API" "Application Programming Interface" >}}
-provider ensure that the endpoints match the consumers requirements? For example, an
-[OpenAPI](https://www.openapis.org/) documentation could be used as a contractual artifact. Both
-sides could agree on this and even more, they could use appropriate tooling to test the generated
-specification in an automated way.
+given, implemented endpoints do not change? How does the
+{{< abbr "API" "Application Programming Interface" >}} provider ensure that the endpoints match the
+consumers requirements? For example, an [OpenAPI](https://www.openapis.org/) documentation could be
+used as a contractual artifact. Both sides could agree on this and even more, they could use
+appropriate tooling to test the generated specification in an automated way.
 
 Unfortunately, with pure {{< abbr "REST" "Representational state transfer" >}} we can't get around
 verbal agreements and usually manual {{< abbr "API" "Application Programming Interface" >}} tests.
@@ -503,12 +503,59 @@ container environments developed specifically for this purpose, which are starte
 
 Consumer-driven contracts offer a way out of this. The entire
 {{< abbr "API" "Application Programming Interface" >}} integration, including the request and
-response models, is driven by the consumer, not the provider. The resulting machine-readable
+response models, is driven by the consumer, not the provider. 
+
+### Consumer-Driven Contracts within a REST/ HTTP based communication
+
+If we take a closer look at consumer-driven contracts, we come across a tool- & file-based
+verification of these very theoretical "contracts". For
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}} there is a valued tool called
+[Pact](https://docs.pact.io/). It is a tool for code-first contract testing. 
+
+#### HTTP CDC by Pact
+
+Within {{< abbr "HTTP" "Hypertext Transfer Protocol" >}} you can test a single interaction between a
+consumer and a provider, or a sequence of interactions. This interaction is called a "pact". To
+create a new pact/ {{< abbr "CDC" "Consumer-Driven Contract" >}} we first need to write a unit test.
+
+##### What are unit tests?
+
+Unit tests are small pieces of code that test a small unit and/ or a behavior of the code. Usually
+software developers use this to ensure, that a wanted behavior of their code fulfills a specific
+domain requirement.
+
+You can imagine the code as a black box with two openings, one for the input(s) and one for the
+output. Within our test we specify the input(s), and we set our expectation(s) for the output. If
+the actual output differs from our expectation, then the test is considered failed.
+
+##### Set up a contract
+
+With Pact, we can now use these tests not only to specify the pact, but we can also ensure that our
+own code (consumer) adheres to this contract. Pact now tests if the address of our request is
+correct and if we have provided all the required information for the producer. The information can
+be found in two places in the request. First in the so-called header, which precedes the request,
+and in the body, which is the core of our request.
+
+To help Pact recognize our request, we first define a matching in the test, where we determine what
+our request to the producer looks like. Additionally, we define the expected response from the
+producer that should be returned in case of a successful request matching.
+
+Now that Pact knows our contract, it spins up a so-called provider mock. This mock intercepts all
+requests against our producer, checks if our request, i.e. the consumer side of the contract is
+correct. If everything is as expected, Pact returns the previously specified & expected response. If
+our request is not correct, then Pact returns an error.
+
+As a further result of a successful test, Pact generates a machine-readable contract. These
 contracts are in {{< abbr "JSON" "JavaScript Object Notation" >}} format and can be verified and
-processed manually or automatically.
+processed manually or automatically by further tools from Pact's toolbox.
 
-### Consumer-Driven Contracts within an REST/ HTTP based communication
+##### Verify a contract
 
+
+
+#### Pact broker as SaaS
+
+#### Pact within your build pipeline
 
 ### Consumer-Driven Contracts within a message broker based communication
 
