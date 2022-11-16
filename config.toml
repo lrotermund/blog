@@ -62,12 +62,15 @@ enableGitInfo = true
   [[params.social]]
     name = "github"
     url = "https://github.com/lrotermund"
+    rel = "me"
   [[params.social]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/lukas-rotermund"
+    rel = "me"
   [[params.social]]
-    name = "twitter"
-    url = "https://twitter.com/LukasRotermund"
+    name = "Mastodon"
+    url = "https://social.dev-wiki.de/@lukasrotermund"
+    rel = "me"
   [params.style]
     darkestColor = "#315659"
     darkColor = "#253031"
