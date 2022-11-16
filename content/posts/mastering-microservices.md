@@ -534,7 +534,7 @@ the actual output differs from our expectation, then the test is considered fail
 With Pact, we can now use these tests not only to specify the pact, but we can also ensure that our
 own code (consumer) adheres to this contract. Pact now tests if the address of our request is
 correct and if we have provided all the required information for the producer. The information can
-be found in two places in the request. First in the so-called header, which precedes the request,
+be found at two places of the request. First in the so-called header, which precedes the request,
 and in the body, which is the core of our request.
 
 To help Pact recognize our request, we first define a matching in the test, where we determine what
@@ -552,9 +552,36 @@ processed manually or automatically by further tools from Pact's toolbox.
 
 ##### Verify a contract
 
+The verification is a part of the "further processing". For Pact itself it's not necessary to
+automatically verify a generated contract.
 
+The easiest way to verify a contract is to send it to the person or team responsible for it,
+hereafter provider, and get confirmation that it can be honored.
 
-#### Pact broker as SaaS
+Verification of contracts is the task of the providers. Pact also provides a tooling to verify
+contracts in form of pact files within the providers tests. The tooling provides multiple ways to
+verify a contract:
+
+1. The easiest way is to just load a pact file within a unit test and to verify it with a simple
+provider configuration.
+
+The next steps require a so-called **Pact broker**. What this Pact broker is and how to use it, we
+will look at in the next section.
+
+2. You can automate your pact management with a Pact broker. The first way to verify a pact with a
+Pact broker is to verify pacts by a tag, e.g. `master` or by an environment like `prod`.
+
+3. Last but not least you can verify all contracts of a provider without specifying a tag.
+
+In the verifier configuration it can be specified that the results are shared with the configured
+broker. Both, the consumer and the provider, can make use of the results with Pacts "can I deploy"
+feature, which allows stopping a deployment when the contracts can't be honored.
+
+#### The Pact broker
+
+##### Self-hosted
+
+##### SaaS
 
 #### Pact within your build pipeline
 
