@@ -1,4 +1,5 @@
 ---
+type: post
 title: "Testing, an important feature of the Go standard library"
 tags: [go-standard-library, "development", "golang", "testing"]
 date: 2021-01-21T12:51:41+01:00

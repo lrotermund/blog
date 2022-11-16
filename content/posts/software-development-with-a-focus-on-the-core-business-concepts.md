@@ -1,4 +1,5 @@
 ---
+type: post
 title: "Software development with a focus on the core business concepts"
 tags: []
 date: 2021-08-15T09:07:06+02:00

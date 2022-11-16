@@ -1,0 +1,38 @@
+{{ define "main" }}
+  <main id="main" itemscope itemtype="https://schema.org/BlogPosting">
+    <h1 itemprop="name">{{ .Title }}</h1>
+    <section class="meta grid">
+      <section>
+        <h1>
+          {{ partial "icon.html" (dict "ctx" $ "name" "calendar") }}
+          <span>published at</span>
+        </h1>
+        <span itemprop="datePublished">{{ .PublishDate.Format "Jan 2, 2006" }}</span>
+      </section>
+      <section>
+        <h1>
+          {{ partial "icon.html" (dict "ctx" $ "name" "clock") }}
+          <span>reading time</span>
+        </h1>
+        <span itemprop="timeRequired" content="PT{{ .ReadingTime }}M">{{ .ReadingTime }} minutes</span>
+      </section>
+    </section>
+    {{- with .Params.tags }}
+    <section class="meta">
+      <h1>
+        {{ partial "icon.html" (dict "ctx" $ "name" "tag") }}
+        <span>tags</span>
+      </h1>
+      <span itemprop="keywords">
+        {{- range $index, $element := . -}}
+          {{ with $.Site.GetPage (printf "/%s/%s" "tags" . ) }}
+            {{- if $index -}}, {{ end -}}
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+          {{- end }}
+        {{- end }}
+      </span>
+    </section>
+    {{- end }}
+    {{ .Content }}
+  </main>
+{{ end }}

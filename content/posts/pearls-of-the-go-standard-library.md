@@ -1,4 +1,5 @@
 ---
+type: post
 title: "Pearls of the Go standard library"
 tags: [go-standard-library, "development", "golang"]
 date: 2021-01-12T20:59:20+01:00

@@ -1,4 +1,5 @@
 ---
+type: post
 title: "Make Go tests more robust by fuzzy testing"
 date: 2021-03-07T23:43:34+01:00
 draft: false

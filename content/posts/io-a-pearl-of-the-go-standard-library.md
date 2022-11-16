@@ -1,4 +1,5 @@
 ---
+type: post
 title: "io - a pearl of the Go standard library"
 tags: ["go-standard-library", "development", "golang", "io"]
 date: 2021-01-12T21:02:34+01:00

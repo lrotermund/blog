@@ -1,4 +1,5 @@
 ---
+type: post
 title: "Mastering microservices"
 tags: ["microservice", "software-architecture", "conference"]
 date: 2022-08-28T13:42:15+02:00
