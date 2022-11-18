@@ -579,11 +579,42 @@ feature, which allows stopping a deployment when the contracts can't be honored.
 
 #### The Pact broker
 
+As its name suggests, the Pact broker is a piece of software that takes over various tasks between
+the consumers and the providers. Its main purpose is to provide pacts to providers, retrieved by
+cosumers manually or by their {{< abbr "CI" "Continuous Integration" >}} pipeline.
+
+As already mentioned in the last section, the broker collects the providers pact-test results to
+share a "can I deploy" information with all contracting parties.
+
+The Pact broker itself is published under the
+{{< abbr "MIT" "Massachusetts Institute of Technology" >}} license. This allows you to use it
+commercially and to make modifications to the code if necessary.
+
+You can find the Pact broker repository at Github:
+[pact-foundation/pact_broker](https://github.com/pact-foundation/pact_broker). This way you can
+easilly setup your own broker.
+
 ##### Self-hosted
+
+As with many software solutions out there, it is possible to operate a Pact broker yourself in
+various ways.
+
+The not-so-elegant way is to set it up yourself. Rent a server and follow the few
+[roll-out instructions on Github](https://github.com/pact-foundation/pact_broker#rolling-your-own).
+This will probably only make you popular in your conservative IT department, but not with your other
+colleagues.
+
+Of course, it is much cooler and more contemporary via a containerised approach. Pact has put
+together some information for you on this, whether you just want to use the
+[Pact broker Docker image](https://github.com/pact-foundation/pact-broker-docker) or deploy it via
+[Terrafrom on AWS](https://github.com/nadnerb/terraform-pact-broker).
 
 ##### SaaS
 
-#### Pact within your build pipeline
+If you don't want to take care of the hosting yourself, that's no problem either. In the end, Pact
+also wants to earn some money with its broker and provides it as
+{{< abbr "SaaS" "Software as a Service" >}} for this purpose, win-win situation. You can find the
+service at [pactflow.io](https://pactflow.io/).
 
 ### Consumer-Driven Contracts within a message broker based communication
 
