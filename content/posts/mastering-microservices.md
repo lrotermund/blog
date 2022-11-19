@@ -616,14 +616,60 @@ also wants to earn some money with its broker and provides it as
 {{< abbr "SaaS" "Software as a Service" >}} for this purpose, win-win situation. You can find the
 service at [pactflow.io](https://pactflow.io/).
 
-### Consumer-Driven Contracts within a message broker based communication
+### Contracts (specifications) within a message broker based communication
 
+Not only in the synchronous world do API contracts have to be adhered to, but also in the
+asynchronous world of the message brokers. The problem here is the lifetime of the messages that are
+exchanged. If a message is sent and retrieved within nanoseconds, this is less of a problem than if
+a message is retrieved from a queue that has been sitting there for days or weeks.
+
+The content of messages may well evolve over time, and what is in the body of a message today may
+not be needed tomorrow. This is where the concept of scheme evolution comes into play. Because we
+must always assume that our messaging scheme will change, we make its evolution part of our
+specification.
+
+#### They are not consumer-driven and they are not contracts
+
+Before we look at tooling, we need to take a step back. Unfortunately, we cannot speak of a
+{{< abbr "CDC" "Consumer-Driven Contract" >}} for events and messages as we do for
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}}/
+{{< abbr "REST" "Representational state transfer" >}}-based communication. Messages are inherently
+driven by the producer. Usually, domain events are exchanged via messages to which other services
+can react. Messages with a command character not only feel wrong, they are wrong. Just imagine a
+command like "submit order" that will not be processed until the next week.
+
+{{< abbr "IMHO" "In My Humble Opinion" >}}, you should send commands synchronously so that you get direct feedback. Often sensitive domain processes depend on these commands, where you can safely do without eventual consistency.
+
+A further problem is the lack of precision. Within a
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}}/
+{{< abbr "REST" "Representational state transfer" >}}-based communication, there are a lot of
+parameters allowing us to set up a precise contract. We are able to specify the
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}} method, the
+{{< abbr "URL" "Uniform Resource Locator" >}}, the
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}} headers and the expected response. On contrary,
+for the messages we have only the message body. There is no producer and no consumer information.
+We can't check for standardized headers, nor for a specific message queue.
+
+For these reasons, I will not speak of message contracts in the following, but rather of
+message specifications that focus only on the content of a message and nothing around it.
+
+#### Message specifications with Message Pact
+
+Pact not only provides a way to handle your {{< abbr "HTTP" "Hypertext Transfer Protocol" >}}-
+{{< abbr "CDC" "Consumer-Driven Contract" >}}'s, it also provides a way to verify, that a message
+consumer can handle a message of a given schema, as well as a way to verify, that a producer is
+able to dispatch a message of a given schema.
+
+#### Message specifications with Apache Avro
+
+
+### CDC via HTTP or message specifications?
 
 Nevertheless, I would like to sharpen your and my focus on the essentials. Whether we use a
 technology or not depends in essence on several influencing factors. These factors are so-called
 "non-functional requirements".
 
-### Non-functional requirements
+#### Non-functional requirements
 
 ## Micro Frontends – Decoupling down to the user interface
 
