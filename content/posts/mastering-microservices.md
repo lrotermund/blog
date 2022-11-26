@@ -660,6 +660,24 @@ Pact not only provides a way to handle your {{< abbr "HTTP" "Hypertext Transfer 
 consumer can handle a message of a given schema, as well as a way to verify, that a producer is
 able to dispatch a message of a given schema.
 
+The verification process is basically the same. You start by writing consumer and provider tests.
+Also, the way how pacts getting exchanges between a consumer and a provider is the same. The
+consumers pacts are shared with a Pact broker. The provider can test message schemas against pacts
+from a given broker.
+
+With Pact, it's not important which message broker you use. It's more important how the broker is
+implemented within your project. Pact requires an implementation via the Ports & Adapters pattern so
+that it can dock itself as a message broker.
+
+For me, however, Pact is missing an important component to make it practical to use with message
+brokers – seamless schema evolution.
+
+Of course, Pact checks if a schema can be used, but in order to evolve a schema, consumers have to
+be constantly updated in case of incompatibilities. This is exactly what I want to abstract away
+with this tooling. I want my teams to be able to write code for their domains independently, without
+having to wait for all the other teams every time. Of course, this doesn't work seamlessly with
+schema evolution, but it's a first step in that direction.
+
 #### Message specifications with Apache Avro
 
 
