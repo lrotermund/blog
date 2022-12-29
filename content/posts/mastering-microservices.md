@@ -656,7 +656,7 @@ message specifications that focus only on the content of a message and nothing a
 #### Message specifications with Message Pact
 
 Pact not only provides a way to handle your {{< abbr "HTTP" "Hypertext Transfer Protocol" >}}-
-{{< abbr "CDC" "Consumer-Driven Contract" >}}'s, it also provides a way to verify, that a message
+{{< abbr "CDCs" "Consumer-Driven Contract" >}}, it also provides a way to verify, that a message
 consumer can handle a message of a given schema, as well as a way to verify, that a producer is
 able to dispatch a message of a given schema.
 
@@ -680,14 +680,264 @@ schema evolution, but it's a first step in that direction.
 
 #### Message specifications with Apache Avro
 
+One way to get schema evolution is to use [Apache Avro](https://avro.apache.org/). Avro is a system
+for a schema-based data serialization. The serialized data is in a binary format and wrapped within
+a {{< abbr "JSON" "JavaScript Object Notation" >}}. The binary data has a compact encoding without
+any field information.
+
+Another benefit of the schema-based serialization system is the opportunity to use a generic message
+wrapper/ generic record to represent the message. If you like it precise, you can also generate the
+message record code based on the defined scheme.
+
+The schema or format evolution is an integral functionality within Apache Avro. From sending to
+receiving a message, it passes through several stations, all of which pay into this functionality.
+
+##### The schema registry
+
+A supporting software architectural component for schema evolution is the schema registry. The
+schema registry is a central software service within our cluster that is used to validate, store and exchange schema information.
+
+All services communicating with versioned schemas like Apache Avro or
+[Google's Protobuf](https://developers.google.com/protocol-buffers/) are also always communicating
+with the schema registry. It provides an
+{{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
+for a schema that can be sent with a message and can in reverse be used to get schema information for an
+{{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}.
+
+To retrieve an
+{{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
+from the registry the passed schema must be
+compatible. The compatibility verification is one of the main tasks of the registry.
+
+##### The compatibility levels
+
+An essential piece of information about a schema is the so-called compatibility level. This is
+initially defined for a schema and allows our registry to compare it to another schema version.
+
+There are seven levels of compatibility in the Apache Avro message format. The levels differ in the
+allowed schema version, in the allowed changes to the schema, and in who must upgrade first – the
+producer or the consumer.
+
+###### The backward compatibility level
+
+The backward compatibility level is a consumer-first level. This means, that:
+
+- fields can be deleted from the schema – deleted fields will be ignored on deserialization
+- optional fields can be added
+- mandatory fields can be turned into optional fields
+
+An optional field is a field with a default value in case of a missing value within the message.
+This way the consumer deserializes the optional field with its default value as long as all
+producers are not fully upgraded to the new schema. 
+
+So the backward compatibility level allows the producers to send messages of schema `N` as well as
+`N-1`. Which means in other words, that data written within the old schema version can be read by
+the new schema version.
+
+To illustrate this more clearly, here is a Golang example for an attempted delivery. The delivery
+service (consumer) appends the nullable (nilable in Golang) bytes field `photo` as an optional
+field.
+
+The consumer's schema codec:
+```json
+{
+    "type": "record",
+    "name": "AttemptedDelivery",
+    "fields" : [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "date",
+            "type": {
+                "type": "int",
+                "logicalType": "date"
+            }
+        },
+        {
+            "name": "address",
+            "type": "some.address.record"
+        },
+        {
+            "name": "photo",
+            "type": ["null", "bytes"]
+        }
+    ]
+}
+```
+
+The consumer's struct representation of the record, including the new nilable field `Photo`:
+```go
+type AttemptedDelivery struct {
+    ID      uuid.UUID   `avro:"id"`
+    Date    time.Time   `avro:"date"`
+    Address Address     `avro:"address"`
+    Photo   *[]byte     `avro:"photo"`
+}
+```
+
+The producer's struct representation of the record without the field `Photo`:
+```go
+type AttemptedDelivery struct {
+    ID      uuid.UUID   `avro:"id"`
+    Date    time.Time   `avro:"date"`
+    Address Address     `avro:"address"`
+}
+```
+
+This way the consumer's `AttemptedDelivery.Photo` is nil as long as it is not set over the message.
+
+
+###### The forward compatibility level
+
+The forward compatibility level is the opposite of the
+[backward compatibility level]({{< relref "#the-backward-compatibility-level" >}}) and is therefore
+a producer-first level. This means, that:
+
+- optional fields can be deleted from the schema
+- optional and mandatory fields can be added
+- optional fields can be turned into mandatory fields
+
+It is only possible to delete optional field because removing mandatory fields could cause problems
+on the consumer side. New fields, on the other hand, whether optional or mandatory, are simply
+ignored on the consumer side.
+
+So the forward compatibility level allows consumers with an implementation of the schema `N` can
+read data `N+1`. Which means in other words, that data written within the new schema version can be
+read by the old schema version.
+
+To illustrate this more clearly, here is a Golang example for an attempted delivery. The shipping
+service provider (provider) appends the bytes field `photo` as a mandatory field.
+
+The producer's schema codec:
+```json
+{
+    "type": "record",
+    "name": "AttemptedDelivery",
+    "fields" : [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "logicalType": "uuid"
+            }
+        },
+        {
+            "name": "date",
+            "type": {
+                "type": "int",
+                "logicalType": "date"
+            }
+        },
+        {
+            "name": "address",
+            "type": "some.address.record"
+        },
+        {
+            "name": "photo",
+            "type": "bytes"
+        }
+    ]
+}
+```
+
+The producer's struct representation of the record, including the new field `Photo`:
+```go
+type AttemptedDelivery struct {
+    ID      uuid.UUID   `avro:"id"`
+    Date    time.Time   `avro:"date"`
+    Address Address     `avro:"address"`
+    Photo   []byte      `avro:"photo"`
+}
+```
+
+The consumer's struct representation of the record without the field `Photo`:
+```go
+type AttemptedDelivery struct {
+    ID      uuid.UUID   `avro:"id"`
+    Date    time.Time   `avro:"date"`
+    Address Address     `avro:"address"`
+}
+```
+
+This way the producer's `AttemptedDelivery.Photo` is not deserialized as long as it is not 
+implemented on the consumer's side.
+
+###### The full compatibility level
+
+The full compatibility level is the combination of the
+[backward compatibility level]({{< relref "#the-backward-compatibility-level" >}}) and the
+[forward compatibility level]({{< relref "#the-forward-compatibility-level" >}}), and accordingly it
+does not matter who updates their schema first. This means, that:
+
+- optional fields can be added
+- optional fields can be deleted
+- it's not possible to change the state of mandatory fields into optional fields
+- it's not possible to change the state of optional fields into mandatory fields
+
+It is only possible to add and delete optional field because adding and deleting mandatory fields,
+as well as turning them into optional fields could cause problems on the both side.
+
+So the full compatibility level allows consumers with an implementation of the schema `N` can read
+data `N+1` and consumers with an implementation of schema `N+1` can read data `N`. Which means in
+other words, that data written within the new schema version can be read by the old schema version
+and data written within the old schema version can be read by the new schema version.
+
+When choosing full compatibility, one must inevitably ask whether the flexibility gained outweighs
+the cost of having only optional fields. Depending on the domain, valuable validations could be lost
+as a result.
+
+###### The \*_transitive compatibility levels
+
+All the previously described compatibility levels are testing the new schema version against their
+previous schema version. If a test is successful, the new scheme can be registered and messages can
+be dispatched matching the corresponding scheme. However, if there may be consumers or producers
+that are more than one version apart, there can be problems and incompatibilities with the previous
+schemes.
+
+For this purpose, the **\*_transitive** compatibility level exists as an annotation for all previous
+compatibility levels. Just attach **\*_transitive** to the compatibility level and the new version
+is getting tested against all previous versions. 
+
+Available **\*_transitive** combinations and their meaning:
+
+- **backward_transitive** – the data written in any old schema version can be read with the new
+schema version
+- **forward_transitive** – the data written in the new schema version can be read by any old schema
+version
+- **full_transitive** – that data written in the new schema version can be read by any old schema
+version and data written in any old schema version can be read by the new schema version
+
+###### The none compatibility level
+
+If you do not want a compatibility check, e.g. because the application is still under development
+and the entire domain model is not yet known, you can use compatibility level `none`.
+
+With the none compatibility level, any change to the schema is allowed. It is OK to delete mandatory fields, change their type and so on.
+
+Based on this, it should quickly become clear that any adjustment of the scheme version can lead to
+breaking changes between consumers and producers. Therefore, use the none compatibility level only
+with very high attention and in very close consultation between the consumers and producers. It is
+also best to use it only during development and switch to another compatibility level for a release.
 
 ### CDC via HTTP or message specifications?
 
-Nevertheless, I would like to sharpen your and my focus on the essentials. Whether we use a
+Finally, I would like to sharpen your and my focus on the essentials. Whether we use a
 technology or not depends in essence on several influencing factors. These factors are so-called
-"non-functional requirements".
+**non-functional requirements**.
 
-#### Non-functional requirements
+It's just as legitimate to go for pure {{< abbr "HTTP" "Hypertext Transfer Protocol" >}} based and
+purist {{< abbr "CDCs" "Consumer-Driven Contract" >}} as it is to opt for message & schema based
+ones in the end.
+
+These primarily customer-driven, non-functional requirements should always serve as the basis for
+decision-making in the end and be recorded accordingly. It is important that people who are aware of
+these non-functional requirements work them out specifically with the customer and thus understand
+the subtleties of the actual requirements.
 
 ## Micro Frontends – Decoupling down to the user interface
 

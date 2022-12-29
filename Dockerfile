@@ -1,7 +1,7 @@
 FROM debian AS build
 
 # Hugo version
-ARG VERSION=0.96.0
+ARG VERSION=0.107.0
 ADD https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_extended_${VERSION}_Linux-64bit.tar.gz /hugo_extended.tar.gz
 RUN tar -zxvf hugo_extended.tar.gz
 RUN /hugo version

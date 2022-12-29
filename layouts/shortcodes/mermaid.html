@@ -7,19 +7,29 @@
 {{ $diagram := safeHTML .Inner }}
 
 <figure aria-label="{{ if $ariaLabel }}{{ $ariaLabel }}{{ else }}{{ $defaultAriaLabel }}{{ end }}">
-    <pre class="mermaid mermaid-{{ $uniqueID }}{{ if $responsive }} screen{{ end }}" 
-        align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+    <template id="template-screen-{{ $uniqueID }}">
         {{ $diagram }}
+    </template>
+    <pre class="mermaid{{ if $responsive }} screen{{ end }}" 
+        align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+        <code class="language-mermaid" id="mermaid-screen-{{ $uniqueID }}">
+            {{ $diagram }}
+        </code>
     </pre>
     {{ if $responsive }}
-        <pre class="mermaid mermaid-{{ $uniqueID }}{{ if $responsive }} mobile{{ end }}" 
-            align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+        <template id="template-mobile-{{ $uniqueID }}">
             {{ replace (replace $diagram "LR" "TB") "RL" "TB" }}
+        </template>
+        <pre class="mermaid{{ if $responsive }} mobile{{ end }}" 
+            align="{{ if $align }}{{ $align }}{{ else }}left{{ end }}">
+            <code class="language-mermaid" id="mermaid-mobile-{{ $uniqueID }}">
+                {{ replace (replace $diagram "LR" "TB") "RL" "TB" }}
+            </code>
         </pre>
     {{ end }}
     <button 
         class="btn-mermaid" 
-        onclick="renderMermaid('.mermaid-{{ $uniqueID }}')">
+        onclick="renderMermaid('{{ $uniqueID }}')">
         {{ partial "icon.html" (dict "ctx" $ "name" "flow-chart" ) }} Render diagram with mermaid-js
     </button>
     <figcaption>

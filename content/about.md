@@ -40,10 +40,11 @@ retail and logistics with technology.
 
 ## Why do I write about topics in which I am not an expert?
 
-This is best summed up in the (translated) words of [Dina Brandt](https://www.trotzigermillennial.de/), a German LinkedIn influencer:
+This is best summed up in the (translated) words of
+[Dina Brandt](https://www.trotzigermillennial.de/), which I stumbled upon on LinkedIn and
+immediately recognized myself in.
 
 {{< blockquote
 quote="\"New\" insights are often just the opposite of new. The more \"new\" you recognize, the more aware you become that \"new\" doesn't even exist in most cases. Then it quickly happens that you stop sharing these things with others - because they seem so unimportant and trivial.  But this is not quite true. On the one hand, there are people who have not yet had the aforementioned knowledge. On the other hand, even people who already know a lot still like to exchange information. The fear that one's own experiences or thoughts are not worth sharing is usually completely unfounded. ***Most of the time, it's only self-doubt that keeps you from doing so.***" 
 author="Diana Brandt" 
-title="\"Neue\" Erkenntnisse sind oft genau das Gegenteil von neu"
-link="https://www.linkedin.com/posts/dina-brandt-trotziger-millennial_neue-erkenntnisse-sind-oft-genau-das-gegenteil-activity-6851418669872910336-YUQm" >}}
+title="\"Neue\" Erkenntnisse sind oft genau das Gegenteil von neu" >}}

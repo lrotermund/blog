@@ -1,6 +1,8 @@
 <header class="intro-and-nav" role="banner">
   <div>
-    <div class="intro">
+    <div class="intro"{{ if eq .Section "posts" }}
+      itemprop="author" itemscope itemtype="https://schema.org/Person"
+      {{ end }}>
       <a
         class="logo"
         href="{{ .Site.BaseURL }}"
@@ -10,8 +12,15 @@
           src="{{ "images/logo.svg" | relURL }}" 
           alt="{{ .Site.Params.logoAlt | default "Logo" }}">
       </a>
-      <p class="library-desc">
-        {{ with .Site.Params.description }} {{ . | markdownify }} {{ end }}
+      <p class="library-desc"{{ if eq .Section "posts" }}
+        itemprop="url" href="{{ ref . "about" }}"
+        {{ end }}>
+        <span{{ if eq .Section "posts" }} itemprop="name"{{ end }}>
+          <strong><em>{{ with .Site.Params.author }} {{ . }} {{ end }}</em></strong>
+        </span><br />
+        <span>
+          {{ with .Site.Params.description }} {{ . | markdownify }} {{ end }}
+        </span>
       </p>
       <div class="app-header-social">
         {{ range .Site.Params.social }}
