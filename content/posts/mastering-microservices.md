@@ -13,7 +13,8 @@ draft: false
 Most developers today have a more or less good definition of microservices in their head. Some are
 developing within a microservice architectural environment and some are not. Long time I've
 developed monolithic web applications and internal services/
-{{< abbr "API" "Application Programming Interface" >}}'s without knowing of further software architectures.
+{{< abbr "APIs" "Application Programming Interface" >}} without knowing of further software
+architectures.
 
 Meanwhile, I've been working with microservices for some years. This year my employer
 [Tasko](https://www.tasko.de/) offered me to visit Heise's
@@ -434,7 +435,7 @@ contexts, where changes to interfaces can occur frequently. Thus, both ways in t
 not what we are looking for.
 
 Here we can't just choose the simplest and easiest-to-implement communication. We need rules and
-fixed boundaries for our {{< abbr "API" "Application Programming Interface" >}}'s and their
+fixed boundaries for our {{< abbr "APIs" "Application Programming Interface" >}} and their
 development. These rules and boundaries some in form of contracts. Through contracts, we can enforce
 message formats as well as there syntax.
 
@@ -939,7 +940,104 @@ decision-making in the end and be recorded accordingly. It is important that peo
 these non-functional requirements work them out specifically with the customer and thus understand
 the subtleties of the actual requirements.
 
-## Micro Frontends – Decoupling down to the user interface
+## Micro front-ends – Decoupling down to the user interface
+
+Within the world of {{< abbr "UIs" "user interface" >}}, modular, decoupled micro front-ends are a
+rarity. The common front-end, whether website or native application, is part of a monolith or
+monolithic itself. A big piece of software, spanning multiple sub-contexts of a bigger bounded
+context or several bounded contexts. And everything deployed within a single deployment.
+
+But why? Front-ends are as modularizable as back-ends.
+
+### What are micro front-ends, and why should you use them?
+
+Rightly, most (front-end) developers wonder at this point why they should use micro front-ends.
+Usually it is enough and sufficient for a project to write a React or Angular based
+{{< abbr "SPA" "single-page application" >}}. So why the supposed mental overhead of splitting it up
+into parts/ modules as well? Isn't it enough to split the back-end?
+
+In the picture of today's software architectures micro front-ends have simply not arrived yet and
+that is understandable.
+
+#### Today's software architectures
+
+To classify the micro front-ends, let's take a brief look at the software architectures commonly
+used today. After that, it will also be easier to understand where we can start in order to open up
+a sensible alternative to the existing frontend architectures with the micro frontends.
+
+##### The monolith
+
+The monolith is usually a so-called **deployment monolith**. It includes the entire back-end and
+front-end code of all bounded contexts, as well as the database. The name of the
+**deployment monolith** arises from the fact that the entire code of all bounded contexts is
+deployed when changes are made to a single context.
+
+Especially the front-end code is strongly interwoven with the back-end code. Often the front-end
+code is not {{< abbr "API" "Application Programming Interface" >}}-supported with data, but comes
+mainly request-driven via template engines that get the necessary data provided and assemble the
+front-end based on it.
+
+Of course, this is only one possible manifestation of front-ends in monoliths. Of course, there are
+also monoliths that provide front-end code, which in turn communicates with the
+{{< abbr "APIs" "Application Programming Interface" >}} of the application to have clear interfaces
+between the back-end and the front-end. Unfortunately, the latter is actually the exception rather
+than the rule.
+
+##### Front-end & back-end
+
+A still monolithic software architecture is the separation of front- and back-end. Both are
+monolithic despite separation at the level of the code base and deployment.
+
+In the back-end we find a code that, in the best case distributed over several modules, provides
+the business logic of the bounded contexts via
+{{< abbr "APIs" "Application Programming Interface" >}}. The back-end itself does not provide any
+front-end code and does not assemble it.
+
+Also in the front-end we find, in the best case distributed over several modules, the UI
+representation of our bounded contexts. The code is detached from the back-end and is developed and
+deployed separately.
+
+##### Microservices
+
+Lastly, we have the combination of a classic monolithic front-end that communicates via an
+aggregation layer/ gateway with a distributed microservice back-end.
+
+The architecture of the front-end is built the same as in the previous style of
+[front-end & back-end]({{< relref "#front-end--back-end" >}}). There is a monolithic code base,
+which in the best case represents all bounded contexts in a modularized way.
+
+In the back-end, on the other hand, there is a clean division of the bounded contexts into
+independently deployable services. Each service knows its own domain models, has its own interfaces
+and its own data management. Everything is accessible and protected behind an aggregation layer/
+gateway.
+
+##### What all have in common
+
+As you can see, micro front-ends are not yet of any significant importance in current software
+architectures. All of today's software architectures usually have a monolithic front-end, which
+modularizes the bounded contexts sometimes more and sometimes less well, if there is a separation
+at all.
+
+That it can be done better is often clear to many developers, but the hurdle is high for many teams
+to deal with new things in general, especially when it comes to front-ends.
+
+#### Definition of a micro front-end
+
+#### e-commerce example for a micro front-end
+
+#### Independent systems due to micro front-ends
+
+#### Advantages of micro front-ends
+
+#### Disadvantages of micro front-ends
+
+### How to use micro front-ends
+
+### Tips and tricks for using micro front-ends
+
+### Micro front-ends and native apps
+
+### Practical micro front-end examples
 
 ## Tackling cross-cutting concerns within your software architecture
 
