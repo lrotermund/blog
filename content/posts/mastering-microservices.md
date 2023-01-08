@@ -952,7 +952,7 @@ But why? Front-ends are as modularizable as back-ends.
 ### What are micro front-ends, and why should you use them?
 
 Rightly, most (front-end) developers wonder at this point why they should use micro front-ends.
-Usually it is enough and sufficient for a project to write a React or Angular based
+Usually it is enough and sufficient for a project to write a React, Angular or Vue based
 {{< abbr "SPA" "single-page application" >}}. So why the supposed mental overhead of splitting it up
 into parts/ modules as well? Isn't it enough to split the back-end?
 
@@ -973,8 +973,8 @@ front-end code of all bounded contexts, as well as the database. The name of the
 deployed when changes are made to a single context.
 
 Especially the front-end code is strongly interwoven with the back-end code. Often the front-end
-code is not {{< abbr "API" "Application Programming Interface" >}}-supported with data, but comes
-mainly request-driven via template engines that get the necessary data provided and assemble the
+is not {{< abbr "API" "Application Programming Interface" >}}-based, but comes mainly
+request-driven via template engines that get the necessary data provided and assemble the
 front-end based on it.
 
 Of course, this is only one possible manifestation of front-ends in monoliths. Of course, there are
@@ -1023,7 +1023,83 @@ to deal with new things in general, especially when it comes to front-ends.
 
 #### Definition of a micro front-end
 
+Micro front-ends pursue the goal of separating and modularizing bounded contexts in the front-end.
+The code is delivered in self-contained parts and is not mixed in a monolithic code base.
+
+They integrate with the holistic goal of separating domains into specialized teams, forming a
+completion of the chain in the UI.
+
+Each feature and requirement of a bounded context is owned by a single specialized team from
+definition, through integration in the microservice, to the micro front-end. This includes their
+testing, development and **individual deployment**.
+
 #### e-commerce example for a micro front-end
+
+To illustrate this, we will now look at an example from the field of e-commerce, precisely because
+this is one of the most tangible and everyday areas in which micro front-ends can generate
+significant added value above a certain company size and revenue level.
+
+To make the example a little more precise and mean, let's look at the ownership within the article
+detail page. Micro front-ends are not only about responsibilities for certain pages, but in
+particular for certain areas and sections.
+
+##### Team Checkout
+
+Checkout is a not insignificant bounded context of the domain in which we operate. Without a good
+customer experience on the way to the order, the checkout may well be abandoned.
+
+To provide the best possible {{< abbr "UX" "User Experience" >}} for customers during checkout,
+Team Checkout owns the following features on the article detail page:
+
+- The buy button, as it is the first part of the checkout process
+- The basket, as it is the gateway to the checkout process
+
+##### Team Inspire
+
+Team Inspire ensures that your shopping cart is as full as possible and that you have an all-round
+good feeling after shopping. A bounded context that is probably underestimated but not to be
+neglected.
+
+Whether it's the matching pants to the jacket, the
+{{< abbr "SATA" "Serial Advanced Technology Attachment" >}} cable to the
+{{< abbr "SSD" "Solid State Drive" >}}, the luggage strap to the brand-new suitcase, or the dip for
+the dry pizza crust. The matching additional article in the delivery makes the order feel complete
+for the customer.
+
+For this reason, the team owns the following features:
+
+- The related articles, as here the customer is shown what all fits to this product and what else
+he should think about
+- The customers also bought articles, because here the customer is shown that...
+  - other customers have already purchased this item, and...
+  - these other customers bought other articles that went well with the current article
+
+##### Team Decide
+
+An article photo that leaves no room for doubt and shows the article from its best side, an article
+description that removes the last doubt from the undecided customer and a list with hard technical
+facts for the {{< abbr "TL;DR" "Too long; didn't read" >}} faction, all this is delivered by Team
+Decide.
+
+Team Decide is the owner of the article detail page. It provides all information of its bounded
+context and coordinates with the other teams which features can and should be embedded.
+
+Besides the whole page, the team owns in particular the features:
+
+- The article image(s)
+- The article description
+- The technical details
+- The articles variants
+
+##### And so on...
+
+Probably some more teams like **Customer Satisfaction**, **Customer Communication** or **Legal**
+could be pointed out, all of which are responsible for bounding contexts that come into play here,
+but the goal and scope that micro front-ends can have should have become clearer.
+
+The most important thing is that teams emerge around bounded contexts, not dumb entities. A team
+always accompanies the entire process of its bounded context and is eventually responsible for its
+success.
 
 #### Independent systems due to micro front-ends
 
