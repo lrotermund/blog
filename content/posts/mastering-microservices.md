@@ -1095,7 +1095,7 @@ Besides the whole page, the team owns in particular the features:
 
 Probably some more teams like **Customer Satisfaction**, **Customer Communication** or **Legal**
 could be pointed out, all of which are responsible for bounding contexts that come into play here,
-but the goal and scope that micro front-ends can have should have become clearer.
+but the goal and scope that micro front-ends can have, should have become clearer.
 
 The most important thing is that teams emerge around bounded contexts, not dumb entities. A team
 always accompanies the entire process of its bounded context and is eventually responsible for its
@@ -1103,11 +1103,186 @@ success.
 
 #### Independent systems due to micro front-ends
 
+We have now learned that teams are being formed around bounded contexts. But how are these teams
+structured? Do we now split up our existing software engineering department and raise digital walls
+between our colleagues?
+
+##### Cross-functional teams
+
+No, of course we won't do that. These teams do not even consist of software engineers at their
+core. It's about a wide range of skills, covering all the essential areas from software
+development, data analysis and evaluation, UI and UX specialists, product owner, to DevOps – in short, it's about cross-functional teams.
+
+As I write this, I can well imagine a large part of the readers now wondering what kind of
+organizational overhead this will create in the end, and that it will never work in this manner.
+And you are not completely wrong. Of course, this is not a form of organization for a startup with
+four employees that is barely able to pay these few salaries and prays that the next release will
+not bring any major bugs that threaten the loss of customers.
+
+This form of organization is aimed at companies with enough staff and their aim is to get the
+maximum out of a bounded context, what ultimately leads us to another related goal.
+
+##### End-To-End responsibility
+
+Another effect, as well as an initial goal of these cross-functional teams, is the
+{{< abbr "E2E" "End-To-End" >}} responsibility for their bounded context. By concentrating
+knowledge and building competence around a bounded context, domain-related questions and processes
+can be quickly and easily clarified and implemented.
+
+If these responsibilities and affiliations do not exist, no one is responsible in these matters, no
+one who takes care of the process or the correct implementation of specialties. The attention then
+lies as often on the whole and not in detail.
+
+##### Enabling & empowerment with self-contained systems
+
+The best way to succeed is to empower and liberate your employees and teams. Work in constricted,
+strict and inflexible environments leads to poor results. Teams evolve into technology and decision
+followers instead of exploring and driving them freely.
+
+As the competence and responsibility is concentrated in the hands of the cross-functional teams,
+they can act independently. From planning to implementation to release, at no point does the team
+have to wait for decisions, approvals, or outputs from other teams.
+
 #### Advantages of micro front-ends
+
+By decoupling the teams in bounded-context centered, cross-functional teams, a number of advantages
+arise for the company, as well as for the employees.
+
+1. better time to market
+
+Empowered, small teams that are based on a bounded context, self-contained, decoupled and free from
+other teams, implement the processes and features of a domain significantly faster than teams that
+need to constantly switch between multiple domains/ bounded contexts.
+
+2. efficiency
+
+Due to the low team size, there are short, direct communication channels with a low need for
+coordination and clear responsibilities. A team with a size of 6-8 people communicates and works
+significantly more effectively on jointly defined goals than a team of 24-30 people.
+
+3. specialized teams
+
+Bundling competencies and goals in cross-functional, specialized teams reduces the coordination
+effort enormously. Only the avoidance of dozens of coordination meetings between teams such as
+development, specialist department and IT operation saves project and development time.
 
 #### Disadvantages of micro front-ends
 
+Of course, micro front-ends not only bring advantages. Let's first take a look at the most obvious
+disadvantage.
+
+1. complex & expensive
+
+Not every company can afford to build cross-functional teams exclusively around bounded contexts. As
+a domain is not only composed of a single bounded context, a not inconsiderable part of the
+personnel must be used to form these teams. Small companies can hardly afford the advantages,
+including cross-functional teams.
+
+2. technology anarchy (antipattern)
+
+The freedoms that the teams have for the development of their micro front-ends can quickly lead to
+technological anarchy where the first team uses Vue 3, the next team build its frontend with jQuery
+and the last team's micro front-end is based on React.
+
+Should it ever come to that point, which would not be a problem for the functionality, but just for
+reasons of interchangeability of employees, the teams should agree on a technology-stack here and,
+if necessary, provide a starter kit for a micro front-end.
+
 ### How to use micro front-ends
+
+Enough with the pros and cons, let's look at what is important for the integration and
+implementation of micro front-ends. We start with the responsibilities around integration.
+
+#### Page ownership
+
+As already broached, each page of our application has an owner. This ownership is assigned to teams
+within the domain along the user journey. Let's go back to our e-commerce application for an
+example.
+
+##### Team Inspire
+
+The potential buyer searches in the search engine of his choice for a garment from which he snapped
+in a conversation that is currently sold out everywhere.
+
+Among the first search results, he unconsciously clicks on one of the ads, as he finds the image
+which is also displayed there unusually appealing. The ad directs him to a hip website, the content
+of which is only about the garment he was just looking for.
+
+Another potential customer comes to our e-commerce application and is inspired by the trends and
+ads on the home page. From time to time, the user leaves the home page in order to find out about
+the offers of a certain category of clothing.
+
+Team Inspire's mission is to attract visitors, inspire and impress them, and ultimately turn them
+into buyers. Their responsibilities include, but are not limited to:
+
+- landing pages
+- home page
+- listing pages
+- wishlist page
+
+##### Team Decide
+
+There it is finally! Just the garment that the inspired visitor still lacks for the colder, windy
+autumn days!
+
+Arriving at the detail page of the article, the visitor now finds beautifully staged model photos
+in a golden yellow autumn forest with an orange sun that disappears in the background between the
+trees.
+
+The visitor dreamily imagines him or herself walking through the autumnal city park in the new
+garment and does not even need the charmingly written description to make a decision. The article
+goes into the basket!
+
+Getting inspired visitors to make a decision is very difficult in today's world full of abundance
+and offers on every corner. That is the sole task of Team Decide. It requires an enormous effort to
+keep neat, convincing and in the context of the time suitable images and texts for all products to
+simplify the way to the decision for every undecided person in the end.
+
+So, the only responsibility of the team is the site:
+
+- detail
+
+##### Team Checkout
+
+Clearly structured and without distraction, the journey of the convinced visitor leads via the
+basket to the final checkout.
+
+The payment method of previous orders is already selected, great! Oh, but what is this? The visitor
+stumbles upon an unmissable banner in the middle of the listing of all items in his basket. If he
+or she orders in the next few minutes, he or she will receive a loyalty discount of 20% and an
+additional autumn surprise?
+
+Without hesitating any longer, the order is placed! On the confirmation page the website thanks the
+buyer for the purchase and offers another voucher for the next visit in exchange for a short
+feedback on today's purchase.
+
+To pick up the visitor, not to dissuade him from buying, but to encourage him if possible, if
+necessary under slight time pressure, and to let him go with a good feeling after the purchase, so
+that he turns into a repeat buyer, these are the responsibilities of Team Checkout.
+
+It is precisely the conversion of buyers into potential repeat buyers that is the focus of the 
+overwhelming majority of orders. This is due to the high customer acquisition costs through
+advertisements. Usually, a customer only becomes profitable once he or she makes a repeat purchase.
+
+The following areas of responsibility of Team Checkout can be derived from this:
+
+- basket page
+- payment page
+- confirmation page
+
+#### Fragment/ feature responsibilities
+
+#### Techniques & challenges for micro front-end integration
+
+##### Micro front-end composition
+
+###### Composition techniques
+
+###### Server-side composition
+
+###### Client-side composition
+
+##### Routing & page transitions
 
 ### Tips and tricks for using micro front-ends
 
