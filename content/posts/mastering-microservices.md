@@ -1341,6 +1341,14 @@ projects {{< abbr "NFRs" "non-functional requirement" >}}.
 
 ###### Server-side composition
 
+As mentioned in the technical overview, we are primarily looking at
+{{< abbr "SSI" "Server Side Includes" >}} and {{< abbr "ESI" "Edge Side Includes" >}} on the server
+side. We will start with {{< abbr "SSI" "Server Side Includes" >}}, since it is based on a minimal
+setup.
+
+Below is a short sequence diagram that shows a request against a product detail page that is owned
+by Team Decide and has an {{< abbr "SSI" "Server Side Includes" >}} from Team Checkout.
+
 {{< 
     mermaid 
     caption="mermaid sequence diagram of an HTTP REST request from a client to a nginx server composing a response with SSIs."
@@ -1352,25 +1360,55 @@ sequenceDiagram
     participant decide as Team Decide
     participant checkout as Team Checkout
 
+    %% Step 1
     client ->> nginx: GET /cool-laptop-case
     activate nginx
 
+    %% Step 2
     nginx ->> decide: GET /cool-laptop-case
     activate decide
+    %% Step 3
     decide ->> nginx: Product detail response, including SSIs
     deactivate decide
 
+    %% Step 4
     nginx --> nginx: Parse SSIs
     Note right of nginx: Found SSI for "/checkout/add-to-basket"
 
+    %% Step 5
     nginx ->> checkout: GET /checkout/add-to-basket
     activate checkout
+    %% Step 6
     checkout ->> nginx: "add to basket" micro frontend response
     deactivate checkout
 
+    %% Step 7
     nginx ->> client: composed front-end
     deactivate nginx
 {{< /mermaid >}}
+
+The request flow for an {{< abbr "SSI" "Server Side Includes" >}} composed micro front-end is
+relatively straightforward. The client's request first goes to nginx, which acts as an orchestrator
+and ensures that the requests are forwarded to the correct endpoints of the responsible teams.
+
+In **step 4**, nginx determines the {{< abbr "SSIs" "Server Side Includes" >}} provided by Team
+Decide. These are included in the page resource as follows.
+
+```html
+<h1>Cool laptop case</h1>
+<img src="/cool-laptop-case.webp"
+    alt="Rustic chestnut colored laptop case made of sturdy faux leather."/>
+<!--#include virtual="/checkout/add-to-basket" -->
+```
+
+As in the example, nginx would now recognize "/checkout/add-to-basket" as an
+{{< abbr "SSI" "Server Side Includes" >}} and load it from Team Checkout to replace it within the
+response document.
+
+Now follows the sequence diagram that again shows a request against the product detail page, but
+this time against a Varnish proxy instead of an nginx. The page responsibility is still with Team
+Decide. Instead of {{< abbr "SSIs" "Server Side Includes" >}}, the team integrates
+{{< abbr "ESIs" "Edge Side Includes" >}} that can be composed by Varnish.
 
 {{< 
     mermaid 
@@ -1383,33 +1421,60 @@ sequenceDiagram
     participant decide as Team Decide
     participant checkout as Team Checkout
 
+    %% Step 1
     client ->> varnish: GET /slim-briefcase
     activate varnish
 
     opt No cached object for "/slim-briefcase"
+        %% Step 2
         varnish ->> decide: GET /slim-briefcase
         activate decide
+        %% Step 3
         decide ->> varnish: Product detail response, including ESIs
         deactivate decide
 
+        %% Step 4
         varnish --> varnish: Add page object to cache
     end
 
+    %% Step 5
     varnish --> varnish: Parse ESI objects
     Note right of varnish: Found object for "/checkout/add-to-basket"
 
     opt No cached object for "/checkout/add-to-basket"
+        %% Step 6
         varnish ->> checkout: GET /checkout/add-to-basket
         activate checkout
+        %% Step 7
         checkout ->> varnish: "add to basket" micro frontend response
         deactivate checkout
 
+        %% Step 8
         varnish --> varnish: Add ESI object to cache
     end
 
+    %% Step 9
     varnish ->> client: composed front-end
     deactivate varnish
 {{< /mermaid >}}
+
+The {{< abbr "ESI" "Edge Side Includes" >}} composition flow is a bit more extensive than
+{{< abbr "SSI" "Server Side Includes" >}} composition and essentially brings the advantage of being
+able to cache documents/ objects, which leads to a huge improvement in response time.
+
+If a request arrives at the Varnish proxy at **step 1**, the proxy first checks if it already has a
+cached entry for this request or if it has to forward the request.
+
+In **step 5**, Varnish checks if there are {{< abbr "ESIs" "Edge Side Includes" >}} in the cached or
+retrieved document. If so, any include found is loaded from the cache, or from the providing team.
+The {{< abbr "ESIs" "Edge Side Includes" >}} are included in the page resource as follows.
+
+```html
+<h1>Slim briefcase</h1>
+<img src="/slim-briefcase.webp"
+    alt="Extra slim briefcase made of a fine black leather with integrated combination lock and a sturdy handle made of steel and leather."/>
+<ESI:include src="/checkout/add-to-basket"/>
+```
 
 ###### Client-side composition
 
