@@ -1405,6 +1405,10 @@ As in the example, nginx would now recognize "/checkout/add-to-basket" as an
 {{< abbr "SSI" "Server Side Includes" >}} and load it from Team Checkout to replace it within the
 response document.
 
+Learn more about server-side composition of micro front-ends with
+{{< abbr "SSIs" "Server Side Includes" >}} in nginx in the corresponding module documentation:
+[ngx_http_ssi_module Dokumentation](https://nginx.org/en/docs/http/ngx_http_ssi_module.html)
+
 Now follows the sequence diagram that again shows a request against the product detail page, but
 this time against a Varnish proxy instead of an nginx. The page responsibility is still with Team
 Decide. Instead of {{< abbr "SSIs" "Server Side Includes" >}}, the team integrates
@@ -1476,7 +1480,13 @@ The {{< abbr "ESIs" "Edge Side Includes" >}} are included in the page resource a
 <ESI:include src="/checkout/add-to-basket"/>
 ```
 
+Learn more about server-side composition of micro front-ends with
+{{< abbr "ESIs" "Edge Side Includes" >}} in Varnish in the corresponding user guide:
+[Varnish cache ESI user guide](https://varnish-cache.org/docs/7.2/users-guide/esi.html)
+
 ###### Client-side composition
+
+
 
 ##### Routing & page transitions
 
