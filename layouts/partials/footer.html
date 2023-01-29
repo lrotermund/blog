@@ -41,7 +41,10 @@
         pre.classList.add("text-center");
       }
 
-      mermaid.initialize({ startOnLoad: false });
+      mermaid.initialize({
+        startOnLoad: false,
+        sequence: { showSequenceNumbers: true }
+      });
     </script>
   {{ end }}
 </footer>

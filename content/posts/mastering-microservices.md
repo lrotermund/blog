@@ -993,9 +993,9 @@ the business logic of the bounded contexts via
 {{< abbr "APIs" "Application Programming Interface" >}}. The back-end itself does not provide any
 front-end code and does not assemble it.
 
-Also in the front-end we find, in the best case distributed over several modules, the UI
-representation of our bounded contexts. The code is detached from the back-end and is developed and
-deployed separately.
+Also in the front-end we find, in the best case distributed over several modules, the
+{{< abbr "UI" "user interface" >}} representation of our bounded contexts. The code is detached
+from the back-end and is developed and deployed separately.
 
 ##### Microservices
 
@@ -1027,7 +1027,7 @@ Micro front-ends pursue the goal of separating and modularizing bounded contexts
 The code is delivered in self-contained parts and is not mixed in a monolithic code base.
 
 They integrate with the holistic goal of separating domains into specialized teams, forming a
-completion of the chain in the UI.
+completion of the chain in the {{< abbr "UI" "user interface" >}}.
 
 Each feature and requirement of a bounded context is owned by a single specialized team from
 definition, through integration in the microservice, to the micro front-end. This includes their
@@ -1111,7 +1111,9 @@ between our colleagues?
 
 No, of course we won't do that. These teams do not even consist of software engineers at their
 core. It's about a wide range of skills, covering all the essential areas from software
-development, data analysis and evaluation, UI and UX specialists, product owner, to DevOps – in short, it's about cross-functional teams.
+development, data analysis and evaluation, {{< abbr "UI" "user interface" >}} and
+{{< abbr "UX" "User Experience" >}} specialists, product owner, to DevOps – in short, it's about
+cross-functional teams.
 
 As I write this, I can well imagine a large part of the readers now wondering what kind of
 organizational overhead this will create in the end, and that it will never work in this manner.
@@ -1270,15 +1272,144 @@ The following areas of responsibility of Team Checkout can be derived from this:
 - payment page
 - confirmation page
 
-#### Fragment/ feature responsibilities
+##### Fragment/ feature responsibilities
+
+On this fictional user journey, visitors encounter a series of {{< abbr "UI" "user interface" >}}
+elements that guide them step-by-step, all the way to the intended purchase. 
+
+Not all of these elements on this journey belong to the respective site owners. The teams provide
+features and fragments to each other, which then fall under a different responsibility.
+
+Which elements are placed on the page and which are not, as well as their further maintenance, are
+organized by the team that owns the page.
 
 #### Techniques & challenges for micro front-end integration
 
+When you think about the implementation of micro front-ends, a lot of questions probably pop into
+your head. As the lion's share of websites has not been implemented based on micro front-ends, the
+fewest readers are probably familiar with the technical details.
+
+I'm no different, I haven't built a website based on micro front-ends yet either. Nevertheless, I
+want to take you with me and show you what I learned in the talk.
+
+##### Technique overview
+
+Technologically, there are actually many ways to realize micro front-ends. And some of them you
+probably won't expect. Let's look at the most obvious one, iFrames.
+
+iFrames are {{< abbr "HTML" "Hypertext Markup Language" >}} elements that can be used since
+{{< abbr "HTML" "Hypertext Markup Language" >}} version 4.0 to embed other web documents into a
+{{< abbr "HTML" "Hypertext Markup Language" >}} document. While iFrames are now somewhat out of
+fashion, they were used productively even until 2019 in Spotify's music player to implement micro
+front-ends.
+
+Also, out of fashion since the introduction of the fetch
+{{< abbr "API" "Application Programming Interface" >}}, but yet functional is the way over
+{{< abbr "AJAX" "Asynchronous JavaScript and XML" >}}.
+
+Another, more modern and stable client-side way are the web components. Web components are custom
+web elements that can be defined and used just like any other
+{{< abbr "HTML" "Hypertext Markup Language" >}} element. These custom elements are supported by any
+technology that can handle the standard elements. All elements within a custom web element are
+encapsulated and do not collide with the elements in which the element is embedded.
+
+There is more information on the page of the standard of the web components under
+[webcomponents.org](https://www.webcomponents.org/).
+
+On the back-end side, we also have different technologies for composing micro front-ends. Both
+technologies are no longer the latest, yet modern, powerful systems that compose their front-ends
+on the server cannot do without them.
+
+So, on the one hand, we have {{< abbr "SSI" "Server Side Includes" >}}, which focuses on script
+commands that are executed by the responsible web server to compose the micro front-end.
+
+On the other hand we have {{< abbr "ESI" "Edge Side Includes" >}}, which basically has the same
+functions as {{< abbr "SSI" "Server Side Includes" >}}, but extends it with an alternative include
+and error handling. Furthermore, {{< abbr "ESI" "Edge Side Includes" >}}, unlike
+{{< abbr "SSI" "Server Side Includes" >}}, focuses on caching.
+
+There are a few more server-side micro front-end technologies, but these are usually very limited
+in their applicability as they focus on single languages like
+{{< abbr "JS" "JavaScript" >}}. For this reason I will not deal with them further here.
+
 ##### Micro front-end composition
 
-###### Composition techniques
+As is so often the case in IT and software architecture, many roads lead to Rome. Which direction a
+team chooses and which of the paths is better and which is worse is something I do not want to and
+cannot determine; in the end, only the team can do that after careful consideration of the
+projects {{< abbr "NFRs" "non-functional requirement" >}}. 
 
 ###### Server-side composition
+
+{{< 
+    mermaid 
+    caption="mermaid sequence diagram of an HTTP REST request from a client to a nginx server composing a response with SSIs."
+    responsive="false"
+>}}
+sequenceDiagram
+    participant client
+    participant nginx
+    participant decide as Team Decide
+    participant checkout as Team Checkout
+
+    client ->> nginx: GET /cool-laptop-case
+    activate nginx
+
+    nginx ->> decide: GET /cool-laptop-case
+    activate decide
+    decide ->> nginx: Product detail response, including SSIs
+    deactivate decide
+
+    nginx --> nginx: Parse SSIs
+    Note right of nginx: Found SSI for "/checkout/add-to-basket"
+
+    nginx ->> checkout: GET /checkout/add-to-basket
+    activate checkout
+    checkout ->> nginx: "add to basket" micro frontend response
+    deactivate checkout
+
+    nginx ->> client: composed front-end
+    deactivate nginx
+{{< /mermaid >}}
+
+{{< 
+    mermaid 
+    caption="mermaid sequence diagram of an HTTP REST request from a client to a varnish proxy server composing a response with ESIs."
+    responsive="false"
+>}}
+sequenceDiagram
+    participant client
+    participant varnish
+    participant decide as Team Decide
+    participant checkout as Team Checkout
+
+    client ->> varnish: GET /slim-briefcase
+    activate varnish
+
+    opt No cached object for "/slim-briefcase"
+        varnish ->> decide: GET /slim-briefcase
+        activate decide
+        decide ->> varnish: Product detail response, including ESIs
+        deactivate decide
+
+        varnish --> varnish: Add page object to cache
+    end
+
+    varnish --> varnish: Parse ESI objects
+    Note right of varnish: Found object for "/checkout/add-to-basket"
+
+    opt No cached object for "/checkout/add-to-basket"
+        varnish ->> checkout: GET /checkout/add-to-basket
+        activate checkout
+        checkout ->> varnish: "add to basket" micro frontend response
+        deactivate checkout
+
+        varnish --> varnish: Add ESI object to cache
+    end
+
+    varnish ->> client: composed front-end
+    deactivate varnish
+{{< /mermaid >}}
 
 ###### Client-side composition
 
