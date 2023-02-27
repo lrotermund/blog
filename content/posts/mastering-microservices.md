@@ -1397,7 +1397,7 @@ Decide. These are included in the page resource as follows.
 ```html
 <h1>Cool laptop case</h1>
 <img src="/cool-laptop-case.webp"
-    alt="Rustic chestnut colored laptop case made of sturdy faux leather."/>
+    alt="Rustic chestnut colored laptop case made of sturdy faux leather." />
 <!--#include virtual="/checkout/add-to-basket" -->
 ```
 
@@ -1407,7 +1407,7 @@ response document.
 
 Learn more about server-side composition of micro front-ends with
 {{< abbr "SSIs" "Server Side Includes" >}} in nginx in the corresponding module documentation:
-[ngx_http_ssi_module Dokumentation](https://nginx.org/en/docs/http/ngx_http_ssi_module.html)
+[ngx_http_ssi_module](https://nginx.org/en/docs/http/ngx_http_ssi_module.html)
 
 Now follows the sequence diagram that again shows a request against the product detail page, but
 this time against a Varnish proxy instead of an nginx. The page responsibility is still with Team
@@ -1476,7 +1476,7 @@ The {{< abbr "ESIs" "Edge Side Includes" >}} are included in the page resource a
 ```html
 <h1>Slim briefcase</h1>
 <img src="/slim-briefcase.webp"
-    alt="Extra slim briefcase made of a fine black leather with integrated combination lock and a sturdy handle made of steel and leather."/>
+    alt="Extra slim briefcase made of a fine black leather with integrated combination lock and a sturdy handle made of steel and leather." />
 <ESI:include src="/checkout/add-to-basket"/>
 ```
 
@@ -1486,7 +1486,140 @@ Learn more about server-side composition of micro front-ends with
 
 ###### Client-side composition
 
+On the client side, just as with the back-end, I want to commit to two implementation paths,
+because I don't expect iFrames and {{< abbr "AJAX" "Asynchronous JavaScript and XML" >}} to be
+desirable ways for you to implement front-ends.
 
+First, let's return to the custom elements/ web components from the technical overview and see how
+we can include our own micro front-end component.
+
+Custom elements consist of two parts:
+
+```html
+<h1>Lightweight Hiking Backpack - Quick feet, black</h1>
+<img src="/img/lightweight-hiking-backpack_quick-feet-black.webp" 
+    alt="With this lightweight & ergonomic hiking backpack, you won't notice what you've been carrying all day when you reach your hiking destination." />
+
+<checkout-add-to-basket />
+
+<script src="/components/checkout/add-to-basket.js" />
+```
+
+What happens inside the micro frontend web component defines an associated
+class that extends the `HTMLElement`.
+
+```javascript
+class CheckoutAddToBasket extends HTMLElement {
+  connectedCallback() {
+      this.#render();
+      this.firstChild.addEventListener('click', this.#addToBasket);
+  }
+  
+  #addToBasket() {
+    // Send post request
+  }
+
+  #render() {
+    this.innerHTML = `<button type="button">add to basket</button>`;
+  }
+}
+    
+customElements.define(
+    'checkout-add-to-basket',
+    CheckoutAddToBasket
+);
+```
+
+So custom elements are basically exactly what you would expect, custom
+{{< abbr "HTML" "Hypertext Markup Language" >}} elements whose functionality
+can be defined by yourself. Not only is this a pretty cool and handy tool, custom elements as such
+are also part of the {{< abbr "HTML" "Hypertext Markup Language" >}} standard. We can make good use
+of this feature with micro frontends. See
+[HTML spec 4.13](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements) for
+more information.
+
+Custom elements are used, for example, by Angular as the basis for the Angular elements.
+
+{{< blockquote
+quote="Angular elements are Angular components packaged as custom elements (also called Web Components), a web standard for defining new HTML elements in a framework-agnostic way." 
+author="Igor Minar, Matias Niemelä" 
+title="Angular elements overview (2023-01-27)"
+link="https://angular.io/guide/elements" >}}
+
+Based on the custom elements we can now also work with the shadow
+{{< abbr "DOM" "Document Object Model" >}}, which brings more complexity but also more flexibility.
+
+The procedure here is similar to that for custom elements. The main difference is that we define
+our element as a so-called shadow root, which can be open or closed for JavaScript access from
+outside. We can now attach any other elements to this shadow root.
+
+But what is the advantage here compared to a custom element? Quite simply, encapsulation. The
+shadow {{< abbr "DOM" "Document Object Model" >}} is its own decoupled
+{{< abbr "DOM" "Document Object Model" >}} where markup, styling and code does not clash with other
+code.
+
+```html
+<style>
+  button {
+    background: #000;
+    color: #fff;
+  }
+</style>
+
+<h1>Lightweight Hiking Backpack - Quick feet, black</h1>
+<img src="/img/lightweight-hiking-backpack_quick-feet-black.webp" 
+    alt="With this lightweight & ergonomic hiking backpack, you won't notice what you've been carrying all day when you reach your hiking destination." />
+
+<button>add to favorites</button>
+<checkout-add-to-basket />
+
+<script src="/components/checkout/add-to-basket.js" />
+```
+
+```javascript
+class CheckoutAddToBasket extends HTMLElement {
+  constructor() {
+    super();
+
+    const shadowRoot = this.attachShadow({ mode: "open" });
+    
+    const btn = document.createElement("button");
+    btn.innerHTML = "add to basket";
+    btn.onclick = this.#addToBasket;
+
+    const style = document.createElement("style");
+    style.textContent = `
+        button {
+            background: red;
+            color: #fff;
+        }
+    `;
+    
+    shadowRoot.appendChild(btn);
+    shadowRoot.appendChild(style);
+  }
+
+  #addToBasket() {
+    // Send post request
+  }
+}
+    
+customElements.define(
+    'checkout-add-to-basket',
+    CheckoutAddToBasket
+);
+```
+
+Although the page defines styles for a button and the custom element also integrates a style node
+with its own generic button styling, there is no conflict. The button of the page has a black
+background with a white text color and the custom element has a red background and also a white
+font color.
+
+The disadvantage of the shadow {{< abbr "DOM" "Document Object Model" >}} is that, unlike custom
+elements, it is not yet part of the {{< abbr "HTML" "Hypertext Markup Language" >}} standard and is
+still in the [standardization process](https://github.com/whatwg/html/pull/5465)
+(as of 2023-01-27). However, information about the shadow tree can already be found in
+[DOM Spec 4.2.2](https://dom.spec.whatwg.org/#shadow-trees).
 
 ##### Routing & page transitions
 
