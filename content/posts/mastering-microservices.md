@@ -1613,7 +1613,7 @@ customElements.define(
 Although the page defines styles for a button and the custom element also integrates a style node
 with its own generic button styling, there is no conflict. The button of the page has a black
 background with a white text color and the custom element has a red background and also a white
-font color.
+text color.
 
 The disadvantage of the shadow {{< abbr "DOM" "Document Object Model" >}} is that, unlike custom
 elements, it is not yet part of the {{< abbr "HTML" "Hypertext Markup Language" >}} standard and is
@@ -1623,7 +1623,107 @@ still in the [standardization process](https://github.com/whatwg/html/pull/5465)
 
 ##### Routing & page transitions
 
+For routing between micro front-ends we can easily use established solutions like classic links
+(hard links) to load other resources, which in turn can also play out micro front-ends.
+
+Another way are soft links, which are processed within the client by an application shell. This
+technique is often used in the implementation of {{< abbr "SPAs" "Single-page application" >}}.
+
+A common advantage of using classic links is that too tight coupling of components can be almost
+eliminated by design, at the cost of a request against a server, of course. It is important that
+the teams agree among themselves on a link structure that is always maintained and that changes to
+this structure are communicated to all teams at an early stage.
+
+Using an application shell like [single-SPA](https://single-spa.js.org/), in turn, leads to a
+better {{< abbr "UX" "User Experience" >}} by using a performant client-internal routing. An
+application shell is able to start and stop connected {{< abbr "SPAs" "Single-page application" >}}
+and usually even lazy load them from the server when they are needed.
+
 ### Tips and tricks for using micro front-ends
+
+#### Communication patterns
+
+There are primarily three communication channels among the micro front-ends: URLs, attributes and
+events.
+
+As mentioned before, {{< abbr "URLs" "Uniform Resource Locator" >}} are just static links to call
+other resources, in a very classical way.
+
+```html
+<p>
+    Take a look at our <a href="/suitcases">wide range of suitcases</a> and find your perfect
+    travel companion for every situation.
+</p>
+```
+
+Attributes, on the other hand, are the interface between the embedding page and the micro
+front-end. Attributes can be used to share values known on the page, such as the
+{{< abbr "SKU" "Stock keeping unit" >}}, with a micro front-end. They can be defined either by the
+team of the page or by the team of the micro front-end.
+
+```html
+<h2>Design your personal suitcase, according to your preferences</h2>
+
+<inpire-suitcase-designer sku="XYZ42USER"/>
+```
+
+Last but not least, we have the events. We can make use of events in two ways, either by
+defining our own custom events or by using the Broadcast Channel API.
+
+The custom event interface is captured in
+[DOM Spec 2.4](https://dom.spec.whatwg.org/#interface-customevent) and comes with a wide browser
+support.
+
+Although the Broadcast Channel API is part of the HTML Living Standard, found in
+[HTML Spec 9.5](https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts)
+, it is not yet fully supported by all browsers, but by the most important ones.
+
+A micro front-end within the basket is interested in all `addedToFavorites` events in order to
+display them to the user later or on revisit.
+
+```js
+obj.addEventListener(
+    'addedToFavorites',
+    (e) => this.remindUserOfArticle(e.sku)
+);
+```
+
+Elsewhere on the page, a custom event is triggered when the user marks an article as a favorite.
+
+```js
+obj.dispatchEvent(
+    new CustomEvent(
+        'addedToFavorites',
+        { sku: article.sku }
+    )
+);
+```
+
+The example again using the Broadcast Channel API. The micro front-end that is interested in the
+`addedToFavorites` messages sets up a broadcast listener.
+
+```js
+const bc = new BroadcastChannel('addedToFavorites');
+bc.onmessage = (sku) => {
+  this.remindUserOfArticle(sku);
+};
+```
+
+And elsewhere on the site, an {{< abbr "SKU" "Stock keeping unit" >}} message is broadcast on the
+`addedToFavorites` channel when the user marks an item as a favorite.
+
+```js
+const bc = new BroadcastChannel('addedToFavorites');
+bc.postMessage(article.sku);
+```
+
+#### Communication smells
+
+
+
+#### Uniformed & shared design system
+
+#### Redundancy minimization
 
 ### Micro front-ends and native apps
 
