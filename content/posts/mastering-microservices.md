@@ -1668,15 +1668,17 @@ team of the page or by the team of the micro front-end.
 ```
 
 Last but not least, we have the events. We can make use of events in two ways, either by
-defining our own custom events or by using the Broadcast Channel API.
+defining our own custom events or by using the Broadcast Channel
+{{< abbr "API" "Application Programming Interface" >}}.
 
 The custom event interface is captured in
 [DOM Spec 2.4](https://dom.spec.whatwg.org/#interface-customevent) and comes with a wide browser
 support.
 
-Although the Broadcast Channel API is part of the HTML Living Standard, found in
-[HTML Spec 9.5](https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts)
-, it is not yet fully supported by all browsers, but by the most important ones.
+Although the Broadcast Channel {{< abbr "API" "Application Programming Interface" >}} is part of
+the {{< abbr "HTML" "Hypertext Markup Language" >}} Living Standard, found in
+[HTML Spec 9.5](https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts),
+it is not yet fully supported by all browsers, but by the most important ones.
 
 A micro front-end within the basket is interested in all `addedToFavorites` events in order to
 display them to the user later or on revisit.
@@ -1699,8 +1701,9 @@ obj.dispatchEvent(
 );
 ```
 
-The example again using the Broadcast Channel API. The micro front-end that is interested in the
-`addedToFavorites` messages sets up a broadcast listener.
+The example again using the Broadcast Channel
+{{< abbr "API" "Application Programming Interface" >}}. The micro front-end that is interested in
+the `addedToFavorites` messages sets up a broadcast listener.
 
 ```js
 const bc = new BroadcastChannel('addedToFavorites');
@@ -1719,11 +1722,86 @@ bc.postMessage(article.sku);
 
 #### Communication smells
 
+On the side of the communication antipattern, or -smells, we find above all too complex
+communication dependencies, shared resources, as well as too large data objects.
 
+From the moment when triggering an event triggers a chain of interactions between more than two
+micro front-ends, something stinks. Hard-to-maintain and error-prone front-ends are created when a
+communication between sender and receiver spans further communications.
+
+One reason for such communications can be incorrectly cut micro front-ends. In other words, the
+underlying bounded context is probably also cut incorrectly.
+
+The next big problem that exists not only in the back-end but also in the front-end are shared
+resources, knowledge, states, data and their stores. If we start sharing all these things, then we
+encourage coupling between our modules. This leads to a huge degradation in maintainability.
+
+For example, just because a user has provided an address for a service availability check, another
+context, e.g., identifying potential customer leads, is not authorized to store the address of the
+visitor.
+
+Sharing such data creates conflicts that are often not apparent at first glance. In the case
+mentioned, the {{< abbr "CRM" "Customer Relationship Management" >}} context builds a dependency on
+the service availability context. What happens now when the service availability context suddenly
+relies on a different data model and sets the primary attribute to automatically determined
+coordinates, for example? As a result, the {{< abbr "CRM" "Customer Relationship Management" >}}
+context must be adjusted due to an adjustment in the service availability context.
+
+Actually, the disadvantages of data sharing should no longer need to be explained today, since it
+is obvious not to build up dependencies on data from other contexts that are not within one's own
+scope of action. 
+
+Another common problem is sharing data models in the payload of my messages. By sharing data models
+between modules, we end up creating coupling again. Everything we share will eventually be consumed
+by other teams. Therefore, it is best to share only what is necessary, and in case of doubt, that
+is only the {{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
+or {{< abbr "IRI" "Internationalized Resource Identifier" >}}.
+
+Using the the {{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
+or {{< abbr "IRI" "Internationalized Resource Identifier" >}}, other modules can in turn load the
+data from a versioned {{< abbr "API" "Application Programming Interface" >}}. The form of the data
+it receives back is known, unlike the payload of an event message.
 
 #### Uniformed & shared design system
 
+Now let's move on to a trade-off tip, a uniformed & shared design system. Micro front-ends,
+especially when used with the shadow {{< abbr "DOM" "Document Object Model" >}}, offer a maximum
+degree of flexibility. Each team can theoretically bring its own styles and its own
+{{< abbr "JS" "JavaScript" >}} framework.
+
+To counteract a style proliferation, all teams could agree on the introduction of a uniformed &
+shared design system. In such a system, for example, it is specified how certain components look
+and how they behave.
+
+The system should be versioned & fully open source within the organization. Furthermore, no further
+actions from other teams should be required to introduce new code and styles, this is important so
+that teams are not blocked from developing new features.
+
+For the provision of internal packages, {{< abbr "NPM" "package manager for the JavaScript programming language" >}} naturally lends itself.
+
 #### Redundancy minimization
+
+The last tip is aimed at minimizing redundancies. Imagine that the micro front-end application is
+run by about 10 teams with different micro front-ends. In the worst case, three times React 18.0.0,
+five times React 16.14.0, two times Vue 2, seven times Vue 3, and some different Angular versions are now loaded.
+
+Here it is also worthwhile to take a look at small frameworks/tools, so that not everything always depends on the big ones. Small ones are for example:
+
+- svelte
+- hyperapp
+- preact
+- lit-html
+- stencil
+
+If you can't avoid excluding large frameworks, then you should at least agree on shared libraries
+in the same version to greatly reduce the initial load. A non-browser-native solution is
+[systemjs](https://github.com/systemjs/systemjs). This can be used to manage and import
+{{< abbr "JS" "JavaScript" >}} dependencies in a uniform way.
+
+Another way is decentralized [module-federation](https://module-federation.github.io). One module
+loads dependencies and other modules with the same dependency just link to the already loaded ones.
+The biggest advantage: it's decentralized. There is no need to simulate a
+{{< abbr "CDN" "Content Delivery Network" >}} for local testing, it just works local.
 
 ### Micro front-ends and native apps
 
