@@ -1805,7 +1805,43 @@ The biggest advantage: it's decentralized. There is no need to simulate a
 
 ### Micro front-ends and native apps
 
-### Practical micro front-end examples
+Besides micro front-ends in web applications, there are of course also micro front-ends in native
+(smartphone) applications. There are three core approaches to how these can be implemented.
+
+1) Build a native app based on {{< abbr "APIs" "Application Programming Interface" >}} (monolith)
+
+In native app monolith, a specialized team develops the app for the target
+{{< abbr "OS" "Operating System" >}}. The team is in close, regular contact with the micro
+front-end teams in order to map their requirements as well as possible in the app.
+
+The team only needs to focus on its {{< abbr "APIs" "Application Programming Interface" >}} and its
+own micro front-ends on the web and does not need native app developers. The disadvantages
+are definitely the loss of development speed and the lack of freedom.
+
+2) Build and integrate native app components
+
+A bit more flexibility and freedom can be bought with the post-loading of native app components,
+whereby the price is clearly the competence around native app development and the post-loading of
+code.
+
+The micro front-end team's tech stack is no longer limited to web and
+{{< abbr "API" "Application Programming Interface" >}}, but has expanded to include technologies
+from multiple target platforms.
+
+Importantly, there still needs to be a team with primary responsibility for the target platform.
+This team provides a wrapper/ shell in which the post-loaded micro front-end components are loaded
+and executed.
+
+3) Build a hybrid app
+
+The simplest solution is certainly a hybrid app that relies on a native wrapper/ shell just like
+the "native, integrated app" that provides a web view to load the micro front-ends.
+
+This brings the significant advantage that front-ends do not have to be developed multiple times
+from scratch, which drastically reduces the need for additional native app developers.
+
+Of course, native options, tweaks, and styling are now missing. Apps not only look like responsive
+web applications, they are.
 
 ## Tackling cross-cutting concerns within your software architecture
 
