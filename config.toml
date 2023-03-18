@@ -2,7 +2,7 @@ baseURL = "https://lukasrotermund.de"
 languageCode = "en-us"
 defaultContentLanguage = "en"
 title = "coding blog"
-theme = "cupper-hugo-theme"
+theme = "lrotermund-cupper-hugo-theme"
 enableRobotsTXT = true
 enableGitInfo = true
 
