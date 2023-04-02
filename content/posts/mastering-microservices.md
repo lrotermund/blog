@@ -1845,6 +1845,125 @@ web applications, they are.
 
 ## Tackling cross-cutting concerns within your software architecture
 
+Cross-cutting concerns are the implementation of requirements that affect multiple systems in an
+overall system. Good examples for cross-cutting concerns are:
+
+- Logging
+- Tracing
+- and error handling
+
+All these are commen requirements for all systems, whether microservice, monolith, or anything in
+between.
+
+### How should we face cross-cutting concerns?
+
+Fortunately, we have many ways to address cross-cutting concerns.
+
+The ways that first come to mind here are particularly close to the code. Namely, the ubiquitous
+design patterns of the [Gang of Four](https://en.wikipedia.org/wiki/Design_Patterns).
+
+Of course, not all patterns can help us here. In particular, we should focus on the
+[singleton](https://en.wikipedia.org/wiki/Singleton_pattern) and
+[facade](https://en.wikipedia.org/wiki/Facade_pattern) patterns. Both patterns, in their own way,
+offer a good way to deal with cross-cutting concerns with the respective capabilities of the
+language in which they are used.
+
+A little further away from the code, there is another pattern that is not from the
+[Gang of Four](https://en.wikipedia.org/wiki/Design_Patterns), but from Chris Richardson. He is the
+father of the software architectural
+[API Gateway pattern](https://microservices.io/patterns/apigateway.html), which fits better
+especially in the context of distributed microservices software architectures.
+
+This pattern is particularly exciting in the course of the cross-cutting concerns, as various,
+involved microservice {{< abbr "APIs" "Application Programming Interface" >}} are united behind one
+{{< abbr "API" "Application Programming Interface" >}}. The
+{{< abbr "API" "Application Programming Interface" >}} Gateway can then be used as a proxy for
+specific services, or to split requests across multiple services. In other words, it is a good
+lever for addressing cross-cutting concerns.
+
+### Infrastructure
+
+Since this article is all about microservices, we'll also stay with the
+[API Gateway pattern](https://microservices.io/patterns/apigateway.html) and now take a swing at
+the infrastructure of microservice software architectures.
+
+Microservices are usually operated in the form of containers that must be orchestrated for smooth
+operation. By orchestration, I mean not just getting microservices up and running (provisioning
+and deployment), but also:
+
+- ressource management – e.g. {{< abbr "CPU" "Central Processing Unit" >}}, memory, storage...
+- health monitoring – can I forward requests to a healthy application?
+- scaling – e.g. 1, 2, or auto scaling service replicas
+- provision of mappings for the interconnection of networks
+- load balancing – forwarding of requests to different services for load balancing and response
+time optimization
+
+The orchestration of microservices and the management of all these tasks is best handled by
+software that has been specially developed and designed for this purpose. One software solution
+that is particularly easy to stumble upon is certainly [Kubernetes](https://kubernetes.io/).
+
+At this point I would also like to recommend the documentary about Kubernetes by **Honeypot**.
+
+{{< _figureCupper
+img="https://images.ctfassets.net/cjwb7umaxoxv/7ug7jhk9xgKYxUIA75lbUT/e4ae78fcf0d792dc824d2e35797c25cf/MOSHED-2022-1-21-17-48-22.jpg?w=600&fl=progressive&q=85"
+imgLink="https://cult.honeypot.io/originals/kubernetes-the-documentary-part-1"
+alt="Preview image of Honypot's documentary \"Kubernetes: The Documentary [PART 1]\""
+caption="Honeypot's documentary [Kubernetes: The Documentary [PART 1]](https://cult.honeypot.io/originals/kubernetes-the-documentary-part-1)." >}}
+
+In addition to Kubernetes, there is of course a whole range of other solutions for orchestrating
+microservices:
+
+- [AWS Fargate](https://aws.amazon.com/fargate/)
+- [AWS Elastic Container Service/ ECS](https://aws.amazon.com/ecs/)
+- [Azure Container Instances](https://azure.microsoft.com/en-us/products/container-instances)
+- [Google Cloud Run](https://cloud.google.com/run)
+- [Red Hat OpenShift Container Platform](https://www.redhat.com/en/technologies/cloud-computing/openshift/container-platform)
+- [Rancher](https://www.rancher.com/products/rancher) ({{< abbr "K8S" "Kubernetes" >}}-as-a-Service)
+- [Docker Swarm](https://docs.docker.com/engine/swarm/)
+- [Nomad by HashiCorp](https://www.nomadproject.io/)
+- [Apache Mesos](https://mesos.apache.org/)
+
+### Kubernetes API gateway via ingress controllers
+
+I have already mentioned how an API gateway works in theory. However, to illustrate this, here is a
+flowchart:
+
+{{< 
+    mermaid 
+    caption="mermaid flowchart diagram of how an API gateway works in theory."
+    responsive="true"
+>}}
+flowchart LR
+    subgraph clients
+        direction TB
+        c1[client 1]
+        c2[client 2]
+        c3[client 3]
+    end
+
+    subgraph microservices
+        direction TB
+        ms1[microservice 1]
+        ms2[microservice 2]
+        ms3[microservice 3]
+    end
+
+    %% The clients send requests against the API gateway
+
+    c1 --> ag[API gateway]
+    c2 --> ag[API gateway]
+    c3 --> ag[API gateway]
+
+    %% The requests are forwarded to the microservices
+    %% based on the set of routing rules
+
+    ag[API gateway] --> ms1
+    ag[API gateway] --> ms2
+    ag[API gateway] --> ms3
+{{< /mermaid >}}
+
+
+
 ## Transactions within and across microservices - Sounds like fun!
 
 ## Sources 
