@@ -1071,8 +1071,8 @@ For this reason, the team owns the following features:
 - The related articles, as here the customer is shown what all fits to this product and what else
 he should think about
 - The customers also bought articles, because here the customer is shown that...
-  - other customers have already purchased this item, and...
-  - these other customers bought other articles that went well with the current article
+  - Other customers have already purchased this item, and...
+  - These other customers bought other articles that went well with the current article
 
 ##### Team Decide
 
@@ -1297,9 +1297,9 @@ want to take you with me and show you what I learned in the talk.
 Technologically, there are actually many ways to realize micro front-ends. And some of them you
 probably won't expect. Let's look at the most obvious one, iFrames.
 
-iFrames are {{< abbr "HTML" "Hypertext Markup Language" >}} elements that can be used since
-{{< abbr "HTML" "Hypertext Markup Language" >}} version 4.0 to embed other web documents into a
-{{< abbr "HTML" "Hypertext Markup Language" >}} document. While iFrames are now somewhat out of
+iFrames are {{< abbr "HTML" "HyperText Markup Language" >}} elements that can be used since
+{{< abbr "HTML" "HyperText Markup Language" >}} version 4.0 to embed other web documents into a
+{{< abbr "HTML" "HyperText Markup Language" >}} document. While iFrames are now somewhat out of
 fashion, they were used productively even until 2019 in Spotify's music player to implement micro
 front-ends.
 
@@ -1309,7 +1309,7 @@ Also, out of fashion since the introduction of the fetch
 
 Another, more modern and stable client-side way are the web components. Web components are custom
 web elements that can be defined and used just like any other
-{{< abbr "HTML" "Hypertext Markup Language" >}} element. These custom elements are supported by any
+{{< abbr "HTML" "HyperText Markup Language" >}} element. These custom elements are supported by any
 technology that can handle the standard elements. All elements within a custom web element are
 encapsulated and do not collide with the elements in which the element is embedded.
 
@@ -1410,7 +1410,7 @@ Learn more about server-side composition of micro front-ends with
 [ngx_http_ssi_module](https://nginx.org/en/docs/http/ngx_http_ssi_module.html)
 
 Now follows the sequence diagram that again shows a request against the product detail page, but
-this time against a Varnish proxy instead of an nginx. The page responsibility is still with Team
+this time against a Varnish proxy instead of a nginx. The page responsibility is still with Team
 Decide. Instead of {{< abbr "SSIs" "Server Side Includes" >}}, the team integrates
 {{< abbr "ESIs" "Edge Side Includes" >}} that can be composed by Varnish.
 
@@ -1531,9 +1531,9 @@ customElements.define(
 ```
 
 So custom elements are basically exactly what you would expect, custom
-{{< abbr "HTML" "Hypertext Markup Language" >}} elements whose functionality
+{{< abbr "HTML" "HyperText Markup Language" >}} elements whose functionality
 can be defined by yourself. Not only is this a pretty cool and handy tool, custom elements as such
-are also part of the {{< abbr "HTML" "Hypertext Markup Language" >}} standard. We can make good use
+are also part of the {{< abbr "HTML" "HyperText Markup Language" >}} standard. We can make good use
 of this feature with micro frontends. See
 [HTML spec 4.13](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements) for
 more information.
@@ -1616,7 +1616,7 @@ background with a white text color and the custom element has a red background a
 text color.
 
 The disadvantage of the shadow {{< abbr "DOM" "Document Object Model" >}} is that, unlike custom
-elements, it is not yet part of the {{< abbr "HTML" "Hypertext Markup Language" >}} standard and is
+elements, it is not yet part of the {{< abbr "HTML" "HyperText Markup Language" >}} standard and is
 still in the [standardization process](https://github.com/whatwg/html/pull/5465)
 (as of 2023-01-27). However, information about the shadow tree can already be found in
 [DOM Spec 4.2.2](https://dom.spec.whatwg.org/#shadow-trees).
@@ -1643,8 +1643,8 @@ and usually even lazy load them from the server when they are needed.
 
 #### Communication patterns
 
-There are primarily three communication channels among the micro front-ends: URLs, attributes and
-events.
+There are primarily three communication channels among the micro front-ends:
+{{< abbr "URLs" "Uniform Resource Locator" >}}, attributes and events.
 
 As mentioned before, {{< abbr "URLs" "Uniform Resource Locator" >}} are just static links to call
 other resources, in a very classical way.
@@ -1676,7 +1676,7 @@ The custom event interface is captured in
 support.
 
 Although the Broadcast Channel {{< abbr "API" "Application Programming Interface" >}} is part of
-the {{< abbr "HTML" "Hypertext Markup Language" >}} Living Standard, found in
+the {{< abbr "HTML" "HyperText Markup Language" >}} Living Standard, found in
 [HTML Spec 9.5](https://html.spec.whatwg.org/multipage/web-messaging.html#broadcasting-to-other-browsing-contexts),
 it is not yet fully supported by all browsers, but by the most important ones.
 
@@ -1690,7 +1690,7 @@ obj.addEventListener(
 );
 ```
 
-Elsewhere on the page, a custom event is triggered when the user marks an article as a favorite.
+Elsewhere, on the page, a custom event is triggered when the user marks an article as a favorite.
 
 ```js
 obj.dispatchEvent(
@@ -1757,7 +1757,7 @@ by other teams. Therefore, it is best to share only what is necessary, and in ca
 is only the {{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
 or {{< abbr "IRI" "Internationalized Resource Identifier" >}}.
 
-Using the the {{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
+Using the {{< abbr "ID" "Identification; In the field of computer science, usually a sequential number, or a unique string of characters. Used to identify and reference an entity." >}}
 or {{< abbr "IRI" "Internationalized Resource Identifier" >}}, other modules can in turn load the
 data from a versioned {{< abbr "API" "Application Programming Interface" >}}. The form of the data
 it receives back is known, unlike the payload of an event message.
@@ -1789,7 +1789,7 @@ Here it is also worthwhile to take a look at small frameworks/tools, so that not
 
 - svelte
 - hyperapp
-- preact
+- React
 - lit-html
 - stencil
 
@@ -1852,7 +1852,7 @@ overall system. Good examples for cross-cutting concerns are:
 - Tracing
 - and error handling
 
-All these are commen requirements for all systems, whether microservice, monolith, or anything in
+All these are common requirements for all systems, whether microservice, monolith, or anything in
 between.
 
 ### How should we face cross-cutting concerns?
@@ -1872,7 +1872,7 @@ A little further away from the code, there is another pattern that is not from t
 [Gang of Four](https://en.wikipedia.org/wiki/Design_Patterns), but from Chris Richardson. He is the
 father of the software architectural
 [API Gateway pattern](https://microservices.io/patterns/apigateway.html), which fits better
-especially in the context of distributed microservices software architectures.
+especially in the context of distributed microservice software architectures.
 
 This pattern is particularly exciting in the course of the cross-cutting concerns, as various,
 involved microservice {{< abbr "APIs" "Application Programming Interface" >}} are united behind one
@@ -1891,11 +1891,11 @@ Microservices are usually operated in the form of containers that must be orches
 operation. By orchestration, I mean not just getting microservices up and running (provisioning
 and deployment), but also:
 
-- ressource management – e.g. {{< abbr "CPU" "Central Processing Unit" >}}, memory, storage...
-- health monitoring – can I forward requests to a healthy application?
-- scaling – e.g. 1, 2, or auto scaling service replicas
-- provision of mappings for the interconnection of networks
-- load balancing – forwarding of requests to different services for load balancing and response
+- Resource management – e.g. {{< abbr "CPU" "Central Processing Unit" >}}, memory, storage...
+- Health monitoring – can I forward requests to a healthy application?
+- Scaling – e.g. 1, 2, or auto-scaling service replicas
+- Provision of mappings for the interconnection of networks
+- Load balancing – forwarding of requests to different services for load balancing and response
 time optimization
 
 The orchestration of microservices and the management of all these tasks is best handled by
@@ -1907,7 +1907,7 @@ At this point I would also like to recommend the documentary about Kubernetes by
 {{< _figureCupper
 img="https://images.ctfassets.net/cjwb7umaxoxv/7ug7jhk9xgKYxUIA75lbUT/e4ae78fcf0d792dc824d2e35797c25cf/MOSHED-2022-1-21-17-48-22.jpg?w=600&fl=progressive&q=85"
 imgLink="https://cult.honeypot.io/originals/kubernetes-the-documentary-part-1"
-alt="Preview image of Honypot's documentary \"Kubernetes: The Documentary [PART 1]\""
+alt="Preview image of Honeypot's documentary \"Kubernetes: The Documentary [PART 1]\""
 caption="Honeypot's documentary [Kubernetes: The Documentary [PART 1]](https://cult.honeypot.io/originals/kubernetes-the-documentary-part-1)." >}}
 
 In addition to Kubernetes, there is of course a whole range of other solutions for orchestrating
@@ -1925,8 +1925,8 @@ microservices:
 
 ### Kubernetes API gateway via ingress controllers
 
-I have already mentioned how an API gateway works in theory. However, to illustrate this, here is a
-flowchart:
+I have already mentioned how an {{< abbr "API" "Application Programming Interface" >}} gateway
+works in theory. However, to illustrate this, here is a flowchart:
 
 {{< 
     mermaid 
