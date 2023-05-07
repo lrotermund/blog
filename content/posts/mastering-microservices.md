@@ -1928,8 +1928,8 @@ microservices:
 I have already mentioned how an {{< abbr "API" "Application Programming Interface" >}} gateway
 works in theory. However, to illustrate this, here is a flowchart:
 
-{{< 
-    mermaid 
+{{<
+    mermaid
     caption="mermaid flowchart diagram of how an API gateway works in theory."
     responsive="true"
 >}}
@@ -1941,28 +1941,399 @@ flowchart LR
         c3[client 3]
     end
 
-    subgraph microservices
-        direction TB
-        ms1[microservice 1]
-        ms2[microservice 2]
-        ms3[microservice 3]
+    subgraph some cluster
+        ag[API gateway]
+
+        subgraph microservices
+            direction TB
+            ms1[microservice 1]
+            ms2[microservice 2]
+            ms3[microservice 3]
+        end
     end
 
     %% The clients send requests against the API gateway
 
-    c1 --> ag[API gateway]
-    c2 --> ag[API gateway]
-    c3 --> ag[API gateway]
+    c1 --> ag
+    c2 --> ag
+    c3 --> ag
 
     %% The requests are forwarded to the microservices
     %% based on the set of routing rules
 
-    ag[API gateway] --> ms1
-    ag[API gateway] --> ms2
-    ag[API gateway] --> ms3
+    ag --> ms1
+    ag --> ms2
+    ag --> ms3
 {{< /mermaid >}}
 
+Broken down, an {{< abbr "API" "Application Programming Interface" >}} gateway takes care of the
+following three tasks:
 
+1. Listen for client requests from outside a cluster
+2. Evaluating a set of provided routing rules against incoming requests
+3. Forwarding the requests to one or multiple microservices
+
+Now let's look at this again with an ingress controller in a Kubernetes cluster.
+
+{{<
+    mermaid
+    caption="mermaid flowchart diagram of how a Kubernetes ingress controller works in theory."
+    responsive="true"
+>}}
+flowchart LR
+    subgraph clients
+        direction TB
+        c1[client 1]
+        c2[client 2]
+        c3[client 3]
+    end
+
+    subgraph kubernetes cluster
+        ag["ingress controller (API gateway)"]
+
+        subgraph microservices
+            direction TB
+            ms1[microservice 1]
+            ms2[microservice 2]
+            ms3[microservice 3]
+
+            subgraph microservice 1
+                direction TB
+                ms1p1[pod 1]
+            end
+
+            subgraph microservice 2
+                direction TB
+                ms2p1[pod 1]
+                ms2p2[pod 2]
+                ms2p3[pod 3]
+            end
+
+            subgraph microservice 3
+                direction TB
+                ms3p1[pod 1]
+                ms3p2[pod 2]
+            end
+        end
+    end
+
+    %% The clients send requests against the API gateway
+
+    c1 --> ag
+    c2 --> ag
+    c3 --> ag
+
+    %% The requests are forwarded to the microservices
+    %% based on the set of routing rules
+
+    ag --> ms1
+    ag --> ms2
+    ag --> ms3
+
+    %% The requests are forwarded to one or multiple pods of
+    %% a microservice
+    ms1 --> ms1p1
+    ms2 --> ms2p1
+    ms2 --> ms2p2
+    ms2 --> ms2p3
+    ms3 --> ms3p1
+    ms3 --> ms3p2
+{{< /mermaid >}}
+
+Basically, the same happens here as with the previous
+{{< abbr "API" "Application Programming Interface" >}} gateway, except that in Kubernetes the
+request is passed on later to a pod of a microservice.
+
+A pod is a group of containers that only together form a functioning unit. This makes a pod the
+smallest possible unit that can be deployed in Kubernetes.
+
+Examples of this could be the joint deployment of a web service (container 1) together with a
+volume, which is regularly filled by a repository syncing service (container 2).
+
+Without much effort, Kubernetes supports three ingress controllers out of the box:
+
+- [nginx](https://git.k8s.io/ingress-nginx/README.md#readme)
+- [GCE](https://git.k8s.io/ingress-gce/README.md#readme)
+- [AWS](https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme)
+
+A good example of an {{< abbr "API" "Application Programming Interface" >}} gateway can be found in
+nginx open source GitHub account. Here, a café application that offers tea (service 2) in addition
+to coffee (service 1) is united behind an {{< abbr "API" "Application Programming Interface" >}}
+gateway.
+
+{{< _figureCupper
+img="https://opengraph.githubassets.com/0a55e423571c2cc1f9bc1730764828ebf10bff9ed3d14814f228a8c86ed821e9/nginxinc/nginx-kubernetes-gateway"
+imgLink="https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/cafe-example"
+alt="nginx-kubernetes-gateway/examples/cafe-example at main · nginxinc/nginx-kubernetes-gateway"
+caption="nginx-kubernetes-gateway/examples/cafe-example at main · [nginxinc/nginx-kubernetes-gateway](https://github.com/nginxinc/nginx-kubernetes-gateway/tree/main/examples/cafe-example)." >}}
+
+### ingress controllers are based on service proxies
+
+In order for an ingress controller to perform its tasks in the cluster,
+it is based on service proxies. Kubernetes
+[service proxies](https://kubernetes.io/docs/reference/networking/virtual-ips/)
+are network components that interact between clients and services.
+
+Their responsibilities include, but are not limited to, the following
+actions:
+
+- Adding and removing {{< abbr "HTTP" "Hypertext Transfer Protocol" >}} headers
+- Terminating and offloading {{< abbr "SSL" "Secure Sockets Layer" >}} requests
+- {{< abbr "URL" "Uniform Resource Locator" >}} filtering and content switching
+- Caching content
+- Supporting blue-green deployments and canary testing
+
+The most common service proxies are:
+
+- [Envoy](https://www.envoyproxy.io/)
+- [OpenResty](https://openresty.org/)
+- [HAProxy](https://www.haproxy.org/)
+
+### API gateway & cross-cutting concern contexts
+
+If we look at the {{< abbr "API" "Application Programming Interface" >}} gateway again after the
+last sections, we quickly see that it has a surprising number of levers to counter cross-cutting
+concerns. The {{< abbr "API" "Application Programming Interface" >}} gateway provides a set of
+contexts for requests that pass through it, which we can use to find and implement centralized
+solutions for dealing with cross-cutting concerns.
+
+The four primary contexts are:
+
+1. The **consumer**, which is basically the client, sending the request to our backend.
+2. The **route**, which is the requested information of our consumer.
+3. The **service**, which is allocated to the requested route.
+4. And **load balancing**, which some {{< abbr "API" "Application Programming Interface" >}}
+gateways also provide.
+
+Fortunately, {{< abbr "API" "Application Programming Interface" >}} gateways are usually well
+extensible by plugins, policies and add-ons, which brings us even closer to the conclusion that
+they are a good tool for addressing cross-cutting concerns in the contexts just identified.
+
+Available extensions that address a cross-cutting concern are rare and sometimes vendors that
+address them also offer {{< abbr "API" "Application Programming Interface" >}} gateway extensions,
+but usually we will write our own extensions to counter these. The reason for this is that
+{{< abbr "API" "Application Programming Interface" >}} gateways are kept very generic because they
+are used in all kinds of applications. The applications in the cluster, on the other hand, are
+specialized software solutions that address one domain per gateway, and there are rarely appropriate
+extensions.
+
+#### Writing your own API gateway plugins
+
+The development of custom plugins is {{< abbr "API" "Application Programming Interface" >}} gateway
+specific. The providers of the {{< abbr "API" "Application Programming Interface" >}} gateways
+usually provide a guide or sample plugins that can be used as a starting point for your own
+development.
+
+You can either install your plugins as Helm charts via your Helm repository in your 
+{{< abbr "K8S" "Kubernetes" >}} cluster, or store them in your kustomize configuration. 
+
+Starting points for the most common {{< abbr "API" "Application Programming Interface" >}} gateways:
+
+**nginx**
+
+- [nginx wiki: extending](https://www.nginx.com/resources/wiki/extending/)
+- [Evan Miller's guide to nginx module development](https://www.evanmiller.org/nginx-modules-guide.html)
+- [agentzh's nginx tutorials](https://openresty.org/download/agentzh-nginx-tutorials-en.html)
+
+**OpenResty**
+
+- [Write your own Lua modules for OpenResty applications](https://blog.openresty.com/en/or-lua-module/)
+
+**HAProxy**
+
+- [5 ways to extend HAProxy with Lua](https://www.haproxy.com/blog/5-ways-to-extend-haproxy-with-lua/)
+
+**Traefik**
+
+- [Developing Traefik plugins](https://plugins.traefik.io/create)
+- [Traefik plugin demo on GitHub](https://github.com/traefik/plugindemo)
+
+**Envoy**
+
+- [Extending Envoy for custom use cases](https://www.envoyproxy.io/docs/envoy/latest/extending/extending)
+
+### Cross-cutting concerns in detail
+
+Now let's assign some cross-cutting concerns to the tasks of the
+{{< abbr "API" "Application Programming Interface" >}} Gateway. Thus, we see that the
+{{< abbr "API" "Application Programming Interface" >}} Gateway is well-suited tool to address them.
+
+**Traffic management**
+
+From time to time it may happen that several services in the cluster, or specific resources of
+these services, can only be accessed by a restricted user group. At this point
+**{{< abbr "ACLs" "Access Control List" >}}** are useful, which we can statically store in the
+ingress controller configuration.
+
+Another good example of traffic management is limiting the rate at which users can access a
+resource. There are many factors that can affect the rate, such as security, service or product
+availability, as well as contractual access rates for tenants. These special requirements can be
+well implemented in a custom plugin.
+
+Below is a {{< abbr "K8S" "Kubernetes" >}} example for an
+{{< abbr "ACL" "Access Control List" >}}, as well as a rate limiting for two different paths of a
+coffee shop application.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coffee-shop
+  namespace: coffee-shop
+spec:
+  rules:
+  - host: foobars-coffee-shop.com
+    http:
+      paths:
+      - path: /special-offer-orders
+        pathType: Prefix
+        backend:
+          service:
+            name: order-service
+            port:
+              name: http
+        tls:
+          - hosts:
+            - foobars-coffee-shop.com
+        annotations:
+          nginx.ingress.kubernetes.io/auth-type: basic
+          nginx.ingress.kubernetes.io/auth-secret: foos-sealed-secret,bars-sealed-secret
+          nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+      - path: /special-offer
+        pathType: Prefix
+        backend:
+          service:
+            name: offer-service
+            port:
+              name: http
+        tls:
+          - hosts:
+            - foobars-coffee-shop.com
+        annotations:
+          nginx.ingress.kubernetes.io/limit-rps: "10"
+          nginx.ingress.kubernetes.io/limit-rps-burst: "20"
+
+```
+
+**Security**
+
+Another topic within cross-cutting concerns that can be addressed well with an
+{{< abbr "API" "Application Programming Interface" >}} gateway is centralized authentication and
+authorization.
+
+In the following {{< abbr "K8S" "Kubernetes" >}} example, an oauth-2/ OpenID Connect authentication
+and authorization is provided by [Keycloak](https://www.keycloak.org/), an open source identity and
+access management under stewardship of [Red Hat](https://www.redhat.com/en), in front of the
+{{< abbr "BI" "Business Intelligence" >}} and {{< abbr "ERP" "Enterprise resource planning" >}}
+service.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coffee-shop
+  namespace: coffee-shop
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback"
+    nginx.ingress.kubernetes.io/auth-signin: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback"
+    nginx.ingress.kubernetes.io/auth-method: POST
+    nginx.ingress.kubernetes.io/auth-response-headers: X-Userinfo
+spec:
+  rules:
+  - host: foobars-coffee-shop.com
+    http:
+      paths:
+      - path: /business-intelligence
+        pathType: Prefix
+        backend:
+          service:
+            name: business-intelligence
+            port:
+              name: http
+        annotations:
+          nginx.ingress.kubernetes.io/auth-url: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback/bi"
+          nginx.ingress.kubernetes.io/auth-signin: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback/bi"
+      - path: /some-erp
+        pathType: Prefix
+        backend:
+          service:
+            name: some-erp
+            port:
+              name: http
+        annotations:
+          nginx.ingress.kubernetes.io/auth-url: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback/erp"
+          nginx.ingress.kubernetes.io/auth-signin: "https://keycloak.foobars-coffee-shop.com/auth/realms/employee-realm/protocol/openid-connect/auth?response_type=code&client_id=nginx&redirect_uri=https://foobars-coffee-shop.com/oauth2/callback/erp"
+
+```
+
+**Resilience**
+
+To harden and secure a service (mesh) architecture, we can integrate a circuit breaker into the
+{{< abbr "API" "Application Programming Interface" >}} gateway. Circuit breakers provide more
+resilient services by monitoring network traffic and marking individual services as unhealthy when
+anomalies are detected. This redirects incoming requests to fallback services.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coffee-shop
+  namespace: coffee-shop
+  annotations:
+    nginx.ingress.kubernetes.io/enable-circuit-breaker: "true"
+spec:
+  rules:
+  - host: foobars-coffee-shop.com
+    http:
+      paths:
+      - path: /orders
+        pathType: Prefix
+        backend:
+          service:
+            name: order-service
+            port:
+              name: http
+      - path: /special-offer
+        pathType: Prefix
+        backend:
+          service:
+            name: offer-service
+            port:
+              name: http
+```
+
+Another example is setting a central timeout for multiple services. However, keep in mind that
+centralized timeout management is not the best solution because services may have different
+response times.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: coffee-shop
+  namespace: coffee-shop
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-timeout: "60s"
+spec:
+  rules:
+  - host: foobars-coffee-shop.com
+    http:
+      paths:
+      - path: /most-popular-roasts
+        pathType: Prefix
+        backend:
+          service:
+            name: analysis-service
+            port:
+              name: http
+      - path: /most-recent-orders
+        pathType: Prefix
+        backend:
+          service:
+            name: order-service
+            port:
+              name: http
+```
 
 ## Transactions within and across microservices - Sounds like fun!
 
