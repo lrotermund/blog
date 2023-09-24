@@ -2,7 +2,7 @@
 type: post
 title: "Mastering microservices"
 tags: ["microservice", "software-architecture", "conference"]
-date: 2022-08-28T13:42:15+02:00
+date: 2023-09-25T00:30:15+02:00
 images: ["/assets/heaven-gd38ed956a_1280.webp"]
 description: "Many developers today have a rough definition of microservices in their head. Let's take a look at all the essential elements that make up microservices."
 summary: "Many developers today have a rough definition of microservices in their head. Let's take a look at all the essential elements that make up microservices."
@@ -16,7 +16,7 @@ developed monolithic web applications and internal services/
 {{< abbr "APIs" "Application Programming Interface" >}} without knowing of further software
 architectures.
 
-Meanwhile, I've been working with microservices for some years. This year my employer
+Meanwhile, I've been working with microservices for some years. Last year my employer
 [Tasko](https://www.tasko.de/) offered me to visit Heise's
 [Mastering Microservices](https://konferenzen.heise.de/mastering-microservices/) to deepen my
 knowledge. I'm really thankful for this opportunity. 
@@ -223,8 +223,8 @@ information hiding. A good tool to visualize the classes responsibilities and co
 {{< abbr "CRC" "Class-Responsibility-Collaboration" >}} model, developed in the 90th by Ward 
 Cunningham and Kent Beck.
 
-The **bounded context** is a more coarse-granular concept from Eric Evans book "Domain Driven
-Design". It's used to represent infrastructure and system boundaries. As with classes, the
+The **bounded context** is a more coarse-granular concept from Eric Evans book Domain Driven
+Design[^bluebook]. It's used to represent infrastructure and system boundaries. As with classes, the
 [bounded context canvas](https://github.com/ddd-crew/bounded-context-canvas) from the
 [Domain-Driven Design Crew](https://github.com/ddd-crew) exists to document responsibilities and
 collaborations for microservices.
@@ -465,9 +465,9 @@ would be hypocritical.
 
 {{< abbr "REST" "Representational state transfer" >}} as well as other lightweight, architectural
 {{< abbr "API" "Application Programming Interface" >}} decisions, like
-{{< abbr "CQRS" "Command-Query-Responsibility-Segregation" >}}, show their full potential when used
-in encapsulated, team and software architectures that in particular do not rely on parallel,
-independent deployment processes.
+{{< abbr "CQRS" "Command-Query-Responsibility-Segregation" >}}[^cqrs], show their full potential
+when used in encapsulated, team and software architectures that in particular do not rely on
+parallel, independent deployment processes.
 
 If the decision is finally made to use {{< abbr "REST" "Representational state transfer" >}}, then
 it is important to adhere to some basic pillars from the beginning that ensure a certain
@@ -2335,14 +2335,596 @@ spec:
               name: http
 ```
 
+### How to govern cross-cutting concerns?
+
+Now that we have gone through how to address cross-cutting concerns with
+{{< abbr "API" "Application Programming Interface" >}} gateways and their plugins and policies, we
+need to make sure that no installation & configuration wild west breaks out among developers.
+
+We need governance as a tool to manage the use of cross-cutting concern plugins and policies in a
+healthy way.
+
+One possible way to provide governance are so called OpenAPI extensions, or more precisely
+X-Objects. This allows teams to satisfy their own needs as well as those of vendors in a governed
+environment.
+
+OpenAPI extensions now allow developers to tap cross-cutting information or trigger actions at
+relevant points within the {{< abbr "API" "Application Programming Interface" >}} gateway, or
+ingress controller.
+
+Let's have a look at the setup of Amazon's Lambda OpenAPI extension within our coffee shop's
+OpenAPI specification and its use in the Ingress controller.
+
+```yaml
+openapi: "3.0.0"
+info:
+  title: "Foobar's Coffee Shop API"
+  version: "1.0.0"
+paths:
+  /newsletter:
+    post:
+      summary: "Subscribe to Foobar's coffee shop newsletter"
+      operationId: "subscribeToNewsletter"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required:
+                - email
+      responses:
+        '200':
+          description: "Successfully subscribed to newsletter"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Successfully subscribed to newsletter"
+        '400':
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email address"
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri: "arn:aws:lambda:eu-central-1:123456789012:function:subscribeToNewsletter"
+        httpMethod: "POST"
+        requestTemplates:
+          application/json: |
+            {
+              "email": "$input.json('$.email')"
+            }
+        responses:
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: |
+                {
+                  "message": "Successfully subscribed to newsletter"
+                }
+            selectionPattern: ".*\"statusCode\":200.*"
+```
+
+Each major vendor provides their own OpenAPI extensions, here are a few examples for AWS, Azure and
+Google:
+
+**AWS**
+
+- `x-amazon-apigateway-auth` configure authorization and authentication
+- `x-amazon-apigateway-cors` configure
+{{< abbr "CORS" "Cross-Origin Resource Sharing" >}} headers
+- `x-amazon-apigateway-integration` configure an integration
+
+**Azure**
+
+- `x-ms-rest` adds some metadata to the requests
+- `x-ms-client-model` adds a client model to the
+{{< abbr "API" "Application Programming Interface" >}}
+- `x-ms-long-running-operation` configure long running operations for the
+{{< abbr "API" "Application Programming Interface" >}}
+
+**Google**
+
+- `x-google-api-client` adds some metadata to the
+{{< abbr "API" "Application Programming Interface" >}}
+- `x-google-api-client-header` adds headers to the Google
+{{< abbr "API" "Application Programming Interface" >}}
+- `x-google-api-client-method` adds a method Google's 
+{{< abbr "API" "Application Programming Interface" >}}
+
+Using these extensions is a first step towards an
+{{< abbr "API" "Application Programming Interface" >}} Definition.
+
+### Service mesh
+
+Now that we have dealt with the {{< abbr "API" "Application Programming Interface" >}} Gateway and
+the Ingress controller with their incoming and outgoing
+packets, we will next take a look at the so-called service meshes.
+
+A service mesh is responsible for the cluster internal network traffic between our services.
+Each service within our mesh has its own sidecar proxy. These are necessary for the service mesh
+to provide e.g.
+
+- **Load balancing** due to routing tables to other sidecars 
+- **Health information** to other sidecars
+- **Connection polling and keep alive** to ensure faster connections to other services
+
+### The difference to an API Gateway/ Ingress Controller
+
+An {{< abbr "API" "Application Programming Interface" >}} Gateway is in contrast to a service mesh,
+always a product, with or without monetization.
+
+Both are communicating on the level 7 of the {{< abbr "OSI" "Open Systems Interconnection" >}}
+model[^osi_model] but the sidecar proxy is also working a lot on the layer 4.
+
+With the {{< abbr "API" "Application Programming Interface" >}} Gateway developers can manage the
+complete life cycle of the containing {{< abbr "APIs" "Application Programming Interface" >}}. On
+the other hand, the sidecar is used to handle all the cluster internal service-to-service
+communication. So it never leaves the cluster.
+
+### Combining an API Gateway/ Ingress with a Service mesh
+
+If we now bring both concepts together, we have a solid, well-configurable
+{{< abbr "API" "Application Programming Interface" >}} boundary of our clusters to the outside
+world, as well as a fine-grained configuration for inter-service communication.
+
+{{< 
+    mermaid 
+    caption="mermaid flowchart/ architecture diagram of a API Gateway <> Service mesh architecture"
+    responsive="true"
+>}}
+graph TB
+    %% Layer one
+    subgraph ag[API Gateway]
+        direction TB
+
+        as1[API service]
+        as2[API service]
+        as3[API service]
+    end
+    
+    %% Layer two
+    subgraph cim[Composite/ Integration Microservices]
+        direction TB
+        
+        subgraph cim1[ ]
+            direction LR
+
+            bl1[Business logic]:::red
+            nf1[Network functions]:::green
+            sm1[Service mesh]
+        end
+
+        subgraph cim2[ ]
+            direction LR
+
+            bl2[Business logic]:::red
+            nf2[Network functions]:::green
+            sm2[Service mesh]
+        end
+
+        subgraph cim3[ ]
+            direction LR
+
+            bl3[Business logic]:::red
+            nf3[Network functions]:::green
+            sm3[Service mesh]
+        end
+    end
+
+    %% Layer three
+    subgraph cam[Core/ Atomic Microservices]
+        direction TB
+        
+        subgraph cam1[ ]
+            direction LR
+
+            bl4[Business logic]:::red
+            nf4[Network functions]:::green
+            sm4[Service mesh]
+        end
+
+        subgraph cam2[ ]
+            direction LR
+
+            bl5[Business logic]:::red
+            nf5[Network functions]:::green
+            sm5[Service mesh]
+        end
+
+        subgraph cam3[ ]
+            direction LR
+
+            bl6[Business logic]:::red
+            nf6[Network functions]:::green
+            sm6[Service mesh]
+        end
+
+        subgraph cam4[ ]
+            direction LR
+
+            bl7[Business logic]:::red
+            nf7[Network functions]:::green
+            sm7[Service mesh]
+        end
+
+        subgraph cam5[ ]
+            direction LR
+
+            bl8[Business logic]:::red
+            nf8[Network functions]:::green
+            sm8[Service mesh]
+        end
+    end
+
+    ag-.->cim1
+    ag-.->cim2
+    ag-.->cim3
+
+    cim1-.->cam1
+    cim1-.->cam3
+    cim2-.->cam2
+    cim2-.->cam4
+    cim3-.->cam3
+    cim3-.->cam5
+
+    classDef red stroke-width:2px,fill:red,color:#fff;
+    classDef green stroke-width:2px,fill:green,color:#fff;
+{{< /mermaid >}}
+
 ## Transactions within and across microservices - Sounds like fun!
+
+Handling a transaction from the frontend, over its request against an
+{{< abbr "API" "Application Programming Interface" >}} that may effect several bounded contexts
+and some database interactions is easy... within a monolith. Everything is in its designated
+flow. We are in control over every peace of code, just as we are of all that follows.
+
+A little more uncomfortable is the thought of applying this transaction to a ramified network of
+microservices and their databases. All these systems may have different owners and could even be
+implemented in another technology then the previous service. It is really not trivial to ensure a
+seamless transaction within this setting.
+
+At this point, we should always ask ourself if we really need a single transaction. Do we want to
+provide a multi-service commit & rollback mechanism? Or isn't there a domain-specific way to handle
+it without a single transaction? 
+
+Take a moment to look around you. Think about the way things work in the real life. Are theses
+things build upon a single transaction? No, the real world isn't transactional.
+
+### Real world examples for a non transactional world
+
+Let's look at two examples for non transactional processes of the real world.
+
+**Opening a shared bank account**:
+
+Have you ever tried opening a shared bank account on the website of your bank of choice? You start
+by filling in all required information step by step. In the last step you have to fill in the
+date of birth of your absent partner. Every one knows that's impossible. The process has failed
+because it is not aligned with the real world.
+
+If, on the other hand, you had gone directly to the bank branch of your choice, then the opening
+process would most likely have been different. You would have filled in all the fields until you
+came across your partner's date of birth, but that would not have been a problem. The nice bank
+consultant would have opened your account with a limited functionality until you hand the date in
+later.
+
+**Transferring money from a bank account to another**
+
+Even the process of transferring money from one bank account to another one is not handled within
+a single transaction. There is not a single chain of events that reduce your account balance and
+increases the other one.
+
+This process is handled within multiple small transactions. It doesn't matter that the money is
+transferred instantaneously, but it will be eventually. It is so-called **eventually consistent**.
+
+Examples for the small transactions are:
+- The creation of transfer order
+- The creation of the transfer message to the other bank
+- The reduction of the account balance
+
+By simply getting used to these transactional processes over time, it is often already a matter of
+course that we continue to implement them transactionally. With a little effort there is always
+another, more realistic way to implement these processes. And the non transactional way if often
+closer to the real worlds domain then the strict, transactional one.
+
+### Transaction strategies within an e-commerce application build upon microservices
+
+Next, lets look at three basic strategies to handle transactions within our e-commerce application.
+The examples will be rough and incomplete, but they'll show the idea behind each strategy.
+
+The examples {{< abbr "APIs" "Application Programming Interface" >}} are based on the
+{{< abbr "CQRS" "Command-Query-Responsibility-Segregation" >}}[^cqrs] pattern.
+
+#### The optimist: or "who needs transactions?"
+
+The most optimistic strategy ignores transactions and just uses a chain of small command and query
+operations.
+
+1. Our customer sends a checkout command to our order service
+2. The order service returns an ID (e.g. transaction or request ID) to the customer
+3. The order service sends a decrease stock command for a given article number to the
+stock service
+
+#### The fortune-teller: it will work out somehow 
+
+Within this example, the order service hold at least a last known stock value for each item
+available. The example is not fully transactional, but its close to.
+
+1. Our customer sends a checkout command to our order service
+2. The order service checks its last known stock value for the order and...
+    1. Rejects the order, if the given stock is to low, or..
+    2. Accepts the order, if there are enough articles in the known stock
+3. In case of an accepted order, the order service sends a decrease stock command for a given
+article number to the stock service
+4. The inventory service send a stock decremented event for the given article number, so that all
+event subscribers can update their known stock
+
+#### The safeguard: I better ask first
+
+Even this last strategy is not fully transactional, but its closer then the other strategies.
+
+1. The user sends a checkout command to the order service
+2. The order service queries the inventory service for the current stock by the given article number
+    1. Whether or not this query is sent may depend on a number of factors, or may simply be
+    performed each time
+    2. One factor may be that the last known value is so large, e.g., over 100, that it is unlikely
+    that anything will go wrong
+3. The order service checks its updated last known stock value for the order and...
+    1. Rejects the order, if the given stock is to low, or..
+    2. Accepts the order, if there are enough articles in the known stock
+4. In case of an accepted order, the order service sends a decrease stock command for a given
+article number to the stock service
+5. The inventory service send a stock decremented event for the given article number, so that all
+event subscribers can update their known stock
+
+#### The risk of a failing order
+
+Each strategy decreases the chance of a failed order, with the first strategy having the highest
+chance of failure and the last strategy having the lowest. However, all strategies are subject to
+failure. There is no cross-database transaction that allows us to simply roll back.
+
+On the other hand, the time taken to achieve eventual consistency within each sub-transaction is
+reduced. Each individual service reaches a consistent state in the shortest possible time.
+
+#### Dealing realistically with failed orders
+
+And if the order cannot be completed successfully in the end, for example due to an over-order,
+there are still other ways of getting out of the situation well or even better than if the order had
+been successful.
+
+This "realistic" way of dealing with mistakes is simply called compensation. Compensation takes us
+out of the transactional world and into the real world. At the end of the day, customers will
+remember well (or hardly at all) the online shop from which they ordered and simply received their
+goods; the majority of online shops can deliver this. The customer will remember the online shop
+(bank, optician, craftsman... or whatever) that acted in an exemplary manner when problems arose and
+helped me as a customer with my problem in a professional manner.
+
+#### Compensation or "the plan B": there is always an alternative
+
+We can see the value of compensation in the over-order example. Our online store had 50 items left
+in stock, and the ordering service was aware of this. However, the service did not know that these
+50 items had already been booked due to a repeat telephone order. So it accepted the next order for
+one item without checking the stock again, because it had not yet reached a risky stock level for
+the service. Now, with 51 items ordered and a stock level of 50, we have the supposed problem.
+
+To find compensation, we need to consider whether the current inventory is actually relevant to a 
+solution. A way of more or less automation is much more based on whether I can deliver on time, not
+whether I have enough inventory.
+
+Another, more human and probably more professional compensation is honesty in the face of a
+mistake. Just admit to your customer that not everything went smoothly with their order. That can
+happen - online, just as well as on-site in the store!
+
+Honest communication and offering a variety of compensation options, such as an alternative item, a
+gift certificate, or (and) a refund of the purchase price, will most likely result in an even
+happier customer who is also likely to become a repeat buyer. Customers notice when they are treated
+with honesty, and these (unfortunately) rare experiences are remembered positively.
+
+#### There is no "plan B", we need a transaction
+
+It happens that compensation is excluded for a variety of reasons. This may be due to the nature of
+the domain, e.g. if it is a matter of life and death, or simply because management does not want to
+compensate for tactical reasons, up to a wrongly cut microservices architecture where a rewrite is
+not done for cost reasons.
+
+##### The most common scenario
+
+Now let's look at one of the most common scenarios, an entity-driven microservices architecture that
+is "perfectly" cut at service boundaries.
+
+Typically, the problems with implementing a microservice architecture stem from our entity-driven
+nature. We obsessively try to declare every component of a domain down to the smallest detail. Our
+dusty toolbox of classes, inheritance, and {{< abbr "UML" "Unified Modeling Language" >}} becomes
+the anchor that keeps us ironclad in the mindset of monolithic structures. 
+
+The nature of entity-based services is that they are at the center of inter-service transactions.
+Many requests involve multiple entities, leading to chaotic situations where non-domain-related
+commands and events must be fired to compensate multiple services and eventually bring all systems
+back to a consistent state.
+
+In software engineering, this is called cohesion and coupling. What we want to achieve with a
+bounded context-centric approach is high cohesion, i.e. the complete encapsulation of domain
+processes. High cohesion results in (almost) transaction-free software architectures between 
+services. Exactly the opposite is achieved with entity-centric software architectures, i.e. high
+coupling.
+
+The problems of high coupling are well known in the area of monolithic architectures, not for
+nothing the
+{{< abbr "S.O.L.I.D." "Single responsibility principle, open-closed principle, Liskov substitution principle, interface segregation principle, dependency inversion principle" >}}[^solid]
+principles have evolved here over the past decades of
+{{< abbr "OOP" "Object-oriented programming" >}}. Each principle has a positive effect by either
+increasing cohesion, (and) or decreasing coupling so that classes are no longer strongly coupled to
+other classes.
+
+##### Example for a microservice transaction and its compensation
+
+The following widely used example of handling transactions across multiple microservices is taken
+from the book Microservices Patterns[^microservices-patterns] by Chris Richardson.
+
+The example includes an ordering service that has sovereignty over all ordering processes, as well
+as a customer service that manages customer data. For all orders there is a rule that must be
+realized as a transaction. The sum of all open amounts of all orders of a customer must be less
+than or equal to the customer's credit limit.
+
+In the following example, the transaction is implemented using a SAGA pattern[^saga-pattern]. For
+more information on sagas, see the paper[^sagas-paper] by Hector Garcia-Molina and Kenneth Salem.
+
+###### The happy path
+
+1. The order is created within a transaction with the status "pending"
+2. The order service sends a message to the customer service to trigger the reservation
+3. The customer service reserves a credit
+4. The customer service sends a message to the order service to trigger the change of status
+5. The order service changes the status from "pending" to "open"
+(Eventual Consistency[^eventual-consistency])
+
+###### Failed to approve the order in the last step
+
+1. The order is created within a transaction with the status "pending"
+2. The order service sends a message to the customer service to trigger the reservation
+3. The customer service reserves a credit
+4. The customer service sends a message to the order service to trigger the approve of the order
+5. The approve order command failed within the order service
+
+Now compensation must be made:
+
+6. The order service sends a compensation message to the customer service to trigger the release of
+the credit
+7. The customer service releases the credit (Eventual Consistency[^eventual-consistency])
+8. The customer service sends a compensation message to the order service to trigger the rejection
+of the order
+9. The order service changes the status from "pending" to "rejected"
+(Eventual Consistency[^eventual-consistency])
+
+##### Ways to control sagas 
+
+The implementation and control of sagas can be done in two ways: choreography and orchestration.
+
+###### Saga choreography
+
+In choreography, the flow of the saga is implicitly sequential within a distributed event flow. Each
+service involved encapsulates the knowledge of the next steps.
+
+This has two clear advantages: loose coupling and ease of implementation. The services do not know
+each other, but each service knows which events it is interested in and which events it must send in
+response. In effect, this is pseudo-loose coupling. But a pseudo-loose coupling that is easy to
+implement.
+
+Of course, as is often the case, there are clear disadvantages to a choreographed saga. The
+pseudo-loose coupling often leads to circular dependencies between services. Especially the
+interaction between events and compensation can cause problems if there is no clear responsibility
+for the saga. In addition, the increasing complexity that arises when we distribute the business
+logic over the course of a saga to a number of services should not be ignored. The latter leads to
+the most annoying drawback, a change in the business logic. If there is a change in the saga flow
+despite the domain, then each service involved must be adjusted to ensure a correct saga flow.
+
+###### Saga orchestration
+
+In contrast to the choreographed saga, in the orchestrated saga we find an explicitly sequential
+flow of events. Explicit because each service that initiates a saga flow acts as its orchestrator.
+
+The services involved by the orchestrator have no knowledge of the event flow. They act as "dumb"
+segments in a chain of actions driven by a single service that also has full domain responsibility
+for the saga flow.
+
+The advantage of orchestration is that it makes the saga easier to understand and provides a
+unidimensional direction in which the steps of the saga are executed. A simple look at the
+orchestrator is enough to understand which actors and events are involved and when they are involved
+in the flow. The unidimensional direction also prevents circular dependencies between our actors.
+
+What we should also not overlook is the separation of concerns that we get from orchestration. Each
+component, each link in our chain, has its role - one performs an action, the other orchestrates,
+the next compensates.
+
+The disadvantage is that you quickly run into the "smart orchestrator & dump service" anti-pattern.
+At this point, too much business logic is tied to an orchestrator, which quickly creates a god class
+that also breaks the separation of concerns if you are not careful with refactoring.
+
+Finally, note that an orchestrator should not be implemented from scratch. There are reliable,
+well-tested solutions available that can be quickly integrated as frameworks, bundles, or plugins,
+and can usually be relied upon.
 
 ## Sources 
 ### My conference notes
-### Heise's "Mastering Microservices" – About the conference 
-#### The speakers
 
+This article is based on as detailed notes and thoughts as possible that I took during the
+conference. If it helps you, you can find them in my smart notes on Github:
+
+- [mastering_microservices_2022.md](https://github.com/lrotermund/zettelkasten/blob/master/notes/%7Dc_mastering_microservices_2022.md)
+
+Please consider the article under this criterion as well. I am grateful for any pointers to errors
+or incompleteness. Feel free to contact me on
+[LinkedIn](https://www.linkedin.com/in/lukas-rotermund),
+[Mastodon](https://social.dev-wiki.de/@lukasrotermund), or simply by
+[email](mailto:lukas.rotermund@live.de).
+
+### Heise's "Mastering Microservices" – About the conference 
+
+[Heise's Mastering Microservices](https://konferenzen.heise.de/mastering-microservices/) is a great
+German-speaking conference for aspiring architects and anyone who wants to look beyond the horizon
+of monolithic software architecture. Speakers include several well-known software architects and
+companies who share their knowledge over the course of a full day. Highly recommended.
+
+## My conclusions
+
+1. Trying to summarize a conference in a blog article was my worst idea in 2022 (2023...).
+2. Heise's "Mastering Microservices" is worth a (virtual) visit, I had the chance to listen to very
+talented software architects and developers and take away a lot for me personally as well as for my
+company.
+3. Not everything you learn at the conference can be applied directly to existing projects, but most
+of the topics were explained so well and hands-on that they can be implemented quickly or taken into
+account when planning future systems or updates.
+4. A few topics that may not seem relevant at first glance can quickly turn out to be quite relevant
+after all. It is worth going through the conference documents and recordings again afterwards and
+consuming them one more time.
 
 ## Disclaimer
 
 {{< disclaimer >}}
+
+[^osi_model]: OSI model: The Open Systems Interconnection (OSI) model is a
+    layered model that seperates seven layers of network communication.
+
+    | Layer | Name               |
+    | ----- | ------------------ |
+    | 7     | Application layer  |
+    | 6     | Presentation Layer |
+    | 5     | Session layer      |
+    | 4     | Transport layer    |
+    | 3     | Network layer      |
+    | 2     | Data link layer    |
+    | 1     | Physical layer     |
+[^cqrs]: CQRS: The Command-Query-Responsibility-Segregation is a pattern in software development for
+    describing the separation of a program's interface into a query and a command interface. Both
+    handling the internal code separately and writing (command) and reading (query) also from
+    different databases, each specialised in writing or reading.
+[^solid]: SOLID principles: The SOLID principles are a set of five design guidelines in
+    object-oriented programming that, when followed properly, can lead to more understandable,
+    flexible, and maintainable code by promoting high cohesion within classes and low coupling
+    between classes.
+[^bluebook]: Domain Driven Design: Eric Evans (2003) Domain-Driven Design - Tackling Complexity in
+    the Heart of Software. Pearson International
+[^microservices-patterns]: Microservices Patterns: Chris Richardson (2018) Microservices Patterns -
+    With examples in Java (English Edition). Manning
+[^saga-pattern]: Saga pattern: The saga pattern is a design pattern in microservices architecture
+    used to manage long-running business transactions by handling distributed transactions and
+    compensating for actions that have been committed, ensuring data consistency across services.
+[^sagas-paper]: Sagas paper: [Hector Garcia-Molina and Kenneth Salem (1987) SAGAS. Department of
+    Computer Science, Princeton University](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
+[^eventual-consistency]: Eventual Consistency: Eventual consistency is a model used in distributed
+    computing, where systems eventually achieve a state of consistency among all nodes or replicas,
+    allowing for temporary inconsistencies and delays in propagating updates.
+
