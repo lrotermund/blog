@@ -46,6 +46,12 @@ caption="heaven-gd38ed956a_1280.webp – Photo by [yeniguel](https://pixabay.com
 command="Resize" 
 options="150x" >}}
 
+{{< figureCupper
+img="pexels-pixabay-277458.webp" 
+caption="pexels-pixabay-277458.webp – Photo by [Pixabay](https://www.pexels.com/de-de/@pixabay) from [Pexels](https://www.pexels.com/de-de/foto/graustufenfotografie-der-uhr-nahe-baumen-277458)." 
+command="Resize" 
+options="150x" >}}
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
