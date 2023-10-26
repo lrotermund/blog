@@ -782,7 +782,7 @@ func TestGroupTransactionsByType(t *testing.T) {
 
 More about the implementation of the 
 [Generator](https://golang.org/src/testing/quick/quick.go?s=575:764#L13) interface in the previous 
-section, [Code analysis of the Check() function](code-analysis-of-the-check-function).
+section, [Code analysis of the Check() function](#code-analysis-of-the-check-function).
 
 The fuzzy test[^fuzz] can be roughly divided into three sections – the test function, the 
 configuration and the test execution.
