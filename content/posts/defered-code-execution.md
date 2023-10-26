@@ -2,7 +2,7 @@
 type: post
 title: "Deferred code execution in PHP, C and Rust – like in Go"
 tags: ["golang", "php", "c", "rust", "development"]
-date: 2023-09-30T13:25:09+02:00
+date: 2023-10-26T12:40:09+02:00
 images: ["/assets/pexels-pixabay-277458.webp"]
 description: "Go's defer keyword was a game changer. Let's see if we can
 implement it in other languages like PHP, C and Rust as well!"
@@ -28,7 +28,7 @@ corresponding domain need to be finished.
 ## What makes go's defer so special?
 
 There are built-in constructs in other languages, such as C#'s `using` keyword,
-Java's seim try-with-resource, C++'s
+Java's try-with-resource, C++'s
 {{< abbr "RAII" "Resource Acquisition Is Initialization" >}}, and Python's
 `with` keyword, that perform similar tasks to the `defer` keyword, but not with
 its capabilities. In these languages, the corresponding constructs are often
@@ -790,8 +790,8 @@ int calculate_and_return(int number) {
     char lock[50];
     snprintf(lock, sizeof(lock), "some-calc-lock_%d", number)
 
-    bool ok = lock_acquire(lock);
-    if (!ok) {
+    bool lockOK = lock_acquire(lock);
+    if (!lockOK) {
         return_defer(-1);
     }
     
@@ -806,7 +806,9 @@ int calculate_and_return(int number) {
     }
 
 defer:
-    lock_release(lock);
+    if (lockOK) {
+        lock_release(lock);
+    }
 
     return result;
 }
@@ -967,13 +969,17 @@ int main() {
             orders[i].orderID,
             orders[i].item
         );
+
         free(orders[i].item);
     }
-    free(orders); 
 
     return_defer(0);
 
 defer:
+    if (orders) {
+        free(orders);
+    }
+
     if (conn) {
         close_mongodb_connection(conn);
         printf("Database connection closed.\n");
@@ -1034,3 +1040,231 @@ docker run --net deferc defer-c:dev
 ```
 
 ## Go's defer in Rust
+
+From the object-oriented PHP to simple C, now with Rust another object-oriented
+language. In my opinion, Go and Rust often find a similar developer community
+and it is not uncommon for discussions to break out on the Internet about which
+language is better. But that's not the point of this post. Rather, I want to use
+the best components of all languages in my daily work, as much as possible.
+And with respect to Go's `defer`, this is definitely possible with Rust.
+
+As with PHP, we can again rely on the deconstructor provided by the drop trait
+in Rust (a trait is usually called an interface in other languages). The
+difference to PHP is most obvious in the implementation, because except for the
+destructor, the two implementations are not similar at all.
+
+As in C, in Rust we rely on a defer macro. Inside the macro, we initialize an
+instance that implements the drop trait and contains a closure. ***Now it gets
+exciting***. Where we relied on the {{< abbr "LIFO" "Last-in-First-out" >}}
+[SplStack](https://www.php.net/manual/en/class.splstack.php) in PHP, we now take
+advantage of Rust's automatic {{< abbr "LIFO" "Last-in-First-out" >}} memory
+deallocation – espacially for implementation's of the drop trait.
+
+Essentially, each call to our defer macro creates an object, and all of those
+objects are cleaned up and deallocated from the end of the function to the
+beginning of the function.
+
+The following implementation once again, as with PHP and C, goes back to a
+smarter mind than mine and that is
+[Huon Wilson](https://huonw.github.io/) and
+[his answer on StackOverflow](https://stackoverflow.com/a/29963675).
+
+### The `defer!` macro
+
+As mentioned before, the Rust implementation of Go's `defer` is all about a
+macro, as well as another helper macro.
+
+```rust
+macro_rules! expr { ($e: expr) => { $e } } // tt hack
+macro_rules! defer {
+    ($($data: tt)*) => (
+        let _scope_call = ScopeCall {
+            c: Some(|| -> () { expr!({ $($data)* }) })
+        };
+    )
+}
+```
+
+Our defer macro expects a pattern `$data` of type token tree `$data: tt` and
+that arbitrarily often `$($data: tt)*`. A token is meant to be somewhat
+abstract, similar to the tokens used in lexical analysis during compilation.
+When several of them come together, commands and expressions are created, from
+that moment on we have a token tree. So exactly what we want to pass when we
+call `defer`, an example follows.
+
+There's a lot going on in the body of the macro, so let's break it down piece by
+piece. Let's start with the inside and work our way out. Inside another macro
+`expr!` is called with a block of statements `({ ... })`. The statements come
+from disassembling our passed token tree into individual statements `$($data)*`.
+
+The result of this helper macro will be the body of a parameterless closure `||`
+with no return value `-> ()`. This closure is wrapped by the `Some()`-Option
+enum and passed as a value to the `c` field of the `ScopeCall` struct.
+
+The `ScopeCall` we just initialized is now written to the variable
+`_scope_call`. With this variable we are only interested in its lifetime in the
+function context and it is not used anywhere else, so we have to ignore the
+corresponding compiler warning with the `_` prefix. 
+
+```rust
+struct ScopeCall<F: FnOnce()> {
+    c: Option<F>
+}
+impl<F: FnOnce()> Drop for ScopeCall<F> {
+    fn drop(&mut self) {
+        self.c.take().unwrap()()
+    }
+}
+```
+
+Now let us take a look at the no less important component, the previously
+initialized `ScopeCall` structure. This is the struct that implements the drop
+trait and thus plays a central role in the operation of the `defer!` macro.
+
+The struct has a single field `c` of the enum type `Option<>` which wraps the
+generic type `F`. The generic type `F` is defined in the struct signature and
+must implement the `FnOnce` trait, which means that you can pass anything as `F`
+[that can be called at most once](https://doc.rust-lang.org/std/ops/trait.FnOnce.html).
+
+Finally, we find the implementation of the drop trait on the `ScopeCall`. Here
+we can assume that our `Option<F>` field contains a value, since we populate it
+with the `Option` enum `Some` inside the `defer!` macro. Therefore, we use
+`self.c.take()` to take the closure `F` from the `Option` and assign the new
+`Option` enum `None` so that the closure `c` is empty from now on.
+
+This `Option<T>`, which `take` returns, corresponds to our defer-closure, we now
+have to unpack it by `unwrap()` to be able to call it directly, which can be
+recognized by the last pair of parentheses `()`.
+
+#### The `tt` token tree hack
+
+The mentioned "tt hack", i.e. `macro_rules! expr { ($e: expr) => { $e } }` is
+used in the defer macro to treat the passed token trees as one big expression
+bundled into one block. Essentially, this makes the defer macro call more
+flexible and allows blocks of expressions to be processed correctly in addition
+to single expressions. 
+
+It's a subtlety of Rust that forces us to handle expressions this way, best to
+try juggling the defer parameters yourself, then you might understand the
+problem better than I can explain it, Rust is not my language of choice.  
+
+### The `defer!` implementation
+
+Now let's look at a simple example of how the defer macro might be used. It is
+important to note that I am not a Rust developer, but I plan to learn Rust so
+that I can make better use of it. The latter also caused me a lot of problems
+when writing the example, as Rust's borrowing mechanism had problems with
+borrowing the mutable file for the defer macro.
+
+If you are a Rust developer, I would love to see better and different ways to
+play around with the defer macro to get the most out of this great concept in
+Rust. Maybe you have a tip for me on how to better understand the borrow
+mechanism.
+
+Now for the example. In the example, a TCP listener is started on port 7878 and
+writes a request of more than 100 bytes to a file. The success response, as well
+as the flushing of the file, are in defer blocks.
+
+```rust
+use std::fs::File;
+use std::io::{self, Write, Read};
+use std::net::TcpListener;
+
+struct ScopeCall<F: FnOnce()> {
+    c: Option<F>
+}
+impl<F: FnOnce()> Drop for ScopeCall<F> {
+    fn drop(&mut self) {
+        self.c.take().unwrap()()
+    }
+}
+
+macro_rules! expr { ($e: expr) => { $e } }
+macro_rules! defer {
+    ($($data: tt)*) => (
+        let _scope_call = ScopeCall {
+            c: Some(|| -> () { expr!({ $($data)* }) })
+        };
+    )
+}
+
+fn main() -> io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:7878")?;
+    println!("Server listening on port 7878...");
+
+    let (mut stream, addr) = listener.accept()?;
+    println!("Connection received from: {}", addr);
+
+    let mut buffer = [0; 1024];
+    let bytes_read = stream.read(&mut buffer)?;
+    if bytes_read <= 100 {
+        stream.write_all(b"Error: Received data is less than or equal to 100 bytes")?;
+
+        return Ok(());
+    }
+
+    defer! {
+        let response = format!("Finished processing {} bytes via TCP", bytes_read);
+        let _ = stream.write_all(response.as_bytes());
+    }
+
+    let message = String::from_utf8_lossy(&buffer[..bytes_read]);
+    let mut file = File::create("defer-rust.txt")?;
+    file.write_all(message.as_bytes())?;
+
+    defer! {
+        let _ = file.flush();
+        let _ = file.sync_all();
+    }
+
+    Ok(())
+}
+```
+
+To start the server itself, create a new binary project with cargo:
+
+```sh
+cargo new defer_rust --bin
+```
+
+Then copy my example into `src/main.rs` and build it, again with cargo:
+
+```sh
+cargo build
+```
+
+Now you can start the server via `./target/debug/defer_rust` and send a netcat
+request of exactly 101 bytes to test the functionality. Feel free to remove a
+character to provoke an error.
+
+```sh
+nc localhost 7878 <<< "In Go, defer schedules calls to run before the enclosing function ends. A powerful tool for cleanup\!"
+```
+
+### The scopeguard crate
+
+If you don't want to implement the macro yourself, there is also
+[**scopeguard**, a crate that provides defer](https://crates.io/crates/scopeguard).
+
+You can easily add scopeguard via cargo:
+
+```sh
+cargo add scopeguard
+```
+
+## My conclusions
+
+Go's defer is a really handy tool. The concept behind defer is another tool that
+allows you as a developer to write more readable and secure code. I think it's
+worth adapting this concept to other languages and playing around with the
+possibilities that arise from this implementation.
+
+In PHP and C, it worked very well for me, and in Rust, I had problems with a
+good implementation due to my skill issue. I will work on that though.
+
+Last but not least, I am interested in your perspective. What do you think about
+defer? Have you ever tried to implement it in another language, or is there
+already an implementation for that language? Feel free to drop me a line on
+[LinkedIn](https://www.linkedin.com/in/lukas-rotermund) or
+[Mastodon](https://social.dev-wiki.de/@lukasrotermund)!
+
