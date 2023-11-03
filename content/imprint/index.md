@@ -52,6 +52,12 @@ caption="pexels-pixabay-277458.webp – Photo by [Pixabay](https://www.pexels.co
 command="Resize" 
 options="150x" >}}
 
+{{< figureCupper
+img="kassel-1092037_1280.webp" 
+caption="kassel-1092037_1280.webp – Photo by [Bernd Hildebrandt](https://pixabay.com/de/users/barni1-773830) from [Pixabay](https://pixabay.com/de/photos/kassel-nebel-bergpark-wilhelmsh%C3%B6he-1092037/)." 
+command="Resize" 
+options="150x" >}}
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
