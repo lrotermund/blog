@@ -1,7 +1,7 @@
 ---
 type: post
 title: "From zero to terraform hero – without paying a dollar"
-tags: ["terraform", "opentofu", "devops", "aws"]
+tags: ["terraform", "opentofu", "devops", "aws", "iac"]
 date: 2023-10-29T12:40:09+02:00
 images: ["/assets/kassel-1092037_1280.webp"]
 description: "I hate paying for learning resources. For that reason, I will
@@ -14,9 +14,39 @@ toc: false
 draft: false
 ---
 
+IT systems are constantly changing. Just like our knowledge as computer
+scientists. While 10 years ago we had to think about the right hardware
+infrastructure to deploy software to hundreds or thousands of customers, today
+the cloud computing providers Amazon Web Services, Microsoft Azure or Google
+Cloud Platform are the first choice.
+
+They all offer incredible power and flexibility when it comes to deploying a
+wide variety of hardware infrastructures. Whether it's a website, an online
+store, a game server, or a neural network, everyone can find the right,
+easy-to-configure products without having to set up, install, and maintain
+hardware systems themselves. Everything is just a click away.
+
+When I worked at an advertising agency until early 2020, all the websites and
+software solutions we developed and delivered to our clients were hosted on
+self-managed shared and dedicated servers at a trusted server provider. In my
+last two jobs, however, I came into more contact with cloud computing providers,
+which is also the core and motivation for this article. If I were in my position
+at the advertising agency again, I would use cloud computing services more
+often, simply because it would have saved me a lot of work.
+
+I would like to take you with me on my learning journey. We'll start with the
+classic {{< abbr "VPS" "Virtueller privater Server" >}} and then look at cloud
+computing and infrastructure as code. After a look at the
+{{< abbr "IaC" "Infrastructure as Code" >}} providers Terraform and OpenTofu, we
+will build a hands-on Terraform project together and continuously apply it to
+the local AWS abstraction layer LocalStack to emulate as much real Terraform
+behavior as possible.
+
 {{< toc >}}
 
 ## What makes a terraform hero?
+
+
 
 ## The non-cloud way of managing your system
 ### It's totally legitimate
