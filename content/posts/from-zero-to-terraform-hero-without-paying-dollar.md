@@ -46,7 +46,21 @@ emulate as much real Terraform behavior as possible.
 
 ## What makes a terraform hero?
 
+Over the past few years, I've met a few colleagues who worked with me or the
+companies I worked for who were all proficient in dealing with different cloud
+providers and could easily make dynamic adjustments to the infrastructures they
+managed. At the time, I only had a good basic understanding of Docker and
+Kubernetes. Anything beyond Kubernetes and Docker, as well as classic
+{{< abbr "VPS" "Virtual private server" >}}, was a black box to me.
 
+To me, these colleagues are Terraform heroes. Terraform heroes are able to
+transform system infrastructure requirements into an efficient, easy to
+understand, and replicable Terraform project.
+
+A basic understanding and cost-effective use of cloud resources is part of the
+Terraform hero's toolbox. They can weigh which resources are needed for a
+requirement and advise which will deliver the most performant, cost-effective,
+and resilient result.
 
 ## The non-cloud way of managing your system
 ### It's totally legitimate
