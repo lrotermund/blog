@@ -69,7 +69,7 @@ enableGitInfo = true
     rel = "me"
   [[params.social]]
     name = "Mastodon"
-    url = "https://social.dev-wiki.de/@lukasrotermund"
+    url = "https://social.tchncs.de/@lukasrotermund"
     rel = "me"
   [params.style]
     darkestColor = "#315659"
