@@ -11,7 +11,7 @@ summary: "I hate paying for learning resources. For that reason, I will
 learn together with you, how to setup and run terraform – without paying a
 dollar"
 toc: false
-draft: false
+draft: true
 ---
 
 IT systems are constantly changing. Just like our knowledge as computer
@@ -63,8 +63,49 @@ requirement and advise which will deliver the most performant, cost-effective,
 and resilient result.
 
 ## The non-cloud way of managing your system
-### It's totally legitimate
+
+I don't want to start from scratch with this blog post. I assume you know what
+a server is and what it does. I want to start where my journey began, working
+on a {{< abbr "VPS" "Virtual private server" >}}.
+
+{{< abbr "VPSs" "Virtual private server" >}} are part of, or a precursor to,
+cloud computing.  Some time before AWS, Google and others started offering their
+services, there were some data centers and hosting providers offering
+{{< abbr "VPS" "Virtual private server" >}}.
+
 ### The classic VPS
+
+A {{< abbr "VPS" "Virtual private server" >}} is basically a classic server that
+you can put under your desk at home, except it is mounted in a rack in a data
+center. There is a {{< abbr "VPS" "Virtual private server" >}} for every budget.
+There are very low performance {{< abbr "VPSs" "Virtual private server" >}}
+whose resources are shared by multiple customers, and there are dedicated,
+highly equipped, high performance {{< abbr "VPSs" "Virtual private server" >}}
+that are leased directly and exclusively to one customer. Depending on the
+configuration, data centers can provision
+{{< abbr "VPSs" "Virtual private server" >}} in minutes to hours.
+
+This flexibility, coupled with the speed with which a
+{{< abbr "VPS" "Virtual private server" >}} can be ordered, makes it an
+extremely popular product to this day. This brings us to the non-cloud way of
+ordering hardware resources.
+
+The process is basically the same no matter which provider I order from. The
+first step is to determine what the basic hardware requirements of your
+application are. This can be easily determined by running the application
+locally, and multiplied if you have a rough idea of how many users the future
+application will have.
+
+With the requirements for your {{< abbr "VPS" "Virtual private server" >}} in
+mind, you can then go to any VPS provider and choose a suitable offering,
+select an operating system image and complete the order. If necessary,
+additional features such as a domain can be booked, but this should all be
+optional. Some providers also offer an
+{{< abbr "API" "Application Programming Interface" >}} for this process, which
+allows for some optimization when creating
+{{< abbr "VPSs" "Virtual private server" >}}, especially on a larger scale.
+
+### It's totally legitimate
 
 ## The cloud motivation
 ### Gaining infrastructural flexibility
