@@ -58,6 +58,12 @@ caption="kassel-1092037_1280.webp – Photo by [Bernd Hildebrandt](https://pixab
 command="Resize" 
 options="150x" >}}
 
+{{< figureCupper
+img="pexels-andreea-airinei-13442515.webp"
+caption="pexels-andreea-airinei-13442515.webp – Photo by [Andreea Airinei](https://www.pexels.com/@andreea-airinei-127737174/) from [Pexels](https://www.pexels.com/photo/close-up-shot-of-a-mossy-tree-trunk-13442515/)."
+command="Resize"
+options="150x" >}}
+
 ### Disclaimer
 *Accountability for content*\
 The contents of our pages have been created with the utmost care. However, we cannot guarantee the contents'
