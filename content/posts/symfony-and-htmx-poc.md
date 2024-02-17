@@ -2,7 +2,7 @@
 type: post
 title: "HTMX & Symfony: The pleasure of purified web development"
 tags: ["symfony", "php", "htmx", "go", "development"]
-date: 2024-02-17T22:00:03+00:00
+date: 2024-02-17T21:00:03+00:00
 images: ["/assets/pexels-andreea-airinei-13442515.webp"]
 description: |
     JS frameworks have professionalized UI web development, but they have also
@@ -15,9 +15,12 @@ toc: false
 draft: false
 ---
 
-HTMX, a simple and powerful library for AJAX, CSS transitions, WebSockets, and
-server-sent events directly in HTML, via attributes. With this promise, HTMX,
-which grew out of intercooler JS, is currently rising to fame. To test if it
+HTMX, a simple and powerful library for
+{{< abbr "AJAX" "Asynchronous JavaScript And XML" >}},
+{{< abbr "CSS" "Cascading Style Sheets" >}} transitions, WebSockets, and
+server-sent events directly in {{< abbr "HTML" "Hypertext Markup Language" >}},
+via attributes. With this promise, HTMX, which grew out of intercooler
+{{< abbr "JS" "JavaScript" >}}, is currently rising to fame. To test if it
 delivers what it promises, I built a proof of concept implementation using HTMX
 and Symfony. 
 
@@ -27,20 +30,28 @@ and Symfony.
 
 Developers who have slowed down active frontend development around 2015 and want
 to develop a feature or two again in today's professional frontend world may
-feel uncomfortable with the overhead of frameworks, libraries, and JS build
-pipelines that have emerged since jQuery.
+feel uncomfortable with the overhead of frameworks, libraries, and
+{{< abbr "JS" "JavaScript" >}} build pipelines that have emerged since jQuery.
 
 Back then, the state of the current application was determined in the backend,
-generated as HTML, and displayed. Today, there is usually a JSON API. Of course,
-this still responds with a current state based on a JWT-based authorization, but
-the result is processed much differently than with the old HTML controllers/
-APIs.
+generated as {{< abbr "HTML" "Hypertext Markup Language" >}}, and displayed.
+Today, there is usually a {{< abbr "JSON" "JavaScript Object Notation" >}}
+{{< abbr "API" "Application Programming Interface" >}}. Of course, this still
+responds with a current state based on a
+{{< abbr "JWT" "JSON Web Token" >}}-based authorization, but the result is
+processed much differently than with the old
+{{< abbr "HTML" "Hypertext Markup Language" >}} controllers/
+{{< abbr "APIs" "Application Programming Interfaces" >}}.
 
-JS frameworks, enabled by Node.js, Bun or Deno build processes, duplicate/mimic
-this backend state processing. Modularized Vue, React, or Angular components,
-triggered by various bindings, send their XHR requests via encapsulated API
-services against the backend JSON APIs. Always in accordance with the roles and
-permissions contained in the corresponding JWT issued by the OAuth server.
+{{< abbr "JS" "JavaScript" >}} frameworks, enabled by Node.js, Bun or Deno build
+processes, duplicate/mimic this backend state processing. Modularized Vue,
+React, or Angular components, triggered by various bindings, send their
+{{< abbr "XHR" "XMLHttpRequest" >}} requests via encapsulated
+{{< abbr "API" "Application Programming Interface" >}} services against the
+backend {{< abbr "JSON" "JavaScript Object Notation" >}}
+{{< abbr "APIs" "Application Programming Interfaces" >}}. Always in accordance
+with the roles and permissions contained in the corresponding
+{{< abbr "JWT" "JSON Web Token" >}} issued by the OAuth server.
 
 The question quickly arises, why all the extra effort? Why all these additional
 transformation layers that states, users and data have to go through? At what
@@ -60,10 +71,11 @@ framework, often with a very flat learning curve, is generally difficult to
 apply to other frameworks.
 
 This skill issue, coupled with the overhead of state, user, and data
-transformations, and the still unaddressed problem that dozens of JS libraries
-that my UI uses get declared vulnerable every night, often actively enabling
-security vulnerabilities in your own application, is what makes front-end
-development so unattractive to me right now.
+transformations, and the still unaddressed problem that dozens of
+{{< abbr "JS" "JavaScript" >}} libraries that my
+{{< abbr "UI" "User Interface" >}} uses get declared vulnerable every night,
+often actively enabling security vulnerabilities in your own application, is
+what makes front-end development so unattractive to me right now.
 
 ## We need simple & boring again, we need the Golang way
 
@@ -90,8 +102,9 @@ without a framework & without a single external library.
 After a short time in Go, you realize one thing: Go is boring - but it is
 effective. Go, with its greatly reduced set of about 25 keywords and its huge
 standard library, makes development highly efficient. There is usually only one
-way to do something in Go, from loops, an API, and coroutines to formatting the
-code.
+way to do something in Go, from loops, an
+{{< abbr "API" "Application Programming Interface" >}}, and coroutines to
+formatting the code.
 
 In Go, it's not about arguing endlessly about the use of sophisticated patterns,
 libraries and frameworks, or about perfect code formatting, or about tabs vs.
@@ -108,7 +121,8 @@ back and forth between backend and frontend.
 
 HTMX is quickly integrated into the project with a simple script tag. No build
 pipeline, no Node.js & no npm, no bun, no deno - just a script. HTMX is minified
-to just ~14k, quickly delivered via a CDN:
+to just ~14k, quickly delivered via a
+{{< abbr "CDN" "Content Delivery Network" >}}:
 
 ```html
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -118,8 +132,12 @@ That's it, now you're ready to go productive and develop your first components
 that work with the features of HTMX. But what are these features? What are the
 benefits for me?
 
-HTMX gives you the ability to send XML HTTP requests, or short XHR, which are
-asynchronous, non-blocking GET, POST, PUT & DELETE requests from any HTML
+HTMX gives you the ability to send
+{{< abbr "XML" "Extensible Markup Language" >}}
+{{< abbr "HTTP" "Hypertext Transfer Protocol" >}} requests, or short
+{{< abbr "XHR" "XMLHttpRequest" >}}, which are
+asynchronous, non-blocking GET, POST, PUT & DELETE requests from any
+{{< abbr "HTML" "Hypertext Markup Language" >}}
 element - why should this only be allowed for `<a>` and `<form>`?
 
 ```html
@@ -137,15 +155,16 @@ element - why should this only be allowed for `<a>` and `<form>`?
 This, and of course the HTMX script tag at the beginning, is all that is needed
 on the frontend side for a lazy loading list of blog posts. HTMX provides
 several functions via attributes prefixed with `hx` or long `data-hx`. In the
-previous example, the `li` element executes a GET XHR when the element is
-displayed in the browsers viewport.
+previous example, the `li` element executes a GET
+{{< abbr "XHR" "XMLHttpRequest" >}} when the element is displayed in the
+browsers viewport.
 
 So far, so good, but what I haven't mentioned is what happens to the result of
-the XHR. The default behavior of HTMX requests is that the content of the
-response replaces the **innerHTML** of the triggering element. However, this
-behavior can be overridden using the `hx-swap` attribute. Possible targets here
-include **outerHTML** or, as in the example, **afterend**, which places the
-result after the triggering element, as well as a few others.
+the {{< abbr "XHR" "XMLHttpRequest" >}}. The default behavior of HTMX requests
+is that the content of the response replaces the **innerHTML** of the triggering
+element. However, this behavior can be overridden using the `hx-swap` attribute.
+Possible targets here include **outerHTML** or, as in the example, **afterend**,
+which places the result after the triggering element, as well as a few others.
 
 Okay, that's it. **Now you are officially an HTMX expert** and know everything
 relevant about HTMX that you need to effectively build simple frontends - no
@@ -153,18 +172,25 @@ joke.
 
 ## Back to the standard: The incredible closeness to HTML
 
-What I really like is how close HTMX is to HTML. HTMX is HTML-compliant by
-definition if only the custom `data-hx` attributes are used. Otherwise, HTMX
-does not deviate much from HTML with the `hx` attributes. All modern browsers
-can handle non-conforming HTML5 attributes without any problems, but of course
-no browser can guarantee this.
+What I really like is how close HTMX is to
+{{< abbr "HTML" "Hypertext Markup Language" >}}. HTMX is
+{{< abbr "HTML" "Hypertext Markup Language" >}}-compliant by definition if only
+the custom `data-hx` attributes are used. Otherwise, HTMX does not deviate much
+from {{< abbr "HTML" "Hypertext Markup Language" >}} with the `hx` attributes.
+All modern browsers can handle non-conforming
+{{< abbr "HTML5" "Hypertext Markup Language 5" >}} attributes without any
+problems, but of course no browser can guarantee this.
 
 The large German Internet portal spiegel.de also frequently uses
-non-HTML5-compliant HTML attributes such as `x-data` or `:class`, and here in
-particular there seem to be no conflicts with SEO and browser compatibility.
+non-{{< abbr "HTML5" "Hypertext Markup Language 5" >}}-compliant
+{{< abbr "HTML" "Hypertext Markup Language" >}} attributes such as `x-data` or
+`:class`, and here in particular there seem to be no conflicts with
+{{< abbr "SEO" "search engine optimization" >}} and browser compatibility.
 
-If you want to be absolutely sure & HTML5 compliant, you must use the `data-hx`
-attributes. This can be done using an HTML5 validator/linter in the merge
+If you want to be absolutely sure &
+{{< abbr "HTML5" "Hypertext Markup Language 5" >}} compliant, you must use the
+`data-hx` attributes. This can be done using an
+{{< abbr "HTML5" "Hypertext Markup Language 5" >}} validator/linter in the merge
 request or deployment pipeline of your choice.
 
 With or without the data prefix, HTMX allows us to build frontends close to the
@@ -173,19 +199,21 @@ application.
 
 ## Get your hands dirty to learn: HTMX & Symfony in practice 
 
-To try out HTMX myself in a three to four hour PoC, I decided to build a
-minimalist, fantasy online store for handbags and suitcases for the Swiss
+To try out HTMX myself in a three to four hour
+{{< abbr "PoC" "Proof of concept" >}}, I decided to build a minimalist, fantasy
+online store for handbags and suitcases for the Swiss
 market - **AlpenGepaeck.ch**.
 
-You can have a look at the PoC and play around with HTMX by cloning the
-repository on Github and running it with Docker Compose in less than a minute.
+You can have a look at the {{< abbr "PoC" "Proof of concept" >}} and play around
+with HTMX by forking the repository on Github and running it with Docker Compose
+in less than a minute.
 
 - [tasko-products/poc-symfony-htmx](https://github.com/tasko-products/poc-symfony-htmx)
 
 The choice of Symfony as PHP framework for the backend is simply based on the
 fact that we at [tasko Products GmbH](https://www.tasko.de/) primarily use PHP
-and Symfony for backend development and the PoC was created as an experiment for
-tasko.
+and Symfony for backend development and the
+{{< abbr "PoC" "Proof of concept" >}} was created as an experiment for tasko.
 
 Of course, you can implement HTMX with any backend language. In particular,
 based on my personal preference, I would recommend taking a look at Golang. The
@@ -193,22 +221,14 @@ two are a good match based on their claim to simplicity and efficiency alone.
 In addition, Go's templates provide you with a wonderful tool for preparing and
 rendering customizable HTMX components on the backend side.
 
-If you want to learn more about HTMX and Golang, I can highly recommend the
-tutorial by ThePrimagen and Frontend Masters:
-
-{{< _figureCupper
-img="https://static.frontendmasters.com/assets/courses/2024-01-21-htmx/posterframe.jpg"
-imgLink="https://frontendmasters.com/courses/htmx/"
-alt="An image of ThePrimagen, trainer of the Frontend Masters course \"HTMX & Go\""
-caption="ThePrimagens and Frontend Masters course [HTMX & Go](https://frontendmasters.com/courses/htmx/)." >}}
-
 ### Setting up a docker based symfony project
 
 Setting up Symfony with Docker is very simple. In this short _Getting Started_,
 we will use the Docker-based installer recommended by Symfony. This was
-developed by Kévin Dunglas, the founder of Les-Tilleuls.coop, the company behind
-Api Platform, and the maintainer of FrankenPHP, a modern Go-based application
-server.
+developed by Kévin Dunglas, the founder of
+[Les-Tilleuls.coop](https://les-tilleuls.coop/en), the company behind
+[Api Platform](https://api-platform.com/), and the maintainer of
+[FrankenPHP](https://frankenphp.dev/), a modern Go-based application server.
 
 Clone the repository or just download it as a zip from Github:
 - [dunglas/symfony-docker](https://github.com/dunglas/symfony-docker)
@@ -242,7 +262,8 @@ MySQL... you name it, installed on the development environment.
 
 Adding HTMX to your project is a matter of seconds. Simply create a `templates`
 folder in your project root and create a `base.html.twig` file there. Now add
-the script tag to the header of this file to load HTMX from the unpkg CDN:
+the script tag to the header of this file to load HTMX from the unpkg
+{{< abbr "CDN" "Content Delivery Network" >}}:
 
 ```html
 <!DOCTYPE html>
@@ -260,11 +281,11 @@ the script tag to the header of this file to load HTMX from the unpkg CDN:
 
 ### Lazy loading rows of products
 
-Now for the fun part. Staying with the PoC example, we will now implement a home
-page with a lazy loading product section. The product section iterates over a
-number of products provided by the controller using Symfony's Twig template
-engine. The last product receives the `hx` attributes for reloading when it is
-revealed to the user in the viewport.
+Now for the fun part. Staying with the {{< abbr "PoC" "Proof of concept" >}}
+example, we will now implement a home page with a lazy loading product section.
+The product section iterates over a number of products provided by the
+controller using Symfony's Twig template engine. The last product receives the
+`hx` attributes for reloading when it is revealed to the user in the viewport.
 
 It is always lazy loaded page by page, as with classic pagination. The last lazy
 loaded product  always knows the next page; this information is always rendered
@@ -407,7 +428,7 @@ final class HomeController extends AbstractController
 }
 ```
 
-To enable lazy loading, we now need the corresponding ProductController. This
+To enable lazy loading, we now need the corresponding `ProductController`. This
 one renders three products by default, i.e. one row in the frontend.
 
 ```php
@@ -455,8 +476,9 @@ class ProductController extends AbstractController
 ### Creating a dynamic product search
 
 Creating a dynamically reloading search was one of the most "difficult" tasks -
-although my problem here was more with the CSS for positioning the search
-results box instead of the HTMX.
+although my problem here was more with the
+{{< abbr "CSS" "Cascading Style Sheets" >}} for positioning the search results
+box instead of the HTMX.
 
 In the following example, you can see the component from the header. The
 component contains an input field for the query, a div for the search results
@@ -465,7 +487,8 @@ happen.
 
 What you also see is the simple implementation of the `onfocusout` event in the
 input field. Just because we're using HTMX here doesn't mean we can't still
-write JS code to reset the search results, as in this case.
+write {{< abbr "JS" "JavaScript" >}} code to reset the search results, as in
+this case.
 
 ```html
 <div class="search-container">
@@ -488,17 +511,19 @@ You already know most of the HTMX attributes from the previous examples. New in
 this example are the `hx-target` and the `hx-indicator`. The `hx-trigger` is a
 bit more complex than in the previous examples.
 
-The trigger here combines simple JS events with various modifiers to react to a
-specific event. In the example, we are interested in the input changed event and
-then add a delay of 500 ms before sending the GET request. If the event occurs
-again within the 500ms, the delay will be reset.
+The trigger here combines simple {{< abbr "JS" "JavaScript" >}} events with
+various modifiers to react to a specific event. In the example, we are
+interested in the input changed event and then add a delay of 500 ms before
+sending the GET request. If the event occurs again within the 500ms, the delay
+will be reset.
 
 The `hx-target` changes only the target element, whose innerHTML is replaced by
 the response content. hx-indicator defines the element that receives the
 `htmx-request` class for the duration of the request. This is a very simple way
-to indicate via CSS that the search is not yet complete.
+to indicate via {{< abbr "CSS" "Cascading Style Sheets" >}} that the search is
+not yet complete.
 
-A simple SearchController is now provided in the backend, which searches the
+A simple `SearchController` is now provided in the backend, which searches the
 repository for results using the simplest means and renders them via a Twig
 template.
 
@@ -620,11 +645,12 @@ Let's take a look at the product detail page and the HTMX button first.
 
 Again, we already know `hx-post` and `hx-target`, only `hx-vals` is new. The
 exciting thing here is that our button can simply send a POST request and the
-values come from the `hx-vals` attribute, which contains a JSON with the data
-we want to submit. The target is defined as a CSS selector for the basketcount
-component in the header, which is a little round label above the basket icon
-that shows the number of items in the basket. This also replaces the innerHTML
-in a response.
+values come from the `hx-vals` attribute, which contains a
+{{< abbr "JSON" "JavaScript Object Notation" >}} with the data we want to
+submit. The target is defined as a {{< abbr "CSS" "Cascading Style Sheets" >}}
+selector for the basketcount component in the header, which is a little round
+label above the basket icon that shows the number of items in the basket. This
+also replaces the innerHTML in a response.
 
 This is the basket header item:
 
@@ -715,10 +741,10 @@ development for the first time in years, and my project, including the lazy
 loading, was up and running within minutes, without any prior knowledge of HTMX
 attributes.
 
-For me, my goal was accomplished. I have found a JS library that makes frontend
-development modern, fast, and boring while keeping the learning curve steep. I
-could well imagine to implement one or two more frontends with HTMX in the
-future.
+For me, my goal was accomplished. I have found a {{< abbr "JS" "JavaScript" >}}
+library that makes frontend development modern, fast, and boring while keeping
+the learning curve steep. I could well imagine to implement one or two more
+frontends with HTMX in the future.
 
 ## An invitation to you...
 
@@ -727,10 +753,10 @@ project and try to realize something realistic in a reduced context, like I did
 with my fantasy shop. I am convinced that everyone will see at least some
 benefit in HTMX.
 
-If you don't feel like building something yourself, feel free to fork the PoC
-and play around with the endpoints and functions, maybe you could build a
-checkout or a dynamic slider on the homepage? In any case, there are a lot of
-possibilities.
+If you don't feel like building something yourself, feel free to fork the
+{{< abbr "PoC" "Proof of concept" >}} and play around with the endpoints and
+functions, maybe you could build a checkout or a dynamic slider on the homepage?
+In any case, there are a lot of possibilities.
 
 ## Of course, we still need Vue, React, and the like
 
