@@ -2,7 +2,7 @@
 type: post
 title: "HTMX & Symfony: The pleasure of purified web development"
 tags: ["symfony", "php", "htmx", "go", "development"]
-date: 2024-02-10T13:10:03+00:00
+date: 2024-02-17T22:00:03+00:00
 images: ["/assets/pexels-andreea-airinei-13442515.webp"]
 description: |
     JS frameworks have professionalized UI web development, but they have also
@@ -184,8 +184,8 @@ repository on Github and running it with Docker Compose in less than a minute.
 
 The choice of Symfony as PHP framework for the backend is simply based on the
 fact that we at [tasko Products GmbH](https://www.tasko.de/) primarily use PHP
-and Symfony for backend development and the PoC was created as a training
-experiment for tasko.
+and Symfony for backend development and the PoC was created as an experiment for
+tasko.
 
 Of course, you can implement HTMX with any backend language. In particular,
 based on my personal preference, I would recommend taking a look at Golang. The
@@ -204,14 +204,552 @@ caption="ThePrimagens and Frontend Masters course [HTMX & Go](https://frontendma
 
 ### Setting up a docker based symfony project
 
+Setting up Symfony with Docker is very simple. In this short _Getting Started_,
+we will use the Docker-based installer recommended by Symfony. This was
+developed by Kévin Dunglas, the founder of Les-Tilleuls.coop, the company behind
+Api Platform, and the maintainer of FrankenPHP, a modern Go-based application
+server.
+
+Clone the repository or just download it as a zip from Github:
+- [dunglas/symfony-docker](https://github.com/dunglas/symfony-docker)
+
+The installer runs automatically when you start the Docker Compose environment,
+and the entrypoint placed in `frankenphp>docker-entrypoint.sh` also
+automatically starts the installation of the composer Symfony skeleton. But
+first you need to build the frankenphp images for the project, just run the
+following command:
+
+```sh
+docker compose build --no-cache
+```
+
+Ok, this may take a while. Once the build is complete, you can simply launch the
+Docker Compose environment. The build step of `symfony-docker-php-1` will take a
+while, this is where the composer project is created. If you have previously
+configured a database in `compose.yaml`, the system will also wait for it to
+start.
+
+To start the Docker Compose environment, just run:
+
+```sh
+docker compose up --pull always -d --wait
+```
+
+Now we have a running Symfony project without even having PHP, nginx, apache,
+MySQL... you name it, installed on the development environment.
+
 ### Include HTMX in your base template
+
+Adding HTMX to your project is a matter of seconds. Simply create a `templates`
+folder in your project root and create a `base.html.twig` file there. Now add
+the script tag to the header of this file to load HTMX from the unpkg CDN:
+
+```html
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+</html>
+```
 
 ### Lazy loading rows of products
 
+Now for the fun part. Staying with the PoC example, we will now implement a home
+page with a lazy loading product section. The product section iterates over a
+number of products provided by the controller using Symfony's Twig template
+engine. The last product receives the `hx` attributes for reloading when it is
+revealed to the user in the viewport.
+
+It is always lazy loaded page by page, as with classic pagination. The last lazy
+loaded product  always knows the next page; this information is always rendered
+based on the current page.
+
+Now create a `home.html.twig`:
+
+```html
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<section class="products" id="products">
+    {{ include('products/products.html.twig', {products, page}) }}
+<section>
+{% endblock %}
+```
+
+The next step is to integrate the `products/products.html.twig` template, which
+we have here as a separate component, so that we can reuse it later for our lazy
+loading.
+
+```html
+{% for product in products %}
+{{ include('products/product.html.twig', {product, page}) }}
+{% endfor %}
+```
+
+and finally the included `products/product.html.twig`:
+
+```html
+{% if loop.last %}
+<section itemscope
+         itemtype="https://schema.org/Product"
+         class="product" 
+         hx-get="{{ path('products', {'page': page + 1}) }}"
+         hx-trigger="revealed"
+         hx-swap="afterend">
+{% else %}
+<section itemscope itemtype="https://schema.org/Product" class="product">
+{% endif%}
+    <a href="{{ path('product', {'number': product.number}) }}">
+        <img itemprop="image"
+             src="{{ product.listingImage.url }}"
+             alt="{{ product.listingImage.alt }}">
+        <div class="label">{{ product.label }}</div>
+        <div itemprop="brand" class="brand">{{ product.brand }}</div>
+        <h1 itemprop="name" class="name">{{ product.name }}</h1>
+        <div itemscope
+             itemprop="offers"
+             itemtype="https://schema.org/Offer"
+             class="price">
+            {% if product.price.isReduced == false %}
+            <meta itemprop="price" content="{{ product.price }}">
+            <meta itemprop="priceCurrency" content="EUR">
+            {{ product.price }} Euro
+            {% else %}
+            <meta itemprop="price" content="{{ product.price.reduced }}">
+            <meta itemprop="priceCurrency" content="EUR">
+            <div itemscope
+                 itemprop="priceSpecification"
+                 itemtype="https://schema.org/PriceSpecification">
+                <meta itemprop="price" content="{{ product.price.reduced }}">
+                <meta itemprop="priceCurrency" content="EUR">
+                <link itemprop="valueAddedTaxIncluded" href="true" />
+            </div>
+            <span class="original-price">
+                <meta itemscope
+                      itemprop="referencePrice"
+                      itemtype="https://schema.org/PriceSpecification">
+                <meta itemprop="price" content="{{ product.price }}">
+                <meta itemprop="priceCurrency" content="EUR">
+                {{ product.price }} Euro
+            </span>
+            <span class="reduced">{{ product.price.reduced }} Euro</span>
+            {% endif %}
+        </div>
+    </a>
+</section>
+```
+
+The hx block is particularly exciting, and this is where HTMX comes into play.
+`hx-get` is used to define that a GET request is sent to the generated route
+`path("products", {"page": page + 1})`.
+
+The GET request is triggered when the last product becomes visible. This
+behavior can be controlled with the `hx-trigger` attribute.
+
+```html
+<section itemscope
+         itemtype="https://schema.org/Product"
+         class="product" 
+         hx-get="{{ path('products', {'page': page + 1}) }}"
+         hx-trigger="revealed"
+         hx-swap="afterend">
+```
+
+All we need for lazy loading of products in the backend is a well-defined
+repository and two controllers to connect the template with the data from the
+repositories.
+
+The corresponding `HomeController` for the home page initially delivers six
+products, so that the next products do not have to be loaded directly via lazy
+loading. It also initially sets the corresponding page to 1, so that the correct
+subsequent products can be loaded during further lazy loading.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Htmx;
+
+use App\Repository\ProductRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+final class HomeController extends AbstractController
+{
+    public function __construct(
+        private readonly ProductRepositoryInterface $productRepository,
+    ) {
+    }
+
+    #[Route("/", name: "home")]
+    public function home(Request $request): Response
+    {
+        return $this->render(
+            "home/index.html.twig",
+            [
+                "products" => $this->productRepository->findAll(
+                    offset: 0,
+                    limit: 6,
+                ),
+                "page" => 1,
+            ],
+        );
+    }
+}
+```
+
+To enable lazy loading, we now need the corresponding ProductController. This
+one renders three products by default, i.e. one row in the frontend.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Htmx;
+
+use App\Repository\ProductRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
+
+class ProductController extends AbstractController
+{
+    private const PRODUCTS_PER_PAGE = 3;
+
+    public function __construct(
+        private readonly ProductRepositoryInterface $productRepository,
+    ) {
+    }
+
+    #[Route("/products", name: 'products',  methods: Request::METHOD_GET)]
+    public function products(Request $request): Response
+    {
+        $page = $request->query->get('page', 1);
+
+        return $this->render(
+            "products/products.html.twig",
+            [
+                "products" => $this->productRepository->findAll(
+                    offset: $page * self::PRODUCTS_PER_PAGE,
+                    limit: self::PRODUCTS_PER_PAGE,
+                ),
+                "page" => $page,
+            ],
+        );
+    }
+}
+```
+
 ### Creating a dynamic product search
+
+Creating a dynamically reloading search was one of the most "difficult" tasks -
+although my problem here was more with the CSS for positioning the search
+results box instead of the HTMX.
+
+In the following example, you can see the component from the header. The
+component contains an input field for the query, a div for the search results
+and a load indicator in case the response takes a long time, which should not
+happen.
+
+What you also see is the simple implementation of the `onfocusout` event in the
+input field. Just because we're using HTMX here doesn't mean we can't still
+write JS code to reset the search results, as in this case.
+
+```html
+<div class="search-container">
+    <input type="text"
+           name="query"
+           placeholder="Search..."
+           hx-get="/search"
+           hx-trigger="input changed delay:500ms"
+           hx-target="#search-results"
+           hx-indicator="#loading-indicator"
+           onfocusout="clearResults()">
+    <div id="search-results"></div>
+    <div id="loading-indicator" style="display: none;">
+        Loading...
+    </div>
+</div>
+```
+
+You already know most of the HTMX attributes from the previous examples. New in
+this example are the `hx-target` and the `hx-indicator`. The `hx-trigger` is a
+bit more complex than in the previous examples.
+
+The trigger here combines simple JS events with various modifiers to react to a
+specific event. In the example, we are interested in the input changed event and
+then add a delay of 500 ms before sending the GET request. If the event occurs
+again within the 500ms, the delay will be reset.
+
+The `hx-target` changes only the target element, whose innerHTML is replaced by
+the response content. hx-indicator defines the element that receives the
+`htmx-request` class for the duration of the request. This is a very simple way
+to indicate via CSS that the search is not yet complete.
+
+A simple SearchController is now provided in the backend, which searches the
+repository for results using the simplest means and renders them via a Twig
+template.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Htmx;
+
+use App\Repository\ProductRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+class SearchController extends AbstractController
+{
+    public function __construct(
+        private readonly ProductRepositoryInterface $productRepository,
+    ) {
+    }
+
+    #[Route("/search", name: "search",  methods: Request::METHOD_GET)]
+    public function search(Request $request): Response
+    {
+        $query = $request->query->get('query');
+        if ($query === null) {
+            return $this->render("search/404.html.twig");
+        }
+
+        return $this->render(
+            "search/products.html.twig",
+            [
+                "products" => $this->productRepository->findByName($query),
+            ],
+        );
+    }
+}
+```
+
+For the search results, we simply use an unsorted list of classic links. After
+all, HTMX is not about turning all elements into links, but about giving every
+element the ability to send requests. **Anything else would not be accessible**,
+for links you should still use the classic a-tag.
+
+```html
+<ul>
+{% for product in products %}
+    <li>
+        <a href="{{ path("product", {"number": product.number}) }}">
+            {{ product.name }}
+        </a>
+    </li>
+{% endfor %}
+</ul>
+```
 
 ### Add products to your shopping basket
 
+Finally, a lighter example. We are still using the session for our demo store
+to save a basket. For this, we still need a product detail page that has a
+button that sends a POST request to our backend, which in turn sends back the
+number of products in the basket as a response.
+
+Let's take a look at the product detail page and the HTMX button first.
+
+```html
+<section class="product__detail"
+         itemscope
+         itemtype="https://schema.org/Product">
+    <img itemprop="image"
+         src="{{ product.listingImage.url }}"
+         alt="{{ product.listingImage.alt }}">
+    <div class="label">{{ product.label }}</div>
+    <section class="content">
+        <p itemprop="brand" class="brand">{{ product.brand }}</p>
+        <h1 itemprop="name">{{ product.name }}</h1>
+        <div itemscope
+             itemprop="offers"
+             itemtype="https://schema.org/Offer"
+             class="price">
+            {% if product.price.isReduced == false %}
+            <meta itemprop="price" content="{{ product.price }}">
+            <meta itemprop="priceCurrency" content="EUR">
+            {{ product.price }} Euro
+            {% else %}
+            <meta itemprop="price" content="{{ product.price.reduced }}">
+            <meta itemprop="priceCurrency" content="EUR">
+            <div itemscope
+                 itemprop="priceSpecification"
+                 itemtype="https://schema.org/PriceSpecification">
+                <meta itemprop="price" content="{{ product.price.reduced }}">
+                <meta itemprop="priceCurrency" content="EUR">
+                <link itemprop="valueAddedTaxIncluded" href="true" />
+            </div>
+            <span class="original-price">
+                <meta itemscope
+                      itemprop="referencePrice"
+                      itemtype="https://schema.org/PriceSpecification">
+                <meta itemprop="price" content="{{ product.price }}">
+                <meta itemprop="priceCurrency" content="EUR">
+                {{ product.price }} Euro
+            </span>
+            <span class="reduced">{{ product.price.reduced }} Euro</span>
+            {% endif %}
+        </div>
+
+        <button hx-post="{{ path("add-to-basket") }}"
+                hx-vals='{"number": "{{ product.number }}"}'
+                hx-target=".cart .count">
+            Add to basket
+        </button>
+
+        <p itemprop="description">{{ product.listingImage.alt }}</p>
+    </section>
+</section>
+```
+
+Again, we already know `hx-post` and `hx-target`, only `hx-vals` is new. The
+exciting thing here is that our button can simply send a POST request and the
+values come from the `hx-vals` attribute, which contains a JSON with the data
+we want to submit. The target is defined as a CSS selector for the basketcount
+component in the header, which is a little round label above the basket icon
+that shows the number of items in the basket. This also replaces the innerHTML
+in a response.
+
+This is the basket header item:
+
+```html
+<div class="cart">
+    <span class="count">{{ itemCount }}</span>
+    <svg...>
+</div>
+```
+
+Now we need the `BasketController` to populate the basket for incoming requests
+and store it in the session. The following `BasketController` uses a
+`BasketService` that encapsulates the basket handling.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controller\Htmx;
+
+use App\Repository\ProductRepositoryInterface;
+use App\Service\BasketServiceInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
+
+class BasketController extends AbstractController
+{
+    public function __construct(
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly BasketServiceInterface $basketService,
+    ) {
+    }
+
+    #[Route(
+        "/add-to-basket",
+        name: 'add-to-basket',
+        methods: Request::METHOD_POST,
+    )]
+    public function products(Request $request): Response
+    {
+        $number = $request->get('number');
+        if ($number === null) {
+            return new Response(
+                'missing required number parameter',
+                status: Response::HTTP_BAD_REQUEST,
+            );  
+        }
+
+        if (!is_string($number) || !Uuid::isValid($number)) {
+            return new Response(
+                'invalid required number parameter',
+                status: Response::HTTP_BAD_REQUEST,
+            );  
+        }
+
+        $product = $this->productRepository->findByNumber(
+            Uuid::fromRfc4122($number),
+        );
+
+        if ($product === null) {
+            return new Response(
+                'not found',
+                status: Response::HTTP_NOT_FOUND,
+            );  
+        }
+
+        $itemCount = $this->basketService->addProductToBasket(
+            $product,
+            $request->getSession(),
+        );
+
+        return new Response((string)$itemCount, status: Response::HTTP_OK);
+    }
+}
+```
+
 ## There it is again: The joy of developing frontends
 
+I was already biased before the experiment because I had already read about the
+strengths and weaknesses of HTMX. However, I had not yet developed with it.
+
+When I started to build the lazy loading and search, I really enjoyed frontend
+development for the first time in years, and my project, including the lazy
+loading, was up and running within minutes, without any prior knowledge of HTMX
+attributes.
+
+For me, my goal was accomplished. I have found a JS library that makes frontend
+development modern, fast, and boring while keeping the learning curve steep. I
+could well imagine to implement one or two more frontends with HTMX in the
+future.
+
 ## An invitation to you...
+
+If you've read this far, I hope you like HTMX. Why don't you grab a small
+project and try to realize something realistic in a reduced context, like I did
+with my fantasy shop. I am convinced that everyone will see at least some
+benefit in HTMX.
+
+If you don't feel like building something yourself, feel free to fork the PoC
+and play around with the endpoints and functions, maybe you could build a
+checkout or a dynamic slider on the homepage? In any case, there are a lot of
+possibilities.
+
+## Of course, we still need Vue, React, and the like
+
+If you're a frontend developer specializing in Vue, React, or Angular, I hope I
+didn't hurt your feelings - that would never be my goal.
+
+There will still be frontends in the future that need to be built in Vue, React
+or Angular, because HTMX as a library doesn't fit at all. The mobile care
+services in Germany come to mind, as we still have a lot of dead spots where
+there is no mobile internet. The data about the route and the people being
+cared for does not necessarily have to be synchronized with a server in real
+time; a synchronization as soon as the Internet is available again is
+sufficient.
+
+Similarly, not every backend developer in every company can start building
+frontends again. Rightly so, companies of a certain size often have their own
+specialized teams with defined tech stacks.
+
+All I wanted to do in this article was to fill your developer toolbox with
+information about one more tool. Different projects have always required
+different tools, so maybe you can use HTMX at some point if it turns out to be
+the best tool for the job.
