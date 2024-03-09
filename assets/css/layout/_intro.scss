@@ -1,0 +1,16 @@
+.intro {
+  .logo {
+    display: grid;
+    justify-content: center;
+
+    @media screen and (max-height:750px) {
+      display: none;
+    }
+
+    img {
+      @media (max-width: 1370px) {
+        max-width: 8rem;
+      }
+    }
+  }
+}

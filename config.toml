@@ -26,9 +26,14 @@ enableGitInfo = true
     url = "/tags/"
     weight = 30
   [[menu.nav]]
-    identifier = "imprint"
-    name = "Imprint"
-    url = "/imprint/"
+    identifier = "graphic-and-image-sources"
+    name = "Graphic sources"
+    url = "/graphic-and-image-sources/"
+    weight = 40
+  [[menu.nav]]
+    identifier = "impressum"
+    name = "Impressum"
+    url = "/impressum/"
     weight = 40
   [[menu.nav]]
     identifier = "data-protection"
