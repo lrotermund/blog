@@ -94,29 +94,29 @@ below:
   GDPR). These companies are obliged to comply with all data protection
   regulations. Strict data protection regulations apply to commissioned data
   processing; in particular, these companies may only use the data to fulfill
-  their tasks on our behalf. I am responsible for compliance with data
+  their tasks on my behalf. I am responsible for compliance with data
   protection regulations by these companies and have concluded corresponding
   order processing agreements with the service providers.
 
-## Cookies
+## Cookies and local storage
 
-My website uses so-called cookies. I use cookies to make my website more
-user-friendly. These are small text files that are stored on your end device
-with the help of the browser. They do not cause any damage. If you call up the
-corresponding server of our website again, your browser sends the previously
-received cookie back to the server. The server can then evaluate the information
-received through this procedure in various ways. Cookies can, for example, make
-it easier to navigate a website.
+My website doesn't use so-called cookies. I use your browsers local storage to 
+make my website more user-friendly. Cookies and the local storage are small text
+files that are stored on your end device with the help of the browser. They do
+not cause any damage. If you call up the corresponding server of my website
+again, your browser doesn't send the previously setup local storage back to the
+server. Its just saved within your browser. The local storage can, for example,
+make it possible to store the active color scheme that my website provides.
 
-My website only uses technically necessary cookies. Technically necessary
-cookies ensure that my website functions smoothly.
+My website only uses technically necessary local storage values. Technically
+necessary local storage values ensure that my website functions smoothly.
 
-If you wish to prevent the use of cookies, you can do so by making local changes
-to your settings in the Internet browser used on your computer (e.g. Microsoft
-Edge, Mozilla Firefox, Safari, Chrome, etc.). You can set up your browser so
-that it informs you about the setting of cookies and you only allow this in
-individual cases. Deactivating cookies will restrict the functionality of our
-website.
+If you wish to prevent the use of the local storage, you can do so by making
+local changes to your settings in the Internet browser used on your computer
+(e.g. Microsoft Edge, Mozilla Firefox, Safari, Chrome, etc.). You can set up
+your browser so that it informs you about the setting of local storage values
+and you only allow this in individual cases. Deactivating the local storage will
+restrict the functionality of my website.
 
 ## Your rights
 
@@ -206,7 +206,6 @@ nach Ablauf der Dauer allfälliger darüber hinaus andauernden
 Rechtsstreitigkeiten oder wenn Ihre Speicherung aus sonstigen gesetzlichen
 Gründen unzulässig ist bzw. wird.
 
-
 ### Weitergabe von Daten / Empfänger bzw. Kategorien von Empfängern
 
 Eine Weitergabe Ihrer Daten an externe Stellen erfolgt ausschließlich im
@@ -228,28 +227,29 @@ Dritten weitergegeben bzw. übermittelt:
   durch diese Unternehmen bin ich verantwortlich und habe ich entsprechende 
   Auftragsverarbeitungsvereinbarungen mit den Dienstleistern geschlossen.
 
-## Cookies
+## Cookies und der Local Storage
 
-Meine Website verwendet so genannte Cookies. Ich nutzen Cookies dazu, um meinen
-Blog nutzerfreundlich zu gestalten. Dabei handelt es sich um kleine
-Textdateien, die mit Hilfe des Browsers auf Ihrem Endgerät abgelegt werden. 
-Sie richten keinen Schaden an. Wird der entsprechende Server meiner Website
-erneut von Ihnen aufgerufen, sendet Ihr Browser den zuvor empfangenen Cookie
-wieder zurück an den Server. Der Server kann dann die durch diese Prozedur
-erhaltenen Informationen auf verschiedene Arten auswerten. Durch Cookies kann
-z.B. das Navigieren auf einer Internetseite erleichtert werden.
+Meine Website verwendet keine so genannten Cookies. Ich verwende den Local
+Storage Ihres Browsers, um meine Website benutzerfreundlicher zu gestalten.
+Cookies und der Local Storage sind kleine Textdateien, die mit Hilfe des
+Browsers auf Ihrem Endgerät gespeichert werden. Sie richten keinen Schaden an.
+Wenn Sie den entsprechenden Server meiner Website erneut aufrufen, sendet Ihr
+Browser den zuvor eingerichteten Local Storage nicht an den Server zurück. Er
+wird nur innerhalb Ihres Browsers gespeichert. Der Local Storage kann z.B. die
+Speicherung des aktiven Farbschemas, das meine Website zur Verfügung stellt,
+ermöglichen.
 
-Meine Website verwendet ausschliesslich technisch notwendige Cookies. Technisch
-notwendige Cookies sorgen dafür, dass meine Website reibungslos Funktioniert.
+Meine Website verwendet nur technisch notwendige Local Storage-Werte. Technisch
+notwendige Local Storage-Werte sorgen dafür, dass meine Website reibungslos
+funktioniert.
 
-Wenn Sie die Nutzung von Cookies unterbinden möchten, so können Sie dies durch
-lokale Vornahme der Änderungen Ihrer Einstellungen in dem auf Ihrem Computer
-verwendeten Internetbrowser (zB Microsoft Edge, Mozilla Firefox, Safari, Chrome,
-etc.) tun. Sie können Ihren Browser so einrichten, dass er Sie über das Setzen
-von Cookies informiert und Sie dies nur im Einzelfall erlauben. Bei der
-Deaktivierung von Cookies kann zur Einschränkung der Funktionalität meiner
-Website kommen.
-
+Wenn Sie die Nutzung des Local Storage verhindern möchten, können Sie dies durch
+lokale Änderungen Ihrer Einstellungen in dem auf Ihrem Computer verwendeten
+Internet-Browser (z.B. Microsoft Edge, Mozilla Firefox, Safari, Chrome, etc.)
+tun. Sie können Ihren Browser so einstellen, dass er Sie über die Einstellung
+der Local Storage Werte informiert und Sie dies nur im Einzelfall zulassen.
+Durch die Deaktivierung des Local Storage wird die Funktionalität meiner Website
+eingeschränkt.
 
 ## Ihre Rechte
 
