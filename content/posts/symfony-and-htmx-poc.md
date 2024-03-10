@@ -1,7 +1,7 @@
 ---
 type: post
 title: "HTMX & Symfony: The pleasure of purified web development"
-tags: ["symfony", "php", "htmx", "go", "development"]
+tags: ["symfony", "php", "htmx", "golang", "development"]
 date: 2024-02-17T21:00:03+00:00
 images: ["/assets/pexels-andreea-airinei-13442515.webp"]
 description: |

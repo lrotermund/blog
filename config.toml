@@ -26,29 +26,29 @@ enableGitInfo = true
     url = "/tags/"
     weight = 30
   [[menu.nav]]
-    identifier = "graphic-and-image-sources"
-    name = "Graphic sources"
-    url = "/graphic-and-image-sources/"
+    identifier = "rss"
+    name = "RSS"
+    url = "/index.xml"
     weight = 40
   [[menu.nav]]
     identifier = "impressum"
     name = "Impressum"
     url = "/impressum/"
-    weight = 40
+    weight = 50
   [[menu.nav]]
     identifier = "data-protection"
     name = "Data Protection"
     url = "/data-protection/"
-    weight = 50
-  [[menu.nav]]
-    identifier = "rss"
-    name = "RSS"
-    url = "/index.xml"
     weight = 60
+  [[menu.nav]]
+    identifier = "graphic-and-image-sources"
+    name = "Graphic sources"
+    url = "/graphic-and-image-sources/"
+    weight = 70
 
 [params]
   author = "Lukas Rotermund"
-  description = "Software Engineer Backend at tasko Products GmbH"
+  description = "Backend Software Developer at tasko Products GmbH"
   homeMetaContent = "hobby coding blog about all dev topics that interest me"
   footer = "Made with [Hugo](https://gohugo.io/). Theme based on [Cupper](https://github.com/zwbetz-gh/cupper-hugo-theme). Deployed to [K3s](https://k3s.io/)."
   dateFormat = "02.01.2006"

@@ -1,0 +1,31 @@
+p {
+  &.subtitle {
+    margin: 1.25rem 0;
+    color: #7b7b7b;
+  }
+
+  &.company {
+    margin: 0.25rem 0 1.25rem 0;
+    color: #7b7b7b;
+  }
+}
+
+h4 {
+  &.techstack {
+
+    &::before,
+    &::after {
+      color: #7b7b7b;
+    }
+
+    &::before {
+      content: "{";
+      margin-right: .45rem;
+    }
+
+    &::after {
+      content: "}";
+      margin-left: .45rem;
+    }
+  }
+}

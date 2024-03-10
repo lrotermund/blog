@@ -10,5 +10,5 @@ Angaben fuer gemaess Sektion 5 TMG, lukasrotermund.de ist eine private
 Publikation von Lukas Rotermund, Kohlenstraße 7, 34121 Kassel
 
 ### Kontaktinformationen
-Telefone: 01779378847\
+Telefon: 01779378847\
 E-Mail: [lukas.rotermund[at]live.de](mailto:lukas.rotermund@live.de)

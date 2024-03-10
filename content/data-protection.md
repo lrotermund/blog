@@ -20,7 +20,7 @@ important aspects of data processing on my website.
 
 The person responsible for data processing is Lukas Rotermund, Kohlenstr. 7,
 34121 Kassel, Germany. You can reach me by telephone at 01779378847, by e-mail
-at lukas.rotermund@live.de or by post at Kohlenstr. 7, 34121 Kassel, Germany.
+at lukas.rotermund[at]live.de or by post at Kohlenstr. 7, 34121 Kassel, Germany.
 
 ## Data security
 
@@ -125,7 +125,7 @@ restriction, data portability, revocation and objection.
 
 If you believe that the processing of your data violates data protection law or
 your data protection claims have otherwise been violated in any way, you can
-complain to us at lukas.rotermund@live.de or the data protection authority.
+complain to us at lukas.rotermund[at]live.de or the data protection authority.
 
 ## Datenschutzerklärung [german version]
 
@@ -143,7 +143,7 @@ Website.
 
 Verantwortlicher für die Datenverarbeitung bin ich, die Person Lukas Rotermund
 mit Sitz in der Kohlenstr. 7, 34121 Kassel. Sie erreichen mich telefonisch unter
-01779378847, per Mail unter lukas.rotermund@live.de oder postalisch unter der
+01779378847, per Mail unter lukas.rotermund[at]live.de oder postalisch unter der
 Anschrift Kohlenstr. 7, 34121 Kassel.
 
 ## Datensicherheit
@@ -196,7 +196,7 @@ Dritten zu wahren, insbesondere für folgende Zwecke:
 - Ihre allfällige Einwilligung gemäß Art 6 Abs 1 lit a DSGVO
 - Berechtigtes Interesse Art 6 Abs 1 lit f DSGVO
 
-###Speicherdauer
+### Speicherdauer
 
 Die Löschung der gespeicherten personenbezogenen Daten erfolgt, wenn Sie als
 Nutzer meiner Website die Einwilligung zur Speicherung widerrufen, wenn Ihre
@@ -216,8 +216,8 @@ verpflichtet bin oder sofern die Datenweitergabe im öffentlichen Interesse lieg
 oder Sie zuvor eingewilligt haben. Sie haben das Recht, eine erteilte
 Einwilligung mit Wirkung auf die Zukunft jederzeit zu widerrufen.
 
-### Personenbezogene Daten werden von mir an die nachfolgend bezeichneten Dritten
-weitergegeben bzw. übermittelt:
+### Personenbezogene Daten werden von mir an die nachfolgend bezeichneten
+Dritten weitergegeben bzw. übermittelt:
 
 - EDV Dienstleister und technische Verarbeiter (Auftragsverarbeiter gemäß Art.
   28 DS-GVO). Diese Unternehmen sind verpflichtet, sämtliche
@@ -258,5 +258,5 @@ Einschränkung, Datenübertragbarkeit, Widerruf und Widerspruch zu.
 
 Wenn Sie glauben, dass die Verarbeitung Ihrer Daten gegen das Datenschutzrecht
 verstößt oder Ihre datenschutzrechtlichen Ansprüche sonst in einer Weise
-verletzt worden sind, können Sie sich bei mir lukas.rotermund@live.de oder der
-Datenschutzbehörde beschweren.
+verletzt worden sind, können Sie sich bei mir lukas.rotermund[at]live.de oder
+der Datenschutzbehörde beschweren.

@@ -1,0 +1,9 @@
+{{ define "main" }}
+  <main id="main">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.subtitle }}
+      <p class="subtitle">{{ . | markdownify }}</p>
+    {{ end }}
+    {{ .Content }}
+  </main>
+{{ end }}

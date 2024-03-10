@@ -1,20 +1,29 @@
 {{ define "main" }}
-  <main id="main" itemscope itemtype="https://schema.org/BlogPosting">
+  <main id="main"
+        itemscope
+        itemtype="https://schema.org/BlogPosting">
     <h1 itemprop="name">{{ .Title }}</h1>
+    {{ with .Params.subtitle }}
+      <small class="subtitle">{{ . }}</small>
+    {{ end }}
     <section class="meta grid">
       <section>
         <h1>
           {{ partial "icon.html" (dict "ctx" $ "name" "calendar") }}
           <span>published at</span>
         </h1>
-        <span itemprop="datePublished">{{ .PublishDate.Format "Jan 2, 2006" }}</span>
+        <span itemprop="datePublished">
+          {{ .PublishDate.Format "Jan 2, 2006" }}
+        </span>
       </section>
       <section>
         <h1>
           {{ partial "icon.html" (dict "ctx" $ "name" "clock") }}
           <span>reading time</span>
         </h1>
-        <span itemprop="timeRequired" content="PT{{ .ReadingTime }}M">{{ .ReadingTime }} minutes</span>
+        <span itemprop="timeRequired" content="PT{{ .ReadingTime }}M">
+          {{ .ReadingTime }} minutes
+        </span>
       </section>
     </section>
     {{- with .Params.tags }}
