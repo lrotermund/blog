@@ -5,10 +5,18 @@ tags: [go-standard-library, "development", "golang"]
 date: 2021-01-12T20:59:20+01:00
 draft: false
 images: ["assets/pexels-veeterzy-39811.webp"]
-description: "The Go standard library provides hundreds of features that make life easier for us Go 
-developers. In this series, we'll look at the library's code together."
-summary: "The Go standard library provides hundreds of features that make life easier for us Go 
-developers. In this series, we'll look at the library's code together."
+image_alt: |
+    A wet, reflective road stretches into the distance between tall pine trees,
+    disappearing into the misty horizon under an overcast sky, evoking a sense
+    of calm and solitude.
+description: |
+    The Go standard library provides hundreds of features that make life easier
+    for us Go developers. In this series, we'll look at the library's code
+    together.
+summary: |
+    The Go standard library provides hundreds of features that make life easier
+    for us Go developers. In this series, we'll look at the library's code
+    together.
 toc: false
 ---
 

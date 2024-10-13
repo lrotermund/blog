@@ -4,6 +4,7 @@ title: "A Go vs PHP Showdown: Building and Benchmarking a CMS"
 tags: ["symfony", "php", "htmx", "golang", "development"]
 date: 2024-03-14T20:00:03+00:00
 images: ["/assets/chatgpt-gopher-figthing-an-elephant.webp"]
+image_alt: ""
 description: |
     Discover the strengths and weaknesses of Go and PHP by developing a CMS.
     This in-depth comparison covers everything from setup to performance

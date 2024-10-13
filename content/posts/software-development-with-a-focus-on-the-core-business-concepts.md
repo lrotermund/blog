@@ -5,6 +5,7 @@ tags: []
 date: 2021-08-15T09:07:06+02:00
 # Nice IDE image: https://carbon.now.sh/?bg=rgba%28171%2C+184%2C+195%2C+1%29&t=monokai&wt=none&l=text%2Fx-go&ds=true&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=14px&lh=133%25&si=false&es=2x&wm=false&code=
 images: ["/assets/pexels-guduru-ajay-bhargav-1044302.webp"]
+image_alt: ""
 description: "How should we write software and how do we actually do it often? This is a brief overview of how to focus on core business concepts with DDD."
 summary: "How should we write software and how do we actually do it often? This is a brief overview of how to focus on core business concepts with DDD."
 toc: false

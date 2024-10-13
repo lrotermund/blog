@@ -66,4 +66,10 @@ caption="923a6a.jpg – Meme generated via [imgflip - Pepe Silvia Meme](https://
 command="Resize"
 options="150x" >}}
 
+{{< figureCupper
+img="docker-ufw-disaster-girl.webp"
+caption="docker-ufw-disaster-girl.webp – Meme generated via [imgflip - Disaster Girl Meme](https://imgflip.com/memetemplate/Disaster-Girl)."
+command="Resize"
+options="150x" >}}
+
 </div>

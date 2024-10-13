@@ -4,6 +4,7 @@ title: "From zero to terraform hero – without paying a dollar"
 tags: ["terraform", "opentofu", "devops", "aws", "iac"]
 date: 2023-10-29T12:40:09+02:00
 images: ["/assets/kassel-1092037_1280.webp"]
+image_alt: ""
 description: "I hate paying for learning resources. For that reason, I will
 learn together with you, how to setup and run terraform – without paying a
 dollar"

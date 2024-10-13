@@ -4,6 +4,13 @@ title: "PHP arrays have driven me mad"
 tags: ["php", "c", "benchmarking", "development"]
 date: 2024-09-01T20:00:10+02:00
 images: ["/assets/923a6a.jpg"]
+image_alt: |
+    This meme shows a man, labeled "LUKAS," frantically pointing at a chaotic
+    board covered with red string and notes, as if trying to explain a complex
+    conspiracy. The board is filled with programming terms like
+    "array<string, int>", "IMMUTABILITY", "Sets", "ArrayObject", and more. The
+    image humorously represents the confusion or intensity of trying to make
+    sense of a complex research topic filled with related terms and ideas.
 description: |
     Larry Garfield's 'Never* use arrays' talk really confused me. How can it be
     that objects in PHP save 50% memory? How can every PHP developer not be

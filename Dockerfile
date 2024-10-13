@@ -1,7 +1,7 @@
 FROM debian AS build
 
 # Hugo version
-ARG VERSION=0.111.3
+ARG VERSION=0.135.0
 ADD https://github.com/gohugoio/hugo/releases/download/v${VERSION}/hugo_extended_${VERSION}_Linux-64bit.tar.gz /hugo_extended.tar.gz
 RUN tar -zxvf hugo_extended.tar.gz
 RUN /hugo version
@@ -22,11 +22,9 @@ WORKDIR /usr/share/nginx/html/
 # clean the default public folder
 RUN rm -fr * .??*
 
-# This inserts a line in the default config file, including our file "expires.inc"
-RUN sed -i '9i\        include /etc/nginx/conf.d/expires.inc;\n' /etc/nginx/conf.d/default.conf
+COPY _docker/nginx.conf /etc/nginx/nginx.conf
+COPY _docker/conf.d/ /etc/nginx/conf.d/
 
-# The file "expires.inc" is copied into the image
-COPY _docker/expires.inc /etc/nginx/conf.d/expires.inc
-RUN chmod 0644 /etc/nginx/conf.d/expires.inc
+RUN chmod 0644 /etc/nginx/nginx.conf /etc/nginx/conf.d/*
 
 COPY --from=build /site/public /usr/share/nginx/html

@@ -4,6 +4,8 @@ title: "HTMX & Symfony: The pleasure of purified web development"
 tags: ["symfony", "php", "htmx", "golang", "development"]
 date: 2024-02-17T21:00:03+00:00
 images: ["/assets/pexels-andreea-airinei-13442515.webp"]
+image_alt: |
+    A beautiful close up shot of a mossy tree trunk, not related to the post.
 description: |
     JS frameworks have professionalized UI web development, but they have also
     made it clumsy. HTMX, on the other hand, with its back-to-the-roots

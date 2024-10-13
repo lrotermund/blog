@@ -4,11 +4,21 @@ title: "Make Go tests more robust by fuzzy testing"
 date: 2021-03-07T23:43:34+01:00
 draft: false
 images: ["/assets/make-go-tests-more-robust-by-fuzzy-testing.webp"]
+image_alt: |
+    This image shows a code snippet written in Go (Golang) for testing a
+    function called `GroupTransactionsByType`. The test function uses a fuzzing
+    approach, iterating through randomly generated transactions, grouping them
+    by type, and checking if the grouping is correct. The configuration is set
+    to perform up to 10,000 test iterations, returning `true` if all tests pass
+    and `false` if any inconsistency is found. The image likely illustrates
+    automated testing for transaction processing logic.
 tags: [go-standard-library, "development", "golang", "testing"]
-description: "In this post, we'll see how Go tests are built more robustly with the quick package 
-and how we can avoid incorrectly chosen parameters."
-summary: "In this post, we'll see how Go tests are built more robustly with the quick package 
-and how we can avoid incorrectly chosen parameters."
+description: |
+    In this post, we'll see how Go tests are built more robustly with the quick
+    package and how we can avoid incorrectly chosen parameters.
+summary: |
+    In this post, we'll see how Go tests are built more robustly with the quick
+    package and how we can avoid incorrectly chosen parameters.
 toc: false
 ---
 

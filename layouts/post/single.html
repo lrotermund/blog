@@ -2,46 +2,52 @@
   <main id="main"
         itemscope
         itemtype="https://schema.org/BlogPosting">
-    <h1 itemprop="name">{{ .Title }}</h1>
-    {{ with .Params.subtitle }}
-      <small class="subtitle">{{ . }}</small>
-    {{ end }}
-    <section class="meta grid">
-      <section>
-        <h1>
-          {{ partial "icon.html" (dict "ctx" $ "name" "calendar") }}
-          <span>published at</span>
-        </h1>
-        <span itemprop="datePublished">
-          {{ .PublishDate.Format "Jan 2, 2006" }}
-        </span>
+    <header>
+      <h1 itemprop="name">{{ .Title }}</h1>
+      {{$images := apply .Params.images "absURL" "."}}
+      {{$postImage := index $images 0}}
+    <img src="{{ $postImage }}" alt="{{ .Params.image_alt }}">
+
+      {{ with .Params.subtitle }}
+        <small class="subtitle">{{ . }}</small>
+      {{ end }}
+      <section class="meta grid">
+        <section>
+          <h1>
+            {{ partial "icon.html" (dict "ctx" $ "name" "calendar") }}
+            <span>published at</span>
+          </h1>
+          <span itemprop="datePublished">
+            {{ .PublishDate.Format "Jan 2, 2006" }}
+          </span>
+        </section>
+        <section>
+          <h1>
+            {{ partial "icon.html" (dict "ctx" $ "name" "clock") }}
+            <span>reading time</span>
+          </h1>
+          <span itemprop="timeRequired" content="PT{{ .ReadingTime }}M">
+            {{ .ReadingTime }} minutes
+          </span>
+        </section>
       </section>
-      <section>
+      {{- with .Params.tags }}
+      <section class="meta">
         <h1>
-          {{ partial "icon.html" (dict "ctx" $ "name" "clock") }}
-          <span>reading time</span>
+          {{ partial "icon.html" (dict "ctx" $ "name" "tag") }}
+          <span>tags</span>
         </h1>
-        <span itemprop="timeRequired" content="PT{{ .ReadingTime }}M">
-          {{ .ReadingTime }} minutes
-        </span>
-      </section>
-    </section>
-    {{- with .Params.tags }}
-    <section class="meta">
-      <h1>
-        {{ partial "icon.html" (dict "ctx" $ "name" "tag") }}
-        <span>tags</span>
-      </h1>
-      <span itemprop="keywords">
-        {{- range $index, $element := . -}}
-          {{ with $.Site.GetPage (printf "/%s/%s" "tags" . ) }}
-            {{- if $index -}}, {{ end -}}
-            <a href="{{ .Permalink }}">{{ .Title }}</a>
+        <span itemprop="keywords">
+          {{- range $index, $element := . -}}
+            {{ with $.Site.GetPage (printf "/%s/%s" "tags" . ) }}
+              {{- if $index -}}, {{ end -}}
+              <a href="{{ .Permalink }}">{{ .Title }}</a>
+            {{- end }}
           {{- end }}
-        {{- end }}
-      </span>
-    </section>
-    {{- end }}
+        </span>
+      </section>
+      {{- end }}
+    </header>
     {{ .Content }}
   </main>
 {{ end }}

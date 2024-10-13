@@ -38,7 +38,7 @@
   {{ $styles := $templateStyles | resources.ExecuteAsTemplate "css/styles.css" . }}
   <link rel="stylesheet" type="text/css" href="{{ $styles.RelPermalink }}">
 
-  {{ $customStyle := resources.Get "css/main.scss" | resources.ToCSS | resources.Minify | resources.Fingerprint -}}
+  {{ $customStyle := resources.Get "css/main.scss" | toCSS | resources.Minify | resources.Fingerprint -}}
   <link rel="stylesheet" href="{{ $customStyle.Permalink }}" />
 
 

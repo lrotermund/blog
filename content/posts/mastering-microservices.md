@@ -4,6 +4,7 @@ title: "Mastering microservices"
 tags: ["microservice", "software-architecture", "conference"]
 date: 2023-09-25T00:30:15+02:00
 images: ["/assets/heaven-gd38ed956a_1280.webp"]
+image_alt: ""
 description: "Many developers today have a rough definition of microservices in their head. Let's take a look at all the essential elements that make up microservices."
 summary: "Many developers today have a rough definition of microservices in their head. Let's take a look at all the essential elements that make up microservices."
 toc: false

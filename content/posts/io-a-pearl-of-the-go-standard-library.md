@@ -5,10 +5,20 @@ tags: ["go-standard-library", "development", "golang", "io"]
 date: 2021-01-12T21:02:34+01:00
 draft: false
 images: ["assets/io-a-pearl-of-the-go-standard-library.webp"]
-description: "I/O operations are among the most commonly used tasks in Go. Let's take a look 
-together at the implementation in the Go standard library."
-summary: "I/O operations are among the most commonly used tasks in Go. Let's take a look 
-together at the implementation in the Go standard library."
+image_alt: |
+    This image shows a Go (Golang) code snippet that demonstrates the usage of
+    the Go standard library's `io` package. The `main` function creates a
+    `strings.NewReader` to simulate an `io.Reader` stream, which is read into a
+    `bytes.Buffer` using `io.Copy()`. If an error occurs during the copy, the
+    program logs the error using `log.Fatal()`. Finally, the contents of the
+    buffer are printed with `fmt.Println()`. The focus is on reading and
+    handling streams of data using the `io` package's tools.
+description: |
+    I/O operations are among the most commonly used tasks in Go. Let's take a
+    look together at the implementation in the Go standard library.
+summary: |
+    I/O operations are among the most commonly used tasks in Go. Let's take a
+    look together at the implementation in the Go standard library.
 toc: false
 ---
 

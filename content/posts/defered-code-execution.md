@@ -4,11 +4,15 @@ title: "Deferred code execution in PHP, C and Rust – like in Go"
 tags: ["golang", "php", "c", "rust", "development"]
 date: 2023-10-26T12:40:09+02:00
 images: ["/assets/pexels-pixabay-277458.webp"]
-description: "Go's defer keyword was a game changer. Let's see if we can
-implement it in other languages like PHP, C and Rust as well!"
-summary: "Make your code more readable with Golang's defer keyword in PHP, C and
-Rust. Learn how to implement it easily and efficiently. Start improving your
-code today!"
+image_alt: |
+    Greyscale photography of several clocks on posts in front of a forest.
+description: |
+    Go's defer keyword was a game changer. Let's see if we can implement it in
+    other languages like PHP, C and Rust as well!
+summary: |
+    Make your code more readable with Golang's defer keyword in PHP, C and
+    Rust. Learn how to implement it easily and efficiently. Start improving your
+    code today!
 toc: false
 draft: false
 ---

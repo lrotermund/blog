@@ -50,8 +50,8 @@ enableGitInfo = true
   author = "Lukas Rotermund"
   description = "Backend Software Developer at tasko Products GmbH"
   homeMetaContent = "hobby coding blog about all dev topics that interest me"
-  footer = "Made with [Hugo](https://gohugo.io/). Theme based on [Cupper](https://github.com/zwbetz-gh/cupper-hugo-theme). Deployed to [K3s](https://k3s.io/)."
-  dateFormat = "02.01.2006"
+  footer = "Made with [Hugo](https://gohugo.io/). Theme based on [Cupper](https://github.com/zwbetz-gh/cupper-hugo-theme). Deployed to [Docker](https://www.docker.com)."
+  dateFormat = "2006-01-02"
   #codePenUser = someUser
   katex = false
   hideHeaderLinks = false
@@ -61,9 +61,6 @@ enableGitInfo = true
   logoAlt = "Thats me, Lukas Rotermund"
   avatar = "/assets/lukas-rotermund.jpg"
   favicon = "/assets/favicon.ico"
-  [[params.social]]
-    name = "Zettelkasten"
-    url = "https://github.com/lrotermund/zettelkasten"
   [[params.social]]
     name = "github"
     url = "https://github.com/lrotermund"

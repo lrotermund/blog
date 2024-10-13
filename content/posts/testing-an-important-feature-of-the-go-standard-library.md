@@ -5,10 +5,22 @@ tags: [go-standard-library, "development", "golang", "testing"]
 date: 2021-01-21T12:51:41+01:00
 draft: false
 images: ["assets/testing-an-important-feature-of-the-go-standard-library.webp"]
-description: "Have you always wanted to learn everything about testing with the Go standard library?  
-I'll show you everything from the first test to parallelization."
-summary: "Have you always wanted to learn everything about testing with the Go standard library?  
-I'll show you everything from the first test to parallelization."
+image_alt: |
+    This image displays a Go (Golang) code snippet for a unit test function
+    named `TestWithSubTests`. It defines multiple test cases with string values
+    `foo` and `bar`, and runs subtests for each case using the `t.Run` function.
+    The subtests call `buggyFuncCouldReturnBlankString` and check if the result
+    is an empty string. If the result is empty, the test fails by calling
+    `t.Fail()`. This snippet demonstrates how to organize and run subtests in Go
+    for better test structure and output clarity.
+description: |
+    Have you always wanted to learn everything about testing with the Go
+    standard library? I'll show you everything from the first test to
+    parallelization.
+summary: |
+    Have you always wanted to learn everything about testing with the Go
+    standard library? I'll show you everything from the first test to
+    parallelization.
 toc: false
 ---
 
