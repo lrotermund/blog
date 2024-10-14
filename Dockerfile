@@ -15,16 +15,10 @@ WORKDIR /site
 RUN /hugo --minify --enableGitInfo
 
 # stage 2
-FROM nginx:alpine
+FROM caddy:alpine
 
-WORKDIR /usr/share/nginx/html/
+COPY _docker/Caddyfile /etc/caddy/Caddyfile
 
-# clean the default public folder
-RUN rm -fr * .??*
+WORKDIR /var/www/html
 
-COPY _docker/nginx.conf /etc/nginx/nginx.conf
-COPY _docker/conf.d/ /etc/nginx/conf.d/
-
-RUN chmod 0644 /etc/nginx/nginx.conf /etc/nginx/conf.d/*
-
-COPY --from=build /site/public /usr/share/nginx/html
+COPY --from=build /site/public /var/www/html
