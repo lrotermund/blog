@@ -28,4 +28,22 @@ h4 {
       margin-left: .45rem;
     }
   }
+
+  &.recommendation {
+
+    &::before,
+    &::after {
+      color: #7b7b7b;
+    }
+
+    &::before {
+      content: "!";
+      margin-right: .45rem;
+    }
+
+    &::after {
+      content: "!";
+      margin-left: .45rem;
+    }
+  }
 }

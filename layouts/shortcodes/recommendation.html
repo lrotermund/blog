@@ -1,0 +1,48 @@
+<div class="recommendation-box"
+     itemscope
+     itemtype="https://schema.org/Recommendation">
+  <blockquote class="recommendation-text" itemprop="text">
+    {{ .Inner | safeHTML }}
+  </blockquote>
+
+  <div class="divider"></div>
+  
+  <div class="recommendation-author">
+    <div class="author-info"
+         itemprop="author"
+         itemscope
+         itemtype="https://schema.org/Person">
+      {{ if .Get "authorLink" }}
+      <a href="{{ .Get "authorLink" }}">
+        <span class="author-name" itemprop="name">
+          {{ .Get "authorName" }}
+        </span>
+        <span class="author-title" itemprop="jobTitle">
+          {{ .Get "authorTitle" }}
+        </span>
+      </a>
+      {{ else }}
+      <span class="author-name" itemprop="name">
+        {{ .Get "authorName" }}
+      </span>
+      <span class="author-title" itemprop="jobTitle">
+        {{ .Get "authorTitle" }}
+      </span>
+      {{ end }}
+      {{ if .Get "company" }}
+        <p class="author-company"
+          itemprop="worksFor"
+          itemscope
+          itemtype="https://schema.org/Organization">
+          {{ if .Get "companyLink" }}
+          <a href="{{ .Get "companyLink" }}">
+            <span itemprop="name">{{ .Get "company" }}</span>
+          </a>
+          {{ else }}
+          <span itemprop="name">{{ .Get "company" }}</span>
+          {{ end }}
+        </p>
+      {{ end }}
+    </div>
+  </div>
+</div>

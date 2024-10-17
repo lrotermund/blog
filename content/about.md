@@ -93,6 +93,30 @@ retail and logistics with technology.
 <h4 class="techstack">Tech Stack</h4>
 PHP, Symfony, MySQL, AWS, Terraform, Docker
 
+<h4 class="recommendation">Recommendation</h4>
+
+{{< recommendation
+    authorName="Daniel"
+    authorTitle="Senior Engineer"
+>}}
+<p>
+  I’ve had the pleasure of working with Lukas for the past two years, and his
+  passion for programming truly stands out. His technical skills are impressive;
+  he consistently produces clean, scalable code and stays up-to-date with the
+  latest technologies.
+</p>
+<p>
+  What sets Lukas apart is his approachable nature. He’s someone everyone can
+  turn to for assistance, fostering an environment where team members feel
+  comfortable sharing challenges. His commitment to learning and growth not only
+  benefits him but also elevates the entire team.
+</p>
+<p>
+  In summary, Lukas is a dedicated professional who will undoubtedly make a
+  significant impact in any team he is part of.
+</p>
+{{< /recommendation >}}
+
 ### Backend Software Developer & Vocational Trainer (2020 - 2022)
 <p class="company">
   fino create GmbH & fino digital GmbH & fino talents GmbH, entirely remote
@@ -114,7 +138,7 @@ Golang, Java, Docker, Kubernetes, MongoDB, RabbitMQ, Jenkins, Azure DevOps
 <p class="company">Pixelwerker GmbH, on-site in 34131 Kassel, Germany</p>
 
 I worked as a lead software developer at
-[pixelwerker GmbH](https://pixelwerker.de/) after I graduated and was
+[Pixelwerker GmbH](https://pixelwerker.de/) after I graduated and was
 responsible for the development of big web platforms based on Laravel, complex
 and customized WordPress applications, own WordPress themes and plugins, as
 well as the roll-out and support of a CI/CD process and a Docker based software
@@ -126,6 +150,124 @@ apprentices myself.
 
 <h4 class="techstack">Tech Stack</h4>
 PHP, Laravel, MySQL/ MariaDB, Laravel Forge, Docker, Wordpress, Shopware
+
+<h4 class="recommendation">Recommendation</h4>
+
+{{< recommendation
+    authorName="Franziska Specht-Günther"
+    authorTitle="Managing Director at Pixelwerker"
+    company="Pixelwerker GmbH"
+    companyLink="https://pixelwerker.de"
+>}}
+<p>
+  I had the pleasure of working with Lukas for more than two years, he is
+  characterized above all by his passion for his work, which he demonstrates on
+  a daily basis. Lukas is solution-oriented and always aims for the best for his
+  customers. He gets stuck into his work and only stops when everything is
+  perfect. In addition to his professional qualifications, it was also a
+  pleasure to work with him on a personal level. He is helpful, empathetic and
+  created a great working atmosphere every day.
+</p>
+{{< /recommendation >}}
+
+{{< recommendation
+    authorName="Johnathan"
+    authorTitle="Managing Director at SkriptAtelier | Senior Software Engineer"
+    company="SkriptAtelier UG"
+    companyLink="https://skriptatelier.de"
+>}}
+<p>
+  I had the pleasure of working alongside Lukas Rotermund at Pixelwerker, where
+  we both served as software developers. Lukas stood out for his passion for
+  coding, his commitment to writing clean, efficient, and well-documented code,
+  and his meticulous approach to problem-solving. His work ethic made him an
+  excellent colleague and a great mentor.
+</p>
+<p>
+  Lukas has an incredible talent for quickly understanding and mastering new
+  technologies. I remember when he took the initiative to explore frameworks
+  like Laravel, which he quickly mastered despite its challenges. He didn't just
+  learn it—he made sure I benefited by sharing practical insights in a way that
+  was easy for me to understand. His deep understanding of tools like Docker,
+  MySQL, and Laravel Forge helped me solve real challenges I faced in my
+  projects.
+</p>
+<p>
+  We often exchanged ideas about how to improve code efficiency, and these
+  discussions were some of the most valuable learning experiences in my career.
+  Lukas’s ability to explain complex concepts in simple terms helped me grow as
+  a developer, and our regular exchanges inspired me to refine my own coding
+  practices. His approach to knowledge-sharing was not only generous but also
+  instrumental in creating a culture of continuous learning.
+</p>
+<p>
+  One of the most impressive qualities Lukas brought to our team was his
+  proactive approach to problem-solving. He had a knack for anticipating
+  potential obstacles and coming up with solutions before they became issues.
+  This kind of forward-thinking approach saved us a lot of time and made our
+  workflows much more predictable. His expertise in setting up Docker
+  environments, for instance, allowed us to streamline our development processes
+  and deploy updates with confidence.
+</p>
+<p>
+  Another aspect of Lukas's work that stood out was his dedication to creating
+  scalable and maintainable solutions. He didn’t just focus on the immediate
+  requirements of a project but always kept an eye on long-term sustainability.
+  Whether it was writing modular code or ensuring that documentation was
+  thorough, Lukas approached every task with a view to how it would impact
+  future development. This foresight was invaluable, especially as our projects
+  grew in complexity.
+</p>
+<p>
+  Beyond his technical skills, Lukas's interpersonal qualities made him a joy
+  to work with. He was always approachable, patient, and willing to lend a
+  helping hand whenever I encountered difficulties. His mentorship went beyond
+  just coding; he helped me improve my problem-solving skills, encouraged me to
+  take on challenging tasks, and fostered my growth as a software developer.
+</p>
+<p>
+  I wholeheartedly recommend Lukas for any software development role,
+  particularly where strong technical skills, deep understanding of modern
+  frameworks, and a collaborative spirit are valued. He would be a tremendous
+  asset to any team.
+</p>
+{{< /recommendation >}}
+
+{{< recommendation
+    authorName="Eva"
+    authorTitle="User Experience Designerin"
+>}}
+<p>
+  I had the pleasure of working with Lukas for two years, and during that time,
+  he not only excelled at solving complex technical problems but was also a
+  wonderful person to work with. He has a strong sense of empathy and always
+  takes the time to listen to his colleagues. His passion for his work is
+  evident in everything he does. Lukas genuinely loves what he does, and his
+  enthusiasm is infectious throughout the team. For him, work is more than just
+  a job – it’s his passion, making him an invaluable and inspiring colleague.
+  Anyone would be fortunate to have the opportunity to work with him.
+</p>
+{{< /recommendation >}}
+
+{{< recommendation
+    authorName="Jonas Henne"
+    authorTitle="Interim Digital Marketing Manager | Founder"
+    company="Boys Who Cry GmbH"
+    companyLink="https://www.boyswhocry.com/"
+>}}
+<p>
+  If you have the chance to hire Lukas, you should. When it comes to individual
+  IT projects Lukas always nailed it. His core competence is not even code. It's
+  his ability to understand the business models of his clients / company and
+  develop smart solutions with a high performance based on their needs.
+</p>
+<p>
+  Furthermore Lukas is a workaholic in a positive way. He exactly knows how to
+  bring the projects forward.
+  If theres a marketing team to lead in the future including software engineers,
+  I would call Lukas first.
+</p>
+{{< /recommendation >}}
 
 ### Software Developer (2016 - 2017)
 <p class="company">
@@ -147,11 +289,32 @@ Three-week placement abroad as a web developer at
 [Micro Update Ltd](http://www.microupdate.co.uk/). Europass Mobility certificate
 through the Leonardo da Vinci programme.
 
-During the internship I developed the company's open source mobile CMS and
+During the internship I developed on the company's open source mobile CMS and
 further simplified and improved its setup process.
 
 <h4 class="techstack">Tech Stack</h4>
 PHP, MySQL
+
+<h4 class="recommendation">Recommendation</h4>
+
+{{< recommendation
+    authorName="Jonathan Camp"
+    authorTitle="Managing Director"
+    company="Micro Update Ltd"
+    companyLink="http://www.microupdate.co.uk/"
+>}}
+<p>
+  Although Lukas only worked with me for a few weeks, he was very enthusiastic
+  and a very quick learner. I gave Lukas a full project to develop and see what
+  he could accomplish. Lukas not only managed to enhance the application in the
+  short time we worked together, he also added additional functionality to make
+  the application a more reliable and robust solution.
+</p>
+<p>
+  Lukas has an enquiring and technical mind which serves him well in this fast
+  paced world. I would not hesitate in recommending him.
+</p>
+{{< /recommendation >}}
 
 ### Apprentice (2013 - 2016)
 <p class="company">

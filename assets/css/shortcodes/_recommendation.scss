@@ -1,0 +1,50 @@
+.recommendation-box {
+  border: 2px solid black;
+  padding: 20px;
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+  color: black;
+  background-color: white;
+
+  .recommendation-text {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    border: none;
+  }
+
+  .divider {
+    height: 1px;
+    background-color: black;
+    margin: 20px 0;
+  }
+
+  .recommendation-author {
+    margin: 0;
+    display: flex;
+    align-items: center;
+
+    .author-info {
+      display: flex;
+      flex-direction: column;
+
+      .author-name {
+        margin: 0;
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .author-title {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .author-company {
+        margin: 0;
+        font-size: 14px;
+        font-style: italic;
+      }
+    }
+  }
+}
