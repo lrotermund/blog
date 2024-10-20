@@ -1,7 +1,42 @@
 :80 {
-    file_server
-
     header {
         -Server
     }
+
+    log_skip
+
+    # cache.appcache, your document html and data
+    @manifest {
+        path_regexp \.(manifest|appcache|html?|xml|json)$
+    }
+    header @manifest Expires "-1"
+
+    # Feed: RSS and Atom
+    @feeds {
+        path_regexp \.(rss|atom)$
+    }
+    header @feeds {
+        Expires "1h"
+        Cache-Control "public"
+    }
+
+    # Media: images, icons, video, audio, HTC
+    @media {
+        path_regexp \.(jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webp|webm|htc)$
+    }
+    header @media {
+        Expires "1M"
+        Cache-Control "public"
+    }
+
+    # CSS and Javascript
+    @assets {
+        path_regexp \.(css|js)$
+    }
+    header @assets {
+        Expires "1y"
+        Cache-Control "public"
+    }
+
+    file_server
 }

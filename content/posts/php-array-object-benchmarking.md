@@ -3,7 +3,7 @@ type: post
 title: "PHP arrays have driven me mad"
 tags: ["php", "c", "benchmarking", "development"]
 date: 2024-09-01T20:00:10+02:00
-images: ["/assets/923a6a.jpg"]
+images: ["/assets/923a6a.webp"]
 image_alt: |
     This meme shows a man, labeled "LUKAS," frantically pointing at a chaotic
     board covered with red string and notes, as if trying to explain a complex

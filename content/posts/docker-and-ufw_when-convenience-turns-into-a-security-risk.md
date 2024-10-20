@@ -105,6 +105,13 @@ thankfully they all pointed me in a similar direction.
 
 ## The solution that finally worked for me
 
+{{< aside >}}
+Shortly after this post was published, I moved away from NGINX as a reverse
+proxy and file server. You can read more about this in my latest blog post: 
+
+[I retired NGINX for Caddy - and never looked back]({{< ref "i-retired-nginx-for-caddy-and-never-looked-back" >}})
+{{< /aside >}}
+
 I decided to remove my Docker-internal nginx reverse proxy that I was using as
 an entry point into my running Docker Compose environment. I then installed a
 local, old school nginx on the host system and added the following root nginx

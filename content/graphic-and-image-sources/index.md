@@ -61,14 +61,20 @@ command="Resize"
 options="150x" >}}
 
 {{< figureCupper
-img="923a6a.jpg"
-caption="923a6a.jpg – Meme generated via [imgflip - Pepe Silvia Meme](https://imgflip.com/memetemplate/74331809/Pepe-Silvia)."
+img="923a6a.webp"
+caption="923a6a.webp – Meme generated via [imgflip - Pepe Silvia Meme](https://imgflip.com/memetemplate/74331809/Pepe-Silvia)."
 command="Resize"
 options="150x" >}}
 
 {{< figureCupper
 img="docker-ufw-disaster-girl.webp"
 caption="docker-ufw-disaster-girl.webp – Meme generated via [imgflip - Disaster Girl Meme](https://imgflip.com/memetemplate/Disaster-Girl)."
+command="Resize"
+options="150x" >}}
+
+{{< figureCupper
+img="nginx_caddy.webp"
+caption="nginx_caddy.webp – Meme generated via [imgflip - Grant Gustin over grave](https://imgflip.com/memetemplate/221578498/Grant-Gustin-over-grave)."
 command="Resize"
 options="150x" >}}
 

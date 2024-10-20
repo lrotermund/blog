@@ -19,6 +19,8 @@ FROM caddy:alpine
 
 COPY _docker/Caddyfile /etc/caddy/Caddyfile
 
+RUN chmod 0644 /etc/caddy/Caddyfile
+
 WORKDIR /var/www/html
 
 COPY --from=build /site/public /var/www/html
