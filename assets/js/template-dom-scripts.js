@@ -148,3 +148,23 @@
   });
 
 }());
+
+document.addEventListener("DOMContentLoaded", function() {
+  const lazyBackgrounds = document.querySelectorAll('.lazy-background');
+
+  const lazyLoadBackground = (entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const bg = entry.target.getAttribute('data-bg');
+        entry.target.style.backgroundImage = bg;
+        observer.unobserve(entry.target);
+      }
+    });
+  };
+
+  const observer = new IntersectionObserver(lazyLoadBackground);
+
+  lazyBackgrounds.forEach(background => {
+    observer.observe(background);
+  });
+});

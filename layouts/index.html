@@ -14,10 +14,17 @@
         <div class="meta">
           {{$images := apply $p.Params.images "absURL" "."}} {{$postImage :=
           index $images 0}}
+          {{ if lt $i 3 }}
           <div
             class="photo"
             style="background-image: url({{ $postImage }})"
           ></div>
+          {{ else }}
+          <div
+            class="photo lazy-background"
+            data-bg="url({{ $postImage }})"
+          ></div>
+          {{ end }}
         </div>
         <div class="description">
           <h2>{{ $p.Title }}</h2>
