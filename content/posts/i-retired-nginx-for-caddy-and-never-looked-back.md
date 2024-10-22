@@ -213,13 +213,12 @@ And here is my single new Caddy configuration:
 
 ```sh
 lukasrotermund.de {
-        encode zstd gzip
-        log_skip
-        reverse_proxy 127.0.0.1:8000
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8000
 
-        header {
-                -Server
-        }
+	header {
+		-Server
+	}
 }
 ```
 
@@ -386,42 +385,40 @@ But yes, there is no real improvement over NGINX's location group format.
 
 ```sh
 :80 {
-    header {
-        -Server
-    }
+	header {
+		-Server
+	}
 
-    log_skip
+	@manifest path_regexp \.(manifest|appcache|html?|xml|json)$
+	header @manifest {
+		Expires "-1"
+	}
 
-    @manifest {
-        path_regexp \.(manifest|appcache|html?|xml|json)$
-    }
-    header @manifest Expires "-1"
+	@feeds path_regexp \.(rss|atom)$
+	header @feeds {
+		Expires "1h"
+		Cache-Control "public"
+	}
 
-    @feeds {
-        path_regexp \.(rss|atom)$
-    }
-    header @feeds {
-        Expires "1h"
-        Cache-Control "public"
-    }
+	@media path_regexp \.(jpg|jpeg|gif|png|ico|svg|webp)$
+	header @media {
+		Expires "1M"
+		Cache-Control "public"
+	}
 
-    @media {
-        path_regexp \.(jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webp|webm|htc)$
-    }
-    header @media {
-        Expires "1M"
-        Cache-Control "public"
-    }
+	@assets path_regexp \.(css|js)$
+	header @assets {
+		Expires "1y"
+		Cache-Control "public"
+	}
 
-    @assets {
-        path_regexp \.(css|js)$
-    }
-    header @assets {
-        Expires "1y"
-        Cache-Control "public"
-    }
+	@fonts path_regexp \.(woff|woff2)$
+	header @fonts {
+		Expires "1y"
+		Cache-Control "public"
+	}
 
-    file_server
+	file_server
 }
 ```
 
