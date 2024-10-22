@@ -1150,5 +1150,4 @@ execution time and logically grouping the test code, really excited me.
 I hope you were able to learn something new and also had fun taking a closer look at the 
 [testing package](https://golang.org/pkg/testing/). If you feel like discussing the article with me, 
 or if you just have some comments, feel free to contact me on 
-[Linkedin](https://www.linkedin.com/in/lukas-rotermund) or 
-[Xing](https://www.xing.com/profile/Lukas_Rotermund2).
+[Mastodon](https://social.tchncs.de/@lukasrotermund).

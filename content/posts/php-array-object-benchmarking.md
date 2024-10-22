@@ -645,7 +645,6 @@ am telling you here.
 
 If you enjoyed this article, please share it with your friends and colleagues.
 And let me know what you think. I am generally easy to reach on
-[LinkedIn](https://www.linkedin.com/in/lukas-rotermund/) and
 [Mastodon (social.tchncs.de)](https://social.tchncs.de/@lukasrotermund).
 
 ## General sources

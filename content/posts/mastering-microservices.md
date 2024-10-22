@@ -2868,8 +2868,7 @@ conference. If it helps you, you can find them in my smart notes on Github:
 
 Please consider the article under this criterion as well. I am grateful for any pointers to errors
 or incompleteness. Feel free to contact me on
-[LinkedIn](https://www.linkedin.com/in/lukas-rotermund),
-[Mastodon](https://social.dev-wiki.de/@lukasrotermund), or simply by
+[Mastodon](https://social.tchncs.de/@lukasrotermund), or simply by
 [email](mailto:lukas.rotermund@live.de).
 
 ### Heise's "Mastering Microservices" – About the conference 

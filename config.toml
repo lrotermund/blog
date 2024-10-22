@@ -66,10 +66,6 @@ enableGitInfo = true
     url = "https://github.com/lrotermund"
     rel = "me"
   [[params.social]]
-    name = "linkedin"
-    url = "https://www.linkedin.com/in/lukas-rotermund"
-    rel = "me"
-  [[params.social]]
     name = "Mastodon"
     url = "https://social.tchncs.de/@lukasrotermund"
     rel = "me"

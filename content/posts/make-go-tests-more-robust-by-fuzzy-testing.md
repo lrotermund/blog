@@ -1006,8 +1006,7 @@ offers.
 I will definitely continue to enrich my classic tests with fuzzy tests[^fuzz] through quick. Do you 
 disagree with me, have you had bad or good experiences with quick, or do you know a way to make 
 fuzzy testing[^fuzz] much more efficient and better? Let's discuss it on 
-[LinkedIn](https://www.linkedin.com/in/lukas-rotermund) or 
-[Xing](https://www.xing.com/profile/Lukas_Rotermund2) – I look forward to your opinion!
+[Mastodon](https://social.tchncs.de/@lukasrotermund) – I look forward to your opinion!
 
 [^fuzz]: fuzzing, fuzz testing, fuzzy testing:  
 	Fuzzy testing is an automatic way to test software using random parameters. Through the random, 

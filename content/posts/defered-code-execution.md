@@ -1269,6 +1269,5 @@ good implementation due to my skill issue. I will work on that though.
 Last but not least, I am interested in your perspective. What do you think about
 defer? Have you ever tried to implement it in another language, or is there
 already an implementation for that language? Feel free to drop me a line on
-[LinkedIn](https://www.linkedin.com/in/lukas-rotermund) or
-[Mastodon](https://social.dev-wiki.de/@lukasrotermund)!
+[Mastodon](https://social.tchncs.de/@lukasrotermund)!
 
