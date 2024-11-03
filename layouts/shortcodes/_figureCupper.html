@@ -1,21 +1,26 @@
 {{ $img := .Get "img" }}
 {{ $imgLink := .Get "imgLink" }}
 {{ $caption := .Get "caption" }}
-{{ $alt := .Get "alt" }}
+
+{{ $alt := or (.Get "alt" | default $caption) $caption }}
+
 {{ $command := .Get "command" }}
 {{ $options := .Get "options" }}
+
+{{ $lazy := or (.Get "lazy" | default "false") "false" }}
+{{ $lazy := eq $lazy "true" }}
 
 {{ if in $img "http" }}
   <figure role="group" aria-describedby="caption-{{ $caption | md5 }}">
     <a href="{{ if $imgLink }}{{ $imgLink }}{{ else }}{{ $img }}{{ end }}" class="img-link">
-      <img src="{{ $img }}"{{ if $alt }} alt="{{ $alt }}"{{ end }}>
+      <img src="{{ $img }}"{{ if $alt }} alt="{{ $alt }}"{{ end }}{{ if $lazy }}loading="lazy"{{ end }}>
     </a>
     <figcaption id="caption-{{ $caption | md5 }}">
       {{ $caption | markdownify }}
     </figcaption>
   </figure>
 {{ else }}
-  {{ $original := .Page.Resources.GetMatch (printf "%s" (.Get $img)) }}
+  {{ $original := .Page.Resources.GetMatch $img }}
   {{ if $original }}
     {{ $new := "" }}
 
@@ -33,7 +38,7 @@
 
     <figure role="group" aria-describedby="caption-{{ $caption | md5 }}">
       <a href="{{ if $imgLink }}{{ $imgLink }}{{ else }}{{ $original.RelPermalink }}{{ end }}" class="img-link">
-        <img src="{{ $new.RelPermalink }}"{{ if $alt }} alt="{{ $alt }}"{{ end }}>
+        <img src="{{ $new.RelPermalink }}"{{ if $alt }} alt="{{ $alt }}"{{ end }}{{ if $lazy }}loading="lazy"{{ end }}>
       </a>
       <figcaption id="caption-{{ $caption | md5 }}">
         {{ $caption | markdownify }}

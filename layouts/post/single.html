@@ -6,7 +6,7 @@
       <h1 itemprop="name">{{ .Title }}</h1>
       {{$images := apply .Params.images "absURL" "."}}
       {{$postImage := index $images 0}}
-    <img src="{{ $postImage }}" alt="{{ .Params.image_alt }}">
+    <img src="{{ $postImage }}" alt="{{ .Params.image_alt | replaceRE "\n" "" }}">
 
       {{ with .Params.subtitle }}
         <small class="subtitle">{{ . }}</small>
