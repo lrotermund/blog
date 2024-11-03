@@ -20,140 +20,139 @@ draft: false
 ---
 
 The question is not whether you or your organisation will be hacked, but how
-prepared you are and how you react. This post is an introduction to the big
-rabbit hole cybersecurity and a big part of the introduction leads us to **the
-pyramid of pain** and to the **MITRE ATT&CK framework**.
+prepared you are and how you will react. This post is an introduction to the
+great rabbit hole of cybersecurity, and much of the introduction leads us to
+**the Pyramid of Pain** and the **MITRE ATT&CK Framework**.
 
 {{< toc >}}
 
 ## Foreword
 
-I am myself a cybersecurity newbie. This post is a summery of what I learned
-during the hackumenta, a hacking conference of my local hackspace flipdot
-associated with the German chaos computer club, short CCC. So, please don't
-expect perfect definitions, domain specific language and educated guesses. This
-is a true view of a cybersecurity beginner on the topic.
+I am a cybersecurity newbie myself. This post is a summery of what I learned at
+hackumenta, a hacking conference run by my local hackspace flipdot, which is
+affiliated with the German Chaos Computer Club, or CCC for short. So please
+don't expect perfect definitions, domain-specific language and educated guesses.
+This is a cybersecurity beginner's view of the subject.
 
-Sadly due to the nature of the framework we'll look at, this post is not as
-accessible as the rest of my posts. The framework uses a lot of visual elements
-and big tables to show sensible attack vectors that I cannot represent well
-accessible. I'll try to explain all the relevant information within the alt
-texts of the included screenshots, but there will be definitively a loss in
-information for which I am really sorry.
+Unfortunately, due to the nature of the framework we'll be looking at, this post
+is not as accessible as the rest of my posts. The framework uses a lot of
+visuals and large tables to show meaningful attack vectors that I cannot present
+in an accessible way. I'll try to explain all the relevant information in the
+alt text of the screenshots included, but there will definitely be a loss of
+information for which I'm very sorry.
 
 ## The basics
 
-If your common with cybersecurity basics and just want to learn something about
-the MITRE ATT&CK framework you can easily skip the fist sections, there will be
-hardly anything new for you.
+If you are familiar with the basics of cybersecurity and just want to learn
+about the MITRE ATT&CK framework, you can skip the first few sections, there
+will be little new for you.
 
 ### "But my software developers are writing secure code, so why should I care?"
 
-A common mistake in software development is, that software developers write
-automatically secure and safe code and that cybersecurity is just something
-that big companies with a couple thousand employees have to care about.
+A common misconception in software development is that software developers
+automatically write safe and secure code, and that cybersecurity is just
+something that big companies with a few thousand employees need to worry about.
 
-(Cyber-) security is a so called **non functional requirement** which I could
-and should write a couple of posts about. Here is a simplified view on the
-topic:
+(Cyber) security is a so-called **non-functional requirement**, about which I
+could and should write a couple of posts. Here is a simplified view of the
+subject:
 
 Software developers usually only get the opposite within their tasks,
 **functional requirements**. Examples are:
 
-- "Show cross selling articles on the checkout"
-- "Send a timer on articles in sale"
-- "A visitor should be able to order as a guest"
+- "Show cross-selling items at checkout"
+- "Send a timer on items on sale"
+- "A visitor should be able to order as a guest".
 
-But there won't be requirements like:
+But there won't be requirements such as
 
-- "A visitors session is stored in a http-only cookie"
-- "The firewall logs must not be deleted easily to avoid loss of evidence after
-an attack"
-- "The payment at the end of the checkout should take five seconds tops"
+- "A visitor's session is stored in an http-only cookie".
+- "The firewall logs must not be easily deleted to avoid loss of evidence after an attack".
+- "Payment at the end of the checkout should take no more than five seconds".
 
-The problem with non functional requirements are, that broadly spoken
-"customers" do not think about them or only when they become a problem. There is
-no business value associated with non functional requirements. So there is no
-interest in enunciating them.
+The problem with non-functional requirements is that, broadly speaking,
+"customers" do not think about them, or only think about them when they become a
+problem. There is no business value associated with non-functional requirements.
+So there is no interest in articulating them.
 
-And to be fair, its IMO not the responsibility of the "customers" to know and
-care about them. Its the responsibility of us, software developers and (cyber-)
-security specialists to know about them and to consider them when planning the
-tasks.
+And to be fair, IMO, it is not the responsibility of "customers" to know and
+care about them. It is the responsibility of us, the software developers and
+(cyber) security specialists, to know about them and to take them into account
+when planning the tasks.
 
-**TL;DR** No, your software developers don't write secure code automatically,
-only when they know about non functional requirements or when you enunciate
-them. Because neither is the rule, but rather an exception, you should and have
-to care.
+**TL;DR** No, your software developers don't automatically write secure code,
+only when they know about non-functional requirements or when you tell them to.
+Since neither is the rule, but rather the exception, you should and must take
+care of it.
 
 ### 🙈 🙉 🙊 "It won't happen to us, what could they possibly steal?"
 
-Its not my goal to play with fear as a rhetorical device. But its also not OK
-to ignore the risks of a cyberattack, especially today. They occur on a daily
-basis and from a lot of aggressors. Hostile countries like Russia, Iran or
-North Korea, as well as unfriendly countries like China (to just name a few) are
-already supporting, enabling, instructing, and operating different kind of
-hacker groups with western targets - the keyword here is: hybrid warfare.
+It is not my aim to play with fear as a rhetorical device. But it is also not OK
+to ignore the risks of a cyber attack, especially today. They happen every day
+and from many different aggressors. Hostile countries like Russia, Iran or North
+Korea, as well as unfriendly countries like China (to name but a few) are
+already supporting, enabling, directing and operating various kinds of hacker
+groups with Western targets - the keyword here is hybrid warfare.
 
-If I collect personal information as a business or private person, I owe it to
-my visitors, users and customers to keep it secure, to use it only in ways that
-are relevant, to delete it when I no longer need it, and to notify and
-compensate them in the event of a data breach.
+If I collect personal information as a business or individual, I owe it to my
+visitors, users and customers to keep it secure, to use it only in ways that are
+relevant, to delete it when I no longer need it, and to notify and compensate
+them in the event of a data breach.
 
-Anyone can be a target for hacker groups, not just the big fish. In fact, the
+Anyone can be a target for hacking groups, not just the big fish. In fact, the
 smaller fish are often the best targets. There is usually no good cybersecurity
 knowledge, software and security mechanisms are likely to be outdated, and there
-will be no routines when it comes to an attack. Easy targets and often also easy
+will be no routines when it comes to an attack. Easy targets and often easy
 money.
 
-Additionally its likely that the victims of a cyberattack will act in favor for
-the attacks after the attack has happened. Many organisations, out of confusion,
-fear and lack of routine, simply reset all systems to get rid of hackers. Files
-get removed and logs deleted. But exactly that helps the attackers due to a loss
-of evidence.
+In addition, the victims of a cyber attack are likely to act in favour of the
+attackers after the attack has taken place. Many organisations, out of
+confusion, fear and lack of routine, simply reset all systems to get rid of the
+hackers. Files are removed and logs deleted. But this actually helps the
+attackers by eliminating evidence.
 
 ### Just be prepared
 
-Cybersecurity is a bottomless topic and attackers are always a dozen steps ahead
-of possible victims. It is easier for them because they just have to be prepared
-for a couple scenarios and attack vectors and the defenders have to be prepared
-for all possible scenarios. But is this correct?
+Cybersecurity is a never-ending story and attackers are always a dozen steps
+ahead of potential victims. It is easier for them because they only have to be
+prepared for a few scenarios and attack vectors, while defenders have to be
+prepared for all possible scenarios. But is that right?
 
-Think of an intruder as the hacker group in the following example. The intruder
-goes through a well prepared routine when breaking into houses. They maybe start
-by a rough preselection of houses by attributes like availability of hiding
-places, lightning, chance to escape in case of detection and of course the
-quality of loot.
+Consider an intruder as the hacker group in the following example. The intruder
+goes through a well-prepared routine when breaking into houses. They may start
+by roughly pre-selecting houses based on attributes such as the availability of
+hiding places, lightning, the chance of escape if detected, and of course the
+quality of the loot.
 
-Next they start with the first house and try to break into the first window. But
-the window is to good protected and it would take to much time to get in, so
-they go to the next window. Now a big light turns on due to a motion sensor. As
-a result they will just skip your house and go to your neighbour, because you
-knew the typical attack vectors for intruders.
+Next, they start with the first house and try to break into the first window.
+But the window is too well protected and it would take too long to get in, so
+they move on to the next window. Now a large light goes on because of a motion
+sensor. As a result, they skip your house and go to your neighbour's, because
+you know the typical attack vectors for intruders.
 
-At the next house they open the first window and are in. Now they are looking
-for loot, but there is no loot on the ground floor and the second floor is
-locked with door. But they are window-intruders, they are not prepared to open
-doors, so they leave and go to the next house because sooner or later there will
-be a house where someone is not prepared.
+At the next house, they open the first window and get in. Now they are looking
+for loot, but there is no loot on the ground floor, and the second floor is
+locked with a door. But they are window intruders, they are not prepared to open
+doors, so they leave and go to the next house, because sooner or later there
+will be a house where someone is not prepared.
 
-Hacker groups and intruders have often some things in common. They are secure
-with a couple of tools and within their routine and it is their goal to go in
-quickly, do want they planned to do and then to leave as quickly as they got in.
+Hacker groups and intruders often have a few things in common. They are secure
+with a few tools and in their routine, and their goal is to get in quickly, do
+what they have planned, and then get out as quickly as they got in.
 
-If some things are going wrong and they have to leave their routine to achieve
-a goal, or if something takes to much time and they risk to get caught, they
-stop and leave, or they don't even see you as a potential target.
+If something goes wrong and they have to leave their routine to achieve a goal,
+or if something takes too long and they risk getting caught, they'll stop and
+walk away, or they won't even see you as a potential target.
 
 Don't be the easy neighbour. Be prepared.
 
 ## The pyramid of pain
 
-The windows and doors of the previous example can be translated to the digital
-world. We have a couple of "protection" layers that we rely on to protect our
-software, our infrastructure. These layers can be represented within the so
-called pyramid of pain from David Bianco. The pain describes how hard it is for
-the attackers to hack into our system.
+The windows and doors of the previous example can be applied to the digital
+world. We have a number of "layers of protection" that we rely on to protect our
+software, our infrastructure. These layers can be represented by David Bianco's
+pyramid of pain. The pain describes how difficult it is for attackers to break
+into our system.
 
 {{< _figureCupper
 img="the-pyramid-of-pain.webp" 
@@ -162,67 +161,60 @@ caption="Custom drawing of David Bianco's 'The pyramid of pain'. I know, my draw
 command="Original"
 lazy="true" >}}
 
-The bottom of the pyramid is hashes, because its pretty trivial for hackers to
-modify hashes we rely on. Also, we cannot know all possible hashes to be
-prepared against wrong ones.
+The bottom of the pyramid is hashes, because it is quite trivial for hackers to
+change the hashes we rely on. Also, we cannot know all possible hashes to guard
+against false ones.
 
-The next layer is the IP address, because its easy for hackers to fake, modify
-and change their IP address. So its not a recommended protection.
+The next level is the IP address, because it is easy for hackers to forge,
+modify and change their IP address. So it is not a recommended protection.
 
-Domain names on layer four is still simple. Its often easy for hackers to buy a
-equal looking domain to prepare their attacks, e.g. instead of
+Domain names at layer four are still simple. Its often easy for hackers to buy a
+similar looking domain to prepare their attacks, e.g. instead of
 **lukasrotermund.de** they just buy **iukasrotermund.de**. Depending on the font
-and the zoom its hard to see a difference.
+and zoom, it is hard to tell the difference.
 
-Its getting harder for hacker from layer three. Now they have to manipulate our
-network or host artefacts. They have to hide their paths in our network where
-they can easy leave evidence in logs. But for specialised hacker groups its
-easy but annoying to work here.
+It gets harder for hackers on layer three. Now they have to manipulate our
+network or host artefacts. They have to hide their paths in our network, where
+they can easily leave evidence in logs. But for specialised hacker groups, this
+is easy, but tedious.
 
-In layer five they have to manipulate and or exchange the tools our company is
-using. That is challenging even for skilled hackers, but with enough time and
-experience not impossible.
+At layer five, they need to manipulate and/or replace the tools our company
+uses. This is a challenge even for skilled hackers, but not impossible with
+enough time and experience.
 
-The last layer is the toughest. The abbreviation TTPs stands for "Tactics,
-Techniques & Procedures". Within this stage, the hackers are trying to change
-and hack our company internal processes. Everything they do here, starting from
-attacks like spear fishing, where they could read the email traffic of the HR
-department for example and therefore know secret internals of employees like
-urgent wishes for vacation. Now they could use that against the employees in the
-name of HR to escalate their privileges. They could also have the goal of
-persistence (keeping a foot in the door) and very often to exfiltrate data.
+The last layer is the hardest. The acronym TTPs stands for Tactics, Techniques &
+Procedures. At this stage, the hackers try to change and hack our internal
+processes. Everything they do here, starting with attacks like spear fishing,
+where they could read the email traffic of the HR department, for example, and
+therefore know secret internal things about employees, like urgent requests for
+vacation. Now they could use that against employees in the name of HR to
+escalate their privileges. They could also have the goal of persistence (keeping
+a foot in the door) and very often to exfiltrate data.
 
-The biggest benefit of the defenders is here, that the barriers are higher then
-in all the other layers. When something doesn't work as expected, the hackers
-have a higher risk to get caught and cancel there operation quickly to train
-executing hackers again, or to search for other attack vectors.
+The biggest advantage of the defenders here is that the barriers are higher than
+in any of the other layers. If something doesn't work as expected, the
+adversaries have a higher risk of being caught and will quickly abort the
+operation to train new hackers or look for other attack vectors.
 
-And that's where the second part of the post gets important, the MITRE ATT&CK
-framework.the
-in all the other layers. When something doesn't work as expected, the hackers
-have a higher risk to get caught and cancel there operation quickly to train
-executing hackers again, or to search for other attack vectors.
-
-And that's where the second part of the post gets important, the MITRE ATT&CK
+And that's where the second part of the post comes in, the MITRE ATT&CK
 framework.
 
 ## The MITRE ATT&CK framework
 
 The word MITRE has two parts, MIT and RE. MIT is the Massachusetts Institute of
-Technology and RE means Research Establishment. The MIT has is background in
-the US military, but not so the MITRE. Its a non-profit organisation working for
-and with their community and with the US government.
+Technology and RE means Research Establishment. The MIT has its background in
+the US military, but not so the MITRE. It is a non-profit organisation that
+works for and with its community and with the US government.
 
-And this organisation provides the ATT&CK framework which targets exactly the
-TTPs from the previous section. Its means Adversarial Tactics, Techniques and
-Common Knowledge and it is a publicly available, global tool that helps security
-experts and companies to prepare and protect themself better against this kind
-of attack vectors.
+And this organisation provides the ATT&CK framework, which is aimed precisely at
+the TTPs from the previous section. It stands for Adversarial Tactics,
+Techniques and Common Knowledge and it is a publicly available, global tool to
+help security professionals and companies better prepare and protect themselves
+against these types of attack vectors.
 
-The framework provides a big matrix with the hacker's tactics as headers and the
-techniques of the tactics as columns. Every technique occurs only once under one
-tactic and the tactics are sorted by the attack phase, starting with the
-reconnaissance and ending with the exfiltration and the impact.
+The framework provides a large matrix with the hacker tactics as headers and the
+techniques of the tactics as columns. Tactics are sorted by attack phase,
+starting with reconnaissance and ending with exfiltration and impact.
 
 {{< _figureCupper
 img="mitre-att-and-ck-matrix.webp" 
@@ -232,39 +224,41 @@ caption="Screenshot of the MITRE ATT&CK website, showing a part of the matrix."
 command="Original"
 lazy="true">}}
 
-Its easy to get lost within all the tactics, techniques and their sub-techniques
-especially as a beginner, when you have to deal with the new cyber security
-domain language. This is exactly my current state. But there is light at the end
-of the tunnel. The MITRE organisation is not only providing this big matrix, but
-also a great angular tool called **[ATT&CK® Navigator](https://github.com/mitre-attack/attack-navigator)**
-that you can find on GitHub.
+
+It is easy to get lost in all the tactics, techniques and their sub-techniques,
+especially as a beginner when you have to deal with the new domain language of
+cybersecurity. This is where I am at the moment. But there is light at the end
+of the tunnel. The MITRE organisation not only provides this big matrix, but
+also a great angular tool called the
+**[ATT&CK® Navigator](https://github.com/mitre-attack/attack-navigator)**, which you
+can find on GitHub.
 
 But before you start using the ATT&CK® Navigator, try to explore the framework
-a little and make yourself comfortable with its architecture. I won't go into
-details here because I learned about the framework on the hackumenta a few days
-ago, so I can't really help you here.
+a bit and get familiar with its architecture. I won't go into details here,
+because I got to know the framework a few days ago at the hackumenta, so I can't
+really help you here.
 
-All I can tell you is, that the framework and everything it provides you
-(tactics, techniques, groups, etc.) are based on real world data, provided by
-companies, organisations and federal agencies. Every technique contains a
-detailed description and some metadata, as well as procedure examples with real
-hacker groups participated and the mitigations that helped to prevent the
-hacker group from being successful.
+All I can tell you is that the framework and everything it provides (tactics,
+techniques, groups, etc.) is based on real-world data provided by companies,
+organisations and government agencies. Each technique includes a detailed
+description and some metadata, as well as examples of what real hacker groups
+have done, and the mitigations that helped prevent the hacker group from
+succeeding.
 
-The way the information is presented is impressive. Every relevant keyword is
+The way the information is presented is impressive. Each relevant keyword is
 well described and the mitigations are well organised in clean, structured
-tables. Nothing is overloaded with information, when you leave the matrix.
+tables. Nothing is overloaded with information when you leave the matrix.
 
-And what helps me the most is, that the path from the root (matrix) to the
-techniques is not shared and cross linked with other tactics. Its like a well
+And what helps me the most is that the path from the root (matrix) to the
+techniques is not shared and cross-linked with other tactics. It is like a well
 organised tree of information.
 
 ## The MITRE ATT&CK® Navigator
 
-The ATT&CK® Navigator can be used in different ways, in the end its just an
-angular SPA. A recommended way is to use a GitHub fork and to enable GitHub
-Pages so you have your own GitHub page. But you can also use npm or you just use
-docker and clone, build and run the container:
+The ATT&CK® Navigator can be used in a number of ways, it is after all just an
+angular SPA. One recommended way is to use a GitHub fork and enable GitHub pages
+so you have your own GitHub page. But you can also use npm or just use docker
+and clone, build and run the container:
 
 ```sh
 git clone git@github.com:mitre-attack/attack-navigator.git
@@ -273,7 +267,7 @@ docker build -t attack-navigator .
 docker run --detach -p 127.0.0.1:4200:4200 attack-navigator
 ```
 
-Then you can open it in your browser under `127.0.0.1:4200`:
+You can then open it in your browser at `127.0.0.1:4200`:
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator.webp" 
@@ -284,40 +278,34 @@ lazy="true">}}
 
 ### Analysing attack vectors for the finance industry using the ATT&CK® Navigator
 
-My goal with this section is to enable you also to get a foot in the
-cybersecurity-door. I will show you a way, how you can use the navigator with a
-practically example so you are not longer overwhelmed by all the possible
-options of the matrix.
+My aim in this section is to enable you to get a foot in the door of
+cybersecurity. I will show you a way to use the Navigator with a practical
+example so that you are no longer overwhelmed by all the possible options of the
+matrix.
 
-But there is also a big problem with the MITRE ATT&CK® Navigator that I will
-share with you. If I have found a solution in the future, the will be a hint in
-this section to.
+Let's start with the analysis. We are now working together in the IT Security/
+Software Development/ Dev(Sec)Ops department of our financial company and our
+goal is to find possible attack vectors of adversaries against our company.
 
-Let's start with the analysis. We are now working together in the IT security/
-software development/ Dev(Sec)Ops department of our finance company and its our
-goal to find possible attack vectors of adversaries against our company.
+Now we open the freshly launched ATT&CK® Navigator and select **Create New
+Layer** and then, of course, **Enterprise ATT&CK**. The Navigator now starts to
+load the latest version of the MITRE ATT&CK matrix, in my case it's version 16.
 
-Now we open the freshly started ATT&CK® Navigator and choose **Create New
-Layer**, and then of course **Enterprise ATT&CK**. The navigator starts now
-loading the latest version MITRE ATT&CK matrix, in my case that's 16.
+On our new 'Layer 1', we start by clicking on the **Selection Controls**, which
+brings up a sidebar with a search field at the top. As we are looking for attack
+vectors for the financial industry, we now type **finance** into the search
+field to look for adversaries/groups that are associated with or known to attack
+this industry. The search looks for our keyword within the "name", "ATT&CK ID",
+"description" and "data source" of the MITRE ATT&CK framework.
 
-On our new "Layer 1" we start by clicking on the **Selection Controls** which
-reveals a sidebar with a search field on the top. Because we are looking for
-attack vectors for the finance industry, we are now entering **finance** into
-the search field to search for adversaries/ groups that have been associated or
-are known for attacking this industry. The search looks within the "name",
-"ATT&CK ID", "description" and "data source" of the MITRE ATT&CK framework for
-our keyword.
-
-In my case the navigator found the four adversaries **APT19**, **APT41**,
+In my case, the Navigator found the four adversaries **APT19**, **APT41**,
 **menuPass** and **Moses Staff**. APT19 is a Chinese-based thread group, APT41
-is a Chinese state-sponsored espionage group and menuPass is a thread group
-where individual members are acted in association with the Chinese Ministry of
-State Security's (MSS). The last group Moses Staff is an Iranian thread group
-that primarily targets Israeli companies. All these groups have in common, that
-they attack the finance industry occasionally. You can find all these
-information within the MITRE ATT&CK framework by just clicking on "view", next
-to the search result.
+is a Chinese state-sponsored espionage group, and menuPass is a thread group
+where individual members act in conjunction with the Chinese Ministry of State
+Security (MSS). The final group, Moses Staff, is an Iranian thread group that
+primarily targets Israeli companies. All these groups have in common that they
+occasionally target the financial industry. You can find all this information in
+the MITRE ATT&CK framework by clicking on "view" next to the search result.
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-search.webp" 
@@ -326,17 +314,17 @@ caption="Screenshot of the **Thread Groups** search result showing the four adve
 command="Original"
 lazy="true">}}
 
-Now we have four interesting research targets for potential attack vectors
-against our company. Within the next step, we will prepare our first layer to
-analyse tactics and techniques of the first group, APT19.
+We now have four interesting research targets for potential attack vectors
+against our company. In the next step, we will prepare our first layer to
+analyse the tactics and techniques of the first group, APT19.
 
-Click on the **select** button to select all techniques of APT19. Now switch
-from the **Selection Controls** to the **Layer Controls** and change the name
-within the **layer settings** from "Layer 1" to "APT19". Next open the **color
-setup** menu to switch the color palette to the preset **transparent to red**.
-Because we are analysing four groups, set the **High value** to "4". To apply
-the color palette go now to the last menu **Technique Controls** and set a "1"
-as the score in the **scoring** option.
+Click the **select** button to select all techniques from APT19. Now switch from
+the **Selection Controls** to the **Layer Controls** and change the name in the
+**layer settings** from "Layer 1" to "APT19". Next, open the **color setup**
+menu to change the colour palette to the preset **transparent to red**. As we
+are analysing four groups, set the **High value** to "4". To apply the colour
+palette, go to the last menu **Technique Controls** and set the **scoring**
+option to 1.
 
 Your layer should now look like this:
 
@@ -347,17 +335,17 @@ caption="Screenshot of the APT19 layer set up, showing their usual techniques wi
 command="Original"
 lazy="true">}}
 
-Within the screenshot we can now see the techniques, that the thread group APT19
-used in the past to attack targets in the finance industry. This is already an
-helpful information. But we can do better. Repeat the steps of the APT19 group
-now for the three other adversaries APT41, menuPass and Moses Staff, each on its
-own layer.
+In the screenshot, we can now see the techniques that the APT19 thread group has
+used in the past to attack targets in the financial industry. This is already
+useful information. But we can do better. Now repeat the steps of the APT19
+group for the other three adversaries, APT41, menuPass and Moses Staff, each on
+their own layer.
 
-When finished, create a new layer by clicking on **Create Layer from Other
-Layers**. Next select the latest ENTERPRISE ATT&CK version as a domain. To merge
-the other layers scores, set the **score expression** to `a+b+c+d`. To finish
-the set up, select the **gradient** and **coloring** from any other layer, e.g.
-APT19. Here is a screenshot of the settings I configured:
+When you are finished, create a new layer by clicking **Create Layer from Other
+Layers**. Next, select the latest version of ENTERPRISE ATT&CK as the domain. To
+merge the scores of the other layers, set the **score expression** to `a+b+c+d`.
+To finish, select the **gradient** and **coloring** from any other layer, e.g.
+APT19. Here is a screenshot of the settings I have configured:
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-merging-layers.webp" 
@@ -366,24 +354,24 @@ caption="Screenshot of the **Create Layer from Other Layers** form set up to cre
 command="Original"
 lazy="true">}}
 
-Now create the new layer and rename it in the **Layer Controls** to
-"Adversaries". The previously set up gradient and the scores range from 0-4
-enables us now to see the shared techniques of our thread groups. This is where
-you start, this is your foot in the door. You don't need to focus on every
-single technique in the framework, just start by looking at the most important
-ones. After that focus on the are less or not overlapping.
+Now create the new layer and rename it "Adversaries" in the **Layer Controls**.
+Using the gradient we set up earlier and the score range of 0-4, we can now see
+the common techniques of our thread groups. This is where you start, this is
+your foot in the door. You don't need to focus on every single technique in the
+framework, just start by looking at the most important ones. After that, focus
+on those that are less overlapping or do not overlap.
 
-In the following screenshot (or in your own navigator) you can see, that the we
-have the overlapping technique **System Network Configuration Discovery** of the
-tactic **Discovery** with a max score of four and next the following four with
-a score of three:
+In the following screenshot (or in your own navigator) you can see that we have
+the overlapping technique **System Network Configuration Discovery** of the
+tactic **Discovery** with a maximum score of four and then the next four with a
+score of three:
 
 - Exploit Public-Facing Application (tactic: Initial Access)
 - Deobfuscate/ Decode Files or Information (tactic: Defense Evasion)
 - System Information Discovery (tactic: Discovery)
 - Ingress Tool Transfer (tactic: Command and Control)
 
-Then we have have 13 overlapping techniques with a score of two:
+Then we have 13 overlapping techniques with a score of two:
 
 - Valid Accounts (tactic: Initial Access)
 - Windows Management Instrumentation (tactic: Execution)
@@ -399,8 +387,8 @@ Then we have have 13 overlapping techniques with a score of two:
 - Automated Collection (tactic: Collection)
 - Data from Local System (tactic: Collection)
 
-And finally a couple more with a score of one, so no overlapping between the
-thread groups:
+Finally, a few more with a score of one, so that there is no overlap between the
+groups of threads:
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-adversaries.webp" 
@@ -411,18 +399,21 @@ lazy="true">}}
 
 ### Mitigating attack vectors
 
-Now there we know about the most used techniques to attack our example industry,
-we can start by using the MITRE ATT&CK framework to lookup mitigations that we
-can apply to mitigate the impact and/or success of the adversaries.
+Now that we know the most commonly used techniques to attack our example
+industry, we can start using the MITRE ATT&CK framework to look for mitigations
+that we can apply to reduce the impact and/or success of the adversaries.
 
-Starting with the [System Network Configuration Discovery](https://attack.mitre.org/techniques/T1016/),
-there sadly no known mitigations because they are exploitable due to system
-failure, as you can read at the techniques page in the framework. So lets skip
-to [Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)
+Unfortunately, starting with
+[System Network Configuration Discovery](https://attack.mitre.org/techniques/T1016/),
+there are no known mitigations because they are exploitable due to system
+failure, as you can read on the techniques page in the framework. So we move on
+to
+[Exploit Public-Facing Application](https://attack.mitre.org/techniques/T1190/)
 with a score of three.
 
-This time we have a couple mitigations, for example [Application Isolation and Sandboxing](https://attack.mitre.org/mitigations/M1048/).
-These mitigations are methods we can look up right away. We can go to our
+This time we have a couple of mitigations, such as
+[Application Isolation and Sandboxing](https://attack.mitre.org/mitigations/M1048/).
+These mitigations are methods that we can look up immediately. We can go to our
 (software) infrastructure and check if the mitigations are already applied or if
 we have a todo.
 
@@ -434,19 +425,19 @@ caption="Screenshot of the **Exploit Public-Facing Application** technique's mit
 command="Original"
 lazy="true">}}
 
-Let's say we already did this for all the overlapping techniques of the previous
-section with a score of four and three. Our team was quick in checking and
-implementing the MITRE ATT&CK mitigations.
+Let's say we've already done this for all the overlapping techniques in the
+previous section with a score of four and three. Our team has quickly reviewed
+and implemented the MITRE ATT&CK mitigations.
 
 Now we can add a new layer to the navigator for the techniques we have already
-mitigated. This time we add a fresh new layer with the latest framework version
-again. This time we name the layer "defense" and change the color palette to
-the preset **transparent to blue** with the **High value** of "4".
+mitigated. This time we add a fresh layer again with the latest version of the
+framework and we name the layer "defence" and change the colour palette to the
+preset **transparent to blue** with a **High value** of "4".
 
 Next we `CTRL` select all the mitigated adversary techniques with a score of
-three and set there score in our defense layer to "4" too. And due to the non
-mitigate ability of the **System Network Configuration Discovery** we set it's
-score just to "1".
+three and set the score in our defence layer to 4 as well. And because the
+**System Network Configuration Discovery** technique isn't mitigated, we just
+set its score to 1.
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-defense.webp" 
@@ -455,13 +446,13 @@ caption="Screenshot of the defense layer with two visible, blue highlighted tech
 command="Original"
 lazy="true">}}
 
-OK, this is our defense starting point. The next step is to compare the
-thread group techniques with our mitigated ones. To do that, add a new layer
-again, this time we click on **Create Layer from Other Layers** again. As
-before, we choose the latest ENTERPRISE ATT&CK version as the domain and last we
-subtract the defense (f) from the adversaries (e), so set the score expression
-to "e-f". And don't set a gradient or coloring this time, we choose another one
-for the comparison.
+OK, this is our starting point for defence. The next step is to compare the
+thread group techniques with our mitigated ones. To do this we add a new layer,
+this time we click **Create Layer from Other Layers** again. As before, we
+choose the latest version of ENTERPRISE ATT&CK as the domain, and finally we
+subtract the defence (f) from the adversaries (e), so set the score expression
+to `e-f`. And this time we don't set a gradient or colouring, we choose another
+one for the comparison.
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-setup-current-state.webp" 
@@ -470,15 +461,14 @@ caption="Screenshot of the **Create Layer from Other Layers** form set up to cre
 command="Original"
 lazy="true">}}
 
-After creating the layer, we change its name to "current state" in the **Layer
-Controls**. Then we change the gradient score range to "0" as the **Low value**
-and "2" as a **High value**. To improve the colors, select the preset **green
-to red**, so the lower the score, the better we are protected against the
-technique.
+After creating the layer, we change its name in the **Layer Controls** to
+"current state". Then we change the gradient score range to "0" for low and "2"
+for high. To improve the colours, we select the **green to red** preset, so the
+lower the score, the better we are protected against the technique.
 
-As a result you can see, that the techniques with a previous score of three do
-now have a score of "-1" which makes them super green. This way we can see,
-what we have accomplished by by our mitigation and where still work is to do.
+As a result, you can see that the techniques with a previous score of three now
+have a score of "-1", which makes them super green. This way we can see what we
+have achieved through our mitigation and where we still need to work.
 
 {{< _figureCupper
 img="mitre-att-and-ck-navigator-current-state.webp" 
@@ -487,32 +477,32 @@ caption="Screenshot of the combined matrix of adversaries and our defense positi
 command="Original"
 lazy="true">}}
 
-To not throw all your work in the garbage every time, you can also export all
-your layers into a single JSON and import it later the same way. You will find
-the export option in the **Layer Controls** under **export** write next to the
+To avoid throwing all your work in the trash every time, you can also export all
+your layers into a single JSON and import it later in the same way. You can find
+the export option in the **Layer Controls** under **export**, right next to the
 settings.
 
 ## The MITRE ATT&CK framework's major drawback.
 
-Right now my biggest problem with the MITRE ATT&CK framework is its reduced
-capability of filtering and finding thread groups based on a given industry. My
-example just works for the big ones like finance, healthcare, military, etc.
-I attended to use the industry 'e-commerce' where I'm currently working in as an
-example for this post, but there is not a single thread group related to it in
-the framework. So I had to pick a big industry like finance.
+Right now my biggest problem with the MITRE ATT&CK framework is its limited
+ability to filter and find thread groups based on a given industry. My example
+only works for the big ones like finance, healthcare, military, etc. I wanted to
+use the 'e-commerce' industry I currently work in as an example for this post,
+but there isn't a single thread group related to it in the framework. So I had
+to pick a big industry like finance.
 
-Actually that's my one and only problem right now. If you know about a good
-adversaries/thread group-industry mapping, that is also compatible with the
-MITRE ATT&CK adversaries, then please contact me on Mastodon
-`@lukasrotermund@social.tchncs.de`. You will find an update here, when I have
-found a good source for a better mapping.
+Actually, that's my only problem at the moment. If you know of a good adversary/
+thread group to industry mapping that is also compatible with the MITRE ATT&CK
+adversaries, please contact me at Mastodon `@lukasrotermund@social.tchncs.de`.
+You will find an update here if I find a good source for a better mapping.
 
 ## Some final thoughts
 
-I like the MITRE ATT&CK framework and the Navigator very much. MITRE it's
-community build something very impressive here. It's rich in information and the
-navigator is a pretty simple to use tool. The framework provides a clear and
-minimalistic structure but is also able to give a lot of structured information.
+I really like the MITRE ATT&CK framework and the Navigator. The MITRE community
+has built something very impressive here. It's rich in information and the
+Navigator is a very easy to use tool. The framework provides a clear and
+minimalist structure but is also able to provide a lot of structured
+information.
 
-I would love to be able to use it a better way and to analyse attack vectors for
-every industry, not only the big ones.
+I would like to be able to use it in a better way and analyse attack vectors for
+every industry, not just the big ones.
