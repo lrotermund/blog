@@ -107,4 +107,12 @@ command="Resize"
 options="150x"
 lazy="true" >}}
 
+{{< _figureCupper
+img="pexels-cottonbro-5474292.webp"
+caption="pexels-cottonbro-5474292.webp – Photo by [cottonbro studio](https://www.pexels.com/@cottonbro/) from [Pexels](https://www.pexels.com/photo/close-up-shot-of-a-person-holding-a-key-5474292/)."
+alt="Photo by cottonbro studio: https://www.pexels.com/@cottonbro/ from Pexels: https://www.pexels.com/photo/close-up-shot-of-a-person-holding-a-key-5474292/."
+command="Resize"
+options="150x"
+lazy="true" >}}
+
 </div>
