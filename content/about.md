@@ -7,7 +7,7 @@ date: 2021-01-13T00:49:25+01:00
 draft: false
 ---
 <img class="center"
-     src="/assets/a5f00c1f-7f64-4faa-a62d-8028c14a3909.webp"
+     src="/assets/cf3c0a61-15c4-4332-98af-aa90b2648a0c.webp"
      alt="That's me, Lukas">
 
 My name is Lukas Rotermund, and I am a backend software developer working

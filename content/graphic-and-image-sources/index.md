@@ -116,11 +116,11 @@ options="150x"
 lazy="true" >}}
 
 {{< _figureCupper
-img="a5f00c1f-7f64-4faa-a62d-8028c14a3909.webp"
-caption="a5f00c1f-7f64-4faa-a62d-8028c14a3909.webp – Photo by [Rafael Michel](https://rafaelmichel.de)."
+img="cf3c0a61-15c4-4332-98af-aa90b2648a0c.webp"
+caption="cf3c0a61-15c4-4332-98af-aa90b2648a0c.webp – Photo by [Rafael Michel](https://rafaelmichel.de)."
 alt="Photo by Rafael Michel: https://rafaelmichel.de."
 command="Resize"
-options="x100"
+options="150x"
 lazy="true" >}}
 
 </div>
