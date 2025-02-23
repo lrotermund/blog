@@ -22,6 +22,8 @@ The person responsible for data processing is Lukas Rotermund, Kohlenstr. 7,
 34121 Kassel, Germany. You can reach me by telephone at 01779378847, by e-mail
 at lukas.rotermund[at]live.de or by post at Kohlenstr. 7, 34121 Kassel, Germany.
 
+{{< gpg >}}
+
 ## Data security
 
 I take appropriate precautions to protect your personal data in accordance with
@@ -145,6 +147,8 @@ Verantwortlicher für die Datenverarbeitung bin ich, die Person Lukas Rotermund
 mit Sitz in der Kohlenstr. 7, 34121 Kassel. Sie erreichen mich telefonisch unter
 01779378847, per Mail unter lukas.rotermund[at]live.de oder postalisch unter der
 Anschrift Kohlenstr. 7, 34121 Kassel.
+
+{{< gpg german="true" >}}
 
 ## Datensicherheit
 

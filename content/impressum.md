@@ -19,3 +19,5 @@ einzuleiten.**
 ### Kontaktinformationen
 Telefon: 01779378847\
 E-Mail: [lukas.rotermund[at]live.de](mailto:lukas.rotermund@live.de)
+
+{{< gpg german="true" >}}

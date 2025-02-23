@@ -15,6 +15,41 @@ entirely remotely on PHP Symfony APIs and e-commerce services for the
 [tasko Products GmbH](https://www.tasko.de/), a leading, European brand for
 leather goods and luggage.
 
+<div class="toc">
+    <strong>contents</strong>
+  <nav id="TableOfContents">
+    <ul>
+      <li><a href="#contact-information">Contact information</a>
+        <ul><li><a href="#gpg-public-key">GPG public key</a></ul>
+      </li>
+      <li><a href="#top-skills">Top skills</a>
+        <ul>
+          <li><a href="#golang">Golang</a></li>
+          <li><a href="#php">PHP</a></li>
+        </ul>
+      </li>
+      <li><a href="#work-experience">Work experience</a>
+        <ul>
+          <li><a href="#backend-software-developer--vocational-trainer-2022---today">Backend Software Developer &amp; Vocational Trainer (2022 - today)</a></li>
+          <li><a href="#backend-software-developer--vocational-trainer-2020---2022">Backend Software Developer &amp; Vocational Trainer (2020 - 2022)</a></li>
+          <li><a href="#lead-software-developer-2017---2020">Lead Software Developer (2017 - 2020)</a></li>
+          <li><a href="#software-developer-2016---2017">Software Developer (2016 - 2017)</a></li>
+          <li><a href="#web-developer-2014">Web Developer (2014)</a></li>
+          <li><a href="#apprentice-2013---2016">Apprentice (2013 - 2016)</a></li>
+          <li><a href="#trainee-2011---2012">Trainee (2011 - 2012)</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+## Contact information
+
+Please use the following e-mail address to contact me:
+[lukas.rotermund[at]live.de](mailto:lukas.rotermund@live.de)
+
+{{< gpg >}}
+
 ## Top skills
 
 ### Golang
