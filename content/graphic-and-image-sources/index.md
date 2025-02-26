@@ -123,4 +123,12 @@ command="Resize"
 options="150x"
 lazy="true" >}}
 
+{{< _figureCupper
+img="pexels-wolfgang-weiser-467045605-20884700.webp"
+caption="pexels-wolfgang-weiser-467045605-20884700.webp – Photo by [Wolfgang Weiser](https://www.pexels.com/@wolfgang-weiser-467045605/) from [Pexels](https://www.pexels.com/photo/containerterminal-20884700/)."
+alt="Photo by Wolfgang Weiser: https://www.pexels.com/@wolfgang-weiser-467045605/ from Pexels: https://www.pexels.com/photo/containerterminal-20884700/."
+command="Resize"
+options="150x"
+lazy="true" >}}
+
 </div>
