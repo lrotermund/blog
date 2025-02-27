@@ -21,7 +21,7 @@ developers to the Swiss army knife of data storage - relational databases and
 some ER model. But is this the only way to store information?
 
 For me it was, until I learned about event sourcing. Today I want to share with
-you my naive view of event sourcing. I think this is important because event
+you my naive view on event sourcing. I think this is important because event
 sourcing is a building block of "software architecture" and it is often mixed
 with a little domain-driven design and a micro-service here and there - leading
 to the software architecture ivory tower. A place we all hate because it feels
@@ -51,8 +51,8 @@ looked good and was of good quality? Well, our content department looks at the
 product and adds it to the product information system to enrich it with data.
 This must be a Create Product operation! The content department adds a new
 description to the product? That must be an Update Product operation! The
-shipping container has just arrived - more stock! That must be an update
-operation!
+shipping container has just arrived - more stock! That must be an Update
+Product operation!
 
 As developers, we are sometimes pretty good at generalising things - in fact, we
 are trained to do so. From day one, we learn to reuse code and generalise it
@@ -62,7 +62,7 @@ framework or (standard) library.
 
 No wonder we came up with create, read, update and delete XYZ. It is
 generalised, it is efficient and everyone knows what we are talking about when
-it comes to "building a product" - or do we?
+it comes to "creating a product" - or do we?
 
 When it comes to domain-specific language, we have already lost information. Try
 talking to your colleagues or customers from the purchasing department and they
